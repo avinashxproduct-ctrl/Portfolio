@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI4UI &amp; Inspiro – Revolutionizing UX for Code Generated Interfaces</title>
+<meta name="description" content="Case study: Inspiro, a UX design language that makes interfaces machine-readable for AI-driven code generation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0e2250;
+  --navy-2:#1b3f86;
+  --blue:#2d7ee8;
+  --sky:#2fb0ff;
+  --tint:#eef7fd;
+  --tint-2:#dcedf9;
+  --ink:#10141c;
+  --muted:#4d5a6b;
+  --teal:#00907a;
+  --green:#3f9f5f;
+  --gold:#c9982a;
+  --tile:#f0bd7c;
+  --line:#d5e3ee;
+  --radius:28px;
+  --font:'Lato',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{font-family:var(--font);color:var(--ink);background:#fff;line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--sky);outline-offset:3px;border-radius:6px}
+.wrap{width:min(1120px,92vw);margin-inline:auto}
+section{position:relative}
+.eyebrow{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:.5rem}
+h2{font-size:clamp(2rem,4vw,2.9rem);line-height:1.15;font-weight:900;letter-spacing:-.01em}
+h2::after{content:"";display:block;width:84px;height:2px;background:var(--ink);margin-top:1rem}
+.lead{font-size:1.15rem;color:#27303d;max-width:62ch;margin-top:1.4rem}
+.lead b,.lead strong{color:var(--ink)}
+.scribble{display:block;margin:.6rem auto 0;width:180px;height:14px}
+.scribble path{stroke:var(--teal);fill:none;stroke-width:2;stroke-linecap:round;stroke-dasharray:300;stroke-dashoffset:300;transition:stroke-dashoffset 1.2s ease .3s}
+.in .scribble path,.scribble.in path{stroke-dashoffset:0}
+
+/* progress + nav */
+#progress{position:fixed;inset:0 auto auto 0;height:4px;width:0;background:linear-gradient(90deg,var(--navy-2),var(--sky));z-index:60}
+nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .3s,box-shadow .3s,color .3s;color:#fff}
+nav.solid{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);color:var(--ink);box-shadow:0 1px 0 var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{font-weight:900;letter-spacing:.04em;text-decoration:none}
+.links{display:flex;gap:.2rem;list-style:none;overflow-x:auto;scrollbar-width:none}
+.links::-webkit-scrollbar{display:none}
+.links a{display:block;padding:.4rem .75rem;border-radius:99px;font-size:.85rem;font-weight:700;text-decoration:none;white-space:nowrap;opacity:.8;transition:.2s}
+.links a:hover{opacity:1;background:rgba(127,160,200,.2)}
+.links a.active{opacity:1;background:var(--blue);color:#fff}
+
+/* hero */
+#top{min-height:100vh;display:flex;align-items:center;color:#fff;overflow:hidden;background:
+  radial-gradient(1200px 600px at 20% 0%,#0b1c47 0%,transparent 60%),
+  linear-gradient(135deg,#0c1d47 0%,#2a5fae 45%,#3b82d6 100%)}
+#top::before{content:"";position:absolute;inset:0;opacity:.18;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:4px 4px;mix-blend-mode:overlay;pointer-events:none}
+.shape{position:absolute;border-radius:0 0 0 180px;pointer-events:none;transition:transform .2s ease-out}
+.shape.a{top:0;right:0;width:min(46vw,640px);height:min(48vh,420px);background:linear-gradient(160deg,#5e78a6 0%,#1d4796 45%,#0f2c70 100%);border:36px solid rgba(70,115,190,.55);border-top:0;border-right:0;border-radius:0 0 0 160px}
+.shape.b{bottom:0;left:0;width:min(34vw,480px);height:min(26vh,230px);background:linear-gradient(180deg,#27b0ff 0%,#0d57b7 100%);border:36px solid rgba(120,185,235,.55);border-bottom:0;border-left:0;border-radius:0 160px 0 0}
+.hero-copy{position:relative;z-index:2;padding-top:70px;padding-bottom:140px;max-width:760px}
+.chips{font-size:.85rem;font-weight:700;margin-bottom:1.2rem;opacity:.95}
+.chips span+span{border-left:1px solid rgba(255,255,255,.6);margin-left:.7rem;padding-left:.7rem}
+h1{font-size:clamp(2.4rem,6vw,4.4rem);line-height:1.08;font-weight:900;letter-spacing:-.02em}
+.hero-meta{display:flex;flex-wrap:wrap;gap:1rem 2.5rem;margin-top:2.4rem}
+.hero-meta div{font-size:.85rem;opacity:.9}
+.hero-meta b{display:block;font-size:1rem}
+.cta{display:inline-flex;align-items:center;gap:.6rem;margin-top:2.4rem;padding:.9rem 1.5rem;border-radius:99px;background:#fff;color:var(--navy);font-weight:900;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.cta:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.cta svg{width:18px;height:18px;transition:transform .2s}
+.cta:hover svg{transform:translateY(3px)}
+
+
+/* overview */
+#overview{background:linear-gradient(var(--tint),var(--tint));padding:5rem 0}
+.ov-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:3rem;align-items:center;margin-top:2rem}
+.ov-grid p{margin-bottom:1.2rem}
+.ov-grid p b{color:var(--navy)}
+.logo-card{background:#fff;border-radius:var(--radius);padding:3rem 2rem;text-align:center;position:relative;box-shadow:0 20px 50px rgba(14,34,80,.08)}
+.finacle{display:inline-flex;align-items:center;gap:.5rem;font-weight:900;font-size:2.8rem;color:#6b6b6b;letter-spacing:-.02em}
+.finacle::before{content:"";width:34px;height:50px;background:#e30613;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,0 60%,45% 100%,45% 0%);}
+.inspiro-word{font-size:3.4rem;font-weight:900;color:#555;letter-spacing:.02em;line-height:1.1}
+.logo-card small{display:block;font-size:1.7rem;font-weight:400;margin-top:.3rem}
+.tile{position:absolute;width:74px;height:74px;border-radius:8px;background:var(--tile);box-shadow:0 6px 14px rgba(0,0,0,.18);display:grid;place-items:center;font-weight:900;font-size:2.2rem;transition:transform .35s cubic-bezier(.3,1.6,.5,1);cursor:pointer;user-select:none;border:0;color:var(--ink)}
+.tile sub{position:absolute;right:8px;bottom:4px;font-size:.9rem;font-weight:400}
+.tile.f{top:-30px;right:60px;transform:rotate(-5deg)}
+.tile.s{top:50px;right:-18px;transform:rotate(4deg)}
+.tile:hover,.tile.pop{transform:rotate(0) scale(1.15) translateY(-6px)}
+.facts{display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem;margin-top:3.5rem;padding-top:2rem;border-top:1px solid var(--line)}
+.facts h3{font-size:1.35rem;margin-bottom:.4rem}
+.facts p{color:var(--muted);margin:0}
+
+/* problem */
+#problem{padding:6rem 0}
+.prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:2.5rem;align-items:start}
+.dilemma{font-size:1.5rem;font-weight:900;margin-bottom:1rem}
+.toggle{display:inline-flex;background:var(--tint);border-radius:99px;padding:5px;margin:1.2rem 0}
+.toggle button{border:0;background:transparent;padding:.55rem 1.2rem;border-radius:99px;font-weight:700;font-size:.9rem;transition:.25s}
+.toggle button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.bars{background:var(--tint);border-radius:var(--radius);padding:2rem}
+.bar-row{margin-bottom:1.4rem}
+.bar-row:last-of-type{margin-bottom:.6rem}
+.bar-label{display:flex;justify-content:space-between;font-weight:700;font-size:.95rem;margin-bottom:.4rem}
+.bar-label span:last-child{color:var(--muted);font-weight:400}
+.track{height:30px;background:#fff;border-radius:99px;overflow:hidden}
+.fill{height:100%;border-radius:99px;width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.fill.design{background:linear-gradient(90deg,var(--blue),var(--sky))}
+.fill.dev{background:linear-gradient(90deg,var(--navy-2),var(--blue))}
+.fill.live{background:linear-gradient(90deg,#d94b4b,#f08a5d)}
+.bars-note{font-size:.82rem;color:var(--muted);margin-top:1rem}
+.outdated{margin-top:1.2rem;padding:.9rem 1.1rem;border-radius:14px;background:#fff;border-left:4px solid #d94b4b;font-weight:700;transition:.4s}
+.outdated.ok{border-color:var(--teal)}
+.w-list{list-style:none;margin-top:1.6rem;display:grid;gap:.6rem}
+.w-list li{display:flex;gap:1rem;align-items:center;padding:.7rem 1rem;border-radius:12px;background:var(--tint);font-weight:700;font-size:.95rem}
+.w-list li span{width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:.8rem;flex:none}
+
+/* objective */
+.center-block{background:var(--tint);margin-inline:auto;width:min(1000px,92vw);padding:6rem 2rem;text-align:center;border-radius:6px}
+.center-block h2{font-size:clamp(2rem,3.6vw,2.6rem)}
+.center-block h2::after{display:none}
+.center-block p{max-width:60ch;margin:1.2rem auto 0;font-size:1.2rem}
+.hl{background:linear-gradient(transparent 62%,rgba(0,144,122,.25) 62%);font-weight:900;cursor:default;padding:0 2px;transition:background .3s}
+.hl:hover{background:linear-gradient(transparent 0%,rgba(0,144,122,.25) 0%)}
+#objective{padding:3rem 0}
+
+/* approach */
+#approach{padding:6rem 0 3rem}
+.dt-box{margin-top:2.5rem;background:var(--tint);border-radius:var(--radius);padding:2rem;display:grid;grid-template-columns:.8fr 1.6fr;gap:2rem;align-items:center}
+.dt-box h3{font-size:1.4rem;margin-bottom:1rem}
+.world-btn{display:block;width:100%;text-align:left;margin-bottom:.8rem;padding:1rem 1.2rem;border-radius:16px;border:2px solid transparent;background:#fff;transition:.25s}
+.world-btn b{display:block}
+.world-btn span{font-size:.92rem;color:var(--muted)}
+.world-btn:hover,.world-btn.on{border-color:var(--gold);transform:translateX(4px)}
+.dt-svg{width:100%;height:auto;overflow:visible}
+.dt-svg .curve{fill:none;stroke:var(--gold);stroke-width:2.2;stroke-dasharray:2200;stroke-dashoffset:2200;transition:stroke-dashoffset 3s ease}
+.dt-svg.draw .curve{stroke-dashoffset:0}
+.dt-svg .node circle{fill:#fff;stroke:var(--gold);stroke-width:2;transition:.2s;cursor:pointer}
+.dt-svg .node:hover circle,.dt-svg .node:focus circle,.dt-svg .node.on circle{fill:var(--gold);r:11}
+.dt-svg .node.build circle{stroke:#7a6fd0;stroke-width:5}
+.dt-svg text{font-size:12px;fill:#333;letter-spacing:.04em}
+.dt-svg .pill rect{fill:#fff;stroke:#c8d3dd;rx:15}
+.dt-svg .pill text{font-weight:900;font-size:11px;text-anchor:middle}
+.dt-svg .zone{transition:opacity .4s}
+.dt-svg.focus-concept .zone.real,.dt-svg.focus-real .zone.concept{opacity:.18}
+.dt-svg .dim{opacity:.18}
+.dt-info{margin-top:1rem;min-height:3.2rem;font-weight:700;color:var(--navy)}
+
+/* strategy */
+#strategy{padding:3rem 0 6rem}
+.strat{display:grid;grid-template-columns:.8fr 1.2fr;gap:3rem;margin-top:2rem;background:linear-gradient(90deg,var(--tint) 0 40%,#fff 40%);border-radius:var(--radius);overflow:hidden}
+.strat-left{padding:3rem 2rem 3rem 3rem}
+.strat-left p{margin-top:1.5rem;color:#27303d}
+.timeline{list-style:none;position:relative;padding:2.5rem 2rem 2.5rem 0}
+.timeline::before{content:"";position:absolute;left:11px;top:2.5rem;bottom:2.5rem;border-left:2px dashed #b9d4e3}
+.timeline::after{content:"";position:absolute;left:11px;top:2.5rem;height:var(--p,0%);border-left:2px solid var(--teal);transition:height .3s}
+.timeline li{position:relative;padding:.7rem 1rem .7rem 3rem;border-radius:12px;cursor:pointer;transition:.25s;opacity:.55}
+.timeline li::before{content:"";position:absolute;left:3px;top:1.15rem;width:18px;height:18px;border-radius:50%;background:#b9d4e3;border:4px solid #fff;box-shadow:0 0 0 2px #b9d4e3;transition:.3s;z-index:1}
+.timeline li.seen{opacity:1}
+.timeline li.seen::before{background:var(--teal);box-shadow:0 0 0 2px var(--teal)}
+.timeline li:hover{background:var(--tint)}
+.timeline em{font-style:normal;font-weight:700;color:var(--teal)}
+.timeline small{display:block;max-height:0;overflow:hidden;color:var(--muted);transition:max-height .4s,margin .4s;font-size:.9rem}
+.timeline li.open small{max-height:100px;margin-top:.4rem}
+
+/* process */
+#process{padding:4rem 0 6rem;background:var(--tint)}
+.flow-card{background:#fff;border-radius:var(--radius);padding:2rem;margin-top:2.5rem;box-shadow:0 20px 50px rgba(14,34,80,.06)}
+.flow-svg{width:100%;height:auto}
+.flow-svg .ring{fill:#fff;stroke:#4aa3ea;stroke-width:6;transition:.3s}
+.flow-svg .fnode{cursor:pointer;outline:none}
+.flow-svg .fnode:hover .ring,.flow-svg .fnode:focus .ring,.flow-svg .fnode.on .ring{fill:#e6f3fd;stroke:var(--blue)}
+.flow-svg .fnode.on{filter:drop-shadow(0 8px 14px rgba(45,126,232,.35))}
+.flow-svg .name{font-size:19px;font-weight:700;fill:#4a1a3a;text-anchor:middle}
+.flow-svg .sub{font-size:13px;fill:#4a1a3a;text-anchor:middle}
+.flow-svg .cap{font-size:13px;fill:#222;text-anchor:middle}
+.flow-svg .arrow{stroke:#111;stroke-width:1.5;fill:none}
+.flow-svg .loop{stroke:#111;stroke-width:1.5;fill:none;stroke-dasharray:6 6;animation:dash 1.4s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-24}}
+.pulse{fill:var(--blue)}
+.flow-detail{margin-top:1.2rem;padding:1.2rem 1.4rem;border-radius:16px;background:var(--tint);min-height:84px}
+.flow-detail b{color:var(--navy)}
+.steps{display:flex;gap:.5rem;margin-top:1.2rem;flex-wrap:wrap}
+.steps button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:.45rem 1rem;font-weight:700;font-size:.88rem;transition:.2s}
+.steps button:hover,.steps button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* guidelines */
+#guidelines{padding:6rem 0}
+.g-intro{display:grid;grid-template-columns:.9fr 1.1fr;gap:3rem;margin-top:2.5rem;align-items:stretch}
+.g-left{background:var(--tint);border-radius:var(--radius);padding:2.5rem;display:flex;flex-direction:column;justify-content:space-between;gap:2rem}
+.g-left p.big{font-size:1.4rem;line-height:1.5}
+.g-left p.big b{color:var(--navy)}
+.cng{display:flex;align-items:center;gap:1rem;color:var(--muted);font-size:.95rem}
+.rick{width:120px;flex:none;cursor:pointer;transition:transform .6s cubic-bezier(.5,0,.2,1)}
+.rick.go{transform:translateX(30px) rotate(-3deg)}
+.g-tabs{display:grid;gap:.7rem}
+.g-tab{text-align:left;border:1px solid var(--line);background:#fff;border-radius:18px;padding:1.1rem 1.4rem;transition:.25s;display:block;width:100%}
+.g-tab h3{font-size:1.1rem;display:flex;align-items:center;gap:.8rem}
+.g-tab h3 i{font-style:normal;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:var(--tint-2);color:var(--navy);font-weight:900;transition:.25s}
+.g-tab p{max-height:0;overflow:hidden;color:var(--muted);transition:max-height .35s,margin .35s;margin:0}
+.g-tab:hover{border-color:var(--blue)}
+.g-tab[aria-expanded="true"]{border-color:var(--blue);box-shadow:0 12px 30px rgba(45,126,232,.15)}
+.g-tab[aria-expanded="true"] i{background:var(--blue);color:#fff}
+.g-tab[aria-expanded="true"] p{max-height:120px;margin-top:.6rem}
+
+/* naming */
+#naming{padding:2rem 0 6rem}
+.name-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem}
+.chip-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:2rem}
+.chip{border:2px solid var(--line);background:#fff;border-radius:99px;padding:.45rem 1rem;font-family:var(--mono);font-size:.85rem;transition:.2s;display:flex;align-items:center;gap:.5rem}
+.chip::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--c)}
+.chip[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.chip[aria-pressed="true"]::before{background:#fff}
+.chip.static{--c:#6b7a90}.chip.dynamic{--c:#2d7ee8}.chip.input{--c:#00907a}.chip.action{--c:#c0561f}
+.chip.all{--c:var(--navy)}
+.demo{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:1.6rem}
+.panel{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+.panel header{display:flex;justify-content:space-between;padding:.8rem 1.2rem;background:var(--tint);font-weight:700;font-size:.85rem;color:var(--muted)}
+.ui-stage{padding:2rem;background:
+  linear-gradient(#fff,#fff) padding-box;display:grid;place-items:center;min-height:360px}
+.pay-card{width:100%;max-width:340px;background:#fff;border-radius:20px;box-shadow:0 14px 40px rgba(14,34,80,.14);padding:1.4rem;border:1px solid var(--line)}
+.pay-card .row{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+.el{position:relative;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:.2s;outline:2px solid transparent;display:inline-block}
+.el.hover{outline-color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+.el.dim{opacity:.18}
+.tag-pill{background:#fff3df;color:#9a5a00;border-radius:99px;font-size:.8rem;font-weight:700;padding:.2rem .7rem}
+.pay-type{font-weight:900;font-size:1.15rem;margin-top:.8rem}
+.pay-name{font-weight:700;margin-top:1rem}
+.pay-no{font-size:.88rem;color:var(--muted)}
+.pay-bal{font-size:1.5rem;font-weight:900;margin-top:.8rem}
+.pay-input{margin-top:1rem;display:block}
+.pay-input span.fake{display:block;border:1.5px solid #9db1c4;border-radius:8px;padding:.55rem .8rem;color:var(--muted);font-size:.9rem;min-width:210px}
+.pay-btn{margin-top:1rem;display:inline-block}
+.pay-btn .el>span{display:inline-block;background:var(--blue);color:#fff;font-weight:700;border-radius:10px;padding:.55rem 1.2rem}
+.layers{list-style:none;padding:.6rem;font-family:var(--mono);font-size:.85rem;min-height:360px}
+.layer{display:flex;align-items:center;gap:.7rem;padding:.6rem .8rem;border-radius:10px;cursor:pointer;transition:.2s;border:1px solid transparent}
+.layer svg{width:14px;height:14px;flex:none;color:#8a98aa}
+.layer .p{font-weight:500;color:var(--c)}
+.layer .r{color:var(--ink)}
+.layer.hover{background:color-mix(in srgb,var(--c) 10%,#fff);border-color:var(--c)}
+.layer.dim{opacity:.25}
+.layer-note{padding:.8rem 1.2rem;border-top:1px solid var(--line);font-size:.88rem;color:var(--muted);background:#fbfdff;min-height:3.4rem}
+.def-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2rem}
+.def{padding:1.1rem;border-radius:16px;background:var(--tint);border-top:4px solid var(--c);transition:.25s}
+.def:hover{transform:translateY(-4px)}
+.def code{font-family:var(--mono);color:var(--c);font-weight:500}
+.def p{font-size:.88rem;color:#27303d;margin-top:.4rem;line-height:1.5}
+.def.s{--c:#6b7a90}.def.d{--c:#2d7ee8}.def.i{--c:#00907a}.def.a{--c:#c0561f}
+.rule-note{margin-top:1.4rem;font-size:.95rem;color:var(--muted)}
+
+/* impact */
+/* impact – metric cards */
+#impact{padding:4rem 0 6rem;background:var(--tint)}
+.imp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-top:2.5rem}
+.imp{background:#fff;border-radius:20px;padding:2rem 2rem 2.2rem;display:flex;flex-direction:column;gap:0;transition:box-shadow .25s}
+.imp:hover{box-shadow:0 10px 32px rgba(14,34,80,.11)}
+.imp-arrow{width:32px;height:32px;color:var(--green)}
+.imp-arrow.down{color:#e05252}
+.imp-num{font-size:3rem;font-weight:900;color:var(--green);line-height:1;margin-top:.7rem}
+.imp-num.down{color:#e05252}
+.imp h3{font-size:1.05rem;font-weight:700;color:var(--navy);margin:.45rem 0 0}
+.imp p{color:var(--muted);margin-top:.4rem;font-size:.93rem;line-height:1.6}
+
+/* bigger – horizontal bands */
+#bigger{padding:6rem 0;background:#f3f6fb}
+.bp-list{display:flex;flex-direction:column;gap:0;margin-top:2.4rem;border-radius:16px;overflow:hidden;border:1px solid #dde4ef}
+.bp-band{display:grid;grid-template-columns:64px 1fr;gap:0;align-items:stretch;background:#fff;border-bottom:1px solid #dde4ef;transition:background .2s}
+.bp-band:last-child{border-bottom:none}
+.bp-band:hover{background:#f7faff}
+.bp-badge{display:flex;align-items:center;justify-content:center;padding:2rem 1.2rem;border-right:1px solid #dde4ef}
+.bp-band:nth-child(1) .bp-badge{background:#d8f0eb}
+.bp-band:nth-child(2) .bp-badge{background:#d8e9f8}
+.bp-band:nth-child(3) .bp-badge{background:#fdf0dc}
+.bp-band:nth-child(4) .bp-badge{background:#e8e1f6}
+.bp-text{padding:1.6rem 2rem}
+.bp-text h3{font-size:1.05rem;font-weight:900;color:var(--navy);margin:0}
+.bp-text p{font-size:.93rem;color:#374151;margin:.4rem 0 0;line-height:1.65}
+@media(max-width:640px){.imp-grid{grid-template-columns:1fr}.bp-band{grid-template-columns:52px 1fr}}
+
+/* thanks */
+#thanks{padding:7rem 0;color:#fff;text-align:center;overflow:hidden;background:linear-gradient(135deg,#0c1d47 0%,#2a5fae 55%,#3b82d6 100%)}
+#thanks h2{font-size:clamp(3rem,8vw,6rem)}
+#thanks h2::after{display:none}
+#thanks p{opacity:.9;margin-top:1rem}
+.top-btn{margin-top:2rem;background:#fff;color:var(--navy);border:0;border-radius:99px;padding:.8rem 1.6rem;font-weight:900}
+footer{padding:1.4rem;text-align:center;font-size:.85rem;color:var(--muted)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}
+
+@media (max-width:860px){
+  .ov-grid,.prob-grid,.dt-box,.strat,.g-intro,.demo{grid-template-columns:1fr}
+  .strat{background:#fff;border:1px solid var(--line)}
+  .strat-left{background:var(--tint);padding:2rem}
+  .timeline{padding-left:1.2rem}
+  .facts,.imp-grid{grid-template-columns:1fr}
+  .def-grid{grid-template-columns:1fr 1fr}
+  .tile.f{right:30px}.tile.s{right:-6px}
+  .brand{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none}
+  .fill{transition:none}
+}
+</style>
+</head>
+<body>
+<div id="progress" aria-hidden="true"></div>
+
+<nav id="nav" aria-label="Case study sections">
+  <div class="wrap">
+    <a class="brand" href="#top">AI4UI &amp; INSPIRO</a>
+    <ul class="links">
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#objective">Objective</a></li>
+      <li><a href="#approach">Approach</a></li>
+      <li><a href="#process">Framework</a></li>
+      <li><a href="#guidelines">Guidelines</a></li>
+      <li><a href="#impact">Impact</a></li>
+      <li><a href="#bigger">Bigger picture</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+<!-- HERO -->
+<section id="top" aria-labelledby="h1">
+  <div class="shape a" data-depth="-14"></div>
+  <div class="shape b" data-depth="18"></div>
+  <div class="wrap">
+    <div class="hero-copy">
+      <p class="chips"><span>B2B (SaaS)</span><span>Mobile &amp; Desktop</span></p>
+      <h1 id="h1">AI4UI &amp; Inspiro – Revolutionizing UX for Code Generated Interfaces</h1>
+      <div class="hero-meta">
+        <div>Role<b>UX Designer</b></div>
+        <div>Timeline<b>July 2024 – April 2025</b></div>
+        <div>Team<b>2 Designers + Manager</b></div>
+      </div>
+      <a class="cta" href="#overview">Read the case study
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section id="overview" aria-labelledby="ov-h">
+  <div class="wrap">
+    <h2 id="ov-h" class="rv">Overview of AI4UI &amp; Inspiro</h2>
+    <div class="ov-grid">
+      <div class="rv">
+        <p>AI4UI is a <b>code generation framework</b> that aims to <b>bridge the gap between design and deployment</b> by making UI development <b>automated and scalable.</b> At its core, Inspiro is the <b>custom UX design language</b> built to maximize the potential of AI4UI, ensuring that designs are <b>machine-readable and code-generation ready.</b></p>
+        <p>This case study explores how AI4UI and Inspiro <b>transform UX workflows, accelerate deployment, and redefine design-to-development efficiency.</b></p>
+      </div>
+      <div class="logo-card rv d1">
+        <button class="tile f" aria-label="Scrabble tile F, 9 points">F<sub>9</sub></button>
+        <button class="tile s" aria-label="Scrabble tile S, 16 points">S<sub>16</sub></button>
+        <div class="finacle">Finacle</div>
+        <div class="inspiro-word">INSPIRO</div>
+        <small>UI Design Guidelines</small>
+      </div>
+    </div>
+    <div class="facts rv">
+      <div><h3>My role</h3><p>As the UX Designer on this project, I led the definition and implementation of machine-readable design standards within the AI4UI framework.</p></div>
+      <div><h3>Timeline</h3><p>July 2024 – April 2025</p></div>
+      <div><h3>Team size</h3><p>2 Designers + Manager</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem" aria-labelledby="pr-h">
+  <div class="wrap">
+    <p class="eyebrow rv">What is the problem</p>
+    <h2 id="pr-h" class="rv">The Time-to-Market Dilemma</h2>
+    <p class="lead rv">One of the biggest challenges in UX design for banking products is the extensive time required to go from concept to deployment.</p>
+    <div class="prob-grid">
+      <div class="rv">
+        <p class="dilemma">Hypothetically speaking</p>
+        <ul class="w-list" id="whyList">
+          <li><span>1</span>Designing UI screens takes ~6 months.</li>
+          <li><span>2</span>Development and implementation take ~6 months to 1 year.</li>
+          <li><span>3</span>By the time the product is live, it is already outdated.</li>
+        </ul>
+        <p style="margin-top:1.6rem">This gap is a major problem — banking and fintech evolve rapidly, and customer expectations shift.</p>
+      </div>
+      <div class="bars rv d1" aria-live="polite">
+        <div class="toggle" role="group" aria-label="Compare workflows">
+          <button id="tgOld" aria-pressed="true">Traditional hand-off</button>
+          <button id="tgNew" aria-pressed="false">With AI4UI + Inspiro</button>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span>Design UI screens</span><span id="lblDesign">~6 months</span></div>
+          <div class="track"><div class="fill design" id="bDesign"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span>Development &amp; implementation</span><span id="lblDev">~6 months to 1 year</span></div>
+          <div class="track"><div class="fill dev" id="bDev"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span>Market has moved on</span><span id="lblGap">Outdated at launch</span></div>
+          <div class="track"><div class="fill live" id="bGap"></div></div>
+        </div>
+        <div class="outdated" id="outdated">By the time the product is live, it is already outdated.</div>
+        <p class="bars-note">Illustrative only. The traditional durations are hypothetical figures from the case study; the AI4UI view is a qualitative comparison, not a measured result.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OBJECTIVE -->
+<section id="objective" aria-labelledby="ob-h">
+  <div class="center-block rv" id="objBlock">
+    <h2 id="ob-h">The objective</h2>
+    <svg class="scribble" viewBox="0 0 180 14" aria-hidden="true"><path d="M4 8 C40 3 90 3 176 6 M20 11 C70 6 120 7 160 9"/></svg>
+    <p>Reduce time to market by leveraging <span class="hl">AI-driven code generation</span> and ensure designs are <span class="hl">machine-readable</span>, allowing UI development to be <span class="hl">automated and scalable.</span></p>
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section id="approach" aria-labelledby="ap-h">
+  <div class="wrap">
+    <p class="eyebrow rv">Approach</p>
+    <h2 id="ap-h" class="rv">Design Thinking to Design Doing</h2>
+    <div class="dt-box rv">
+      <div>
+        <h3>Design Thinking to Design Doing Model</h3>
+        <button class="world-btn" data-world="concept"><b>Concept World</b><span>Focused on ideation, research, and experimentation</span></button>
+        <button class="world-btn" data-world="real"><b>Real World</b><span>Focused on implementation, feedback, and iterative improvement</span></button>
+      </div>
+      <div>
+        <svg class="dt-svg" id="dtSvg" viewBox="0 0 760 400" role="img" aria-label="Design thinking to design doing diagram: Why, Research, Analyze, Hypothesis, Experimentation, then Build, followed by loops of New Ideas, Reflect and Analyse">
+          <g class="pill zone concept"><rect x="130" y="4" width="150" height="30"/><text x="205" y="24">CONCEPT WORLD</text></g>
+          <g class="pill zone real"><rect x="395" y="4" width="150" height="30"/><text x="470" y="24">REAL WORLD</text></g>
+          <line x1="380" y1="40" x2="380" y2="350" stroke="#9fb0c0" stroke-width="1"/>
+          <g class="zone concept">
+            <path class="curve" d="M10 310 C90 300 110 270 125 240 S190 140 215 110 S270 55 300 65 S375 120 380 200"/>
+            <path class="curve" d="M380 200 C380 130 300 130 300 200 C300 270 380 270 380 200"/>
+            <path class="curve" d="M380 200 C380 100 270 100 270 200 C270 300 380 300 380 200"/>
+            <path class="curve" d="M380 200 C380 160 330 160 330 200 C330 240 380 240 380 200"/>
+          </g>
+          <g class="zone real">
+            <path class="curve" d="M380 200 C380 40 740 40 740 200 C740 360 380 360 380 200"/>
+            <path class="curve" d="M380 200 C380 90 640 90 640 200 C640 310 380 310 380 200"/>
+            <path class="curve" d="M380 200 C380 130 540 130 540 200 C540 270 380 270 380 200"/>
+          </g>
+          <g class="node zone concept" tabindex="0" data-t="Why(s) – start by questioning the problem" data-w="concept"><circle cx="75" cy="308" r="9"/><text x="48" y="336">WHY(S)</text></g>
+          <g class="node zone concept" tabindex="0" data-t="Research – understand the space" data-w="concept"><circle cx="128" cy="236" r="9"/><text x="50" y="228">RESEARCH</text></g>
+          <g class="node zone concept" tabindex="0" data-t="Analyze – make sense of what was found" data-w="concept"><circle cx="205" cy="118" r="9"/><text x="150" y="108">ANALYZE</text></g>
+          <g class="node zone concept" tabindex="0" data-t="Hypothesis – form a testable idea" data-w="concept"><circle cx="300" cy="64" r="9"/><text x="260" y="48">HYPOTHESIS</text></g>
+          <g class="node zone concept" tabindex="0" data-t="Experimentation – try it, break it, learn" data-w="concept"><circle cx="270" cy="200" r="9"/><circle cx="300" cy="200" r="9"/><circle cx="330" cy="200" r="9"/><text x="210" y="260">EXPERIMENTATION</text></g>
+          <g class="node build" tabindex="0" data-t="Build – where the concept meets the real world" data-w="both"><circle cx="380" cy="200" r="11"/><text x="396" y="205" style="font-weight:700">BUILD</text></g>
+          <g class="node zone real" tabindex="0" data-t="New ideas – feedback seeds the next cycle" data-w="real"><circle cx="560" cy="82" r="9"/><text x="528" y="66">NEW IDEAS</text></g>
+          <g class="node zone real" tabindex="0" data-t="Reflect – evaluate what happened" data-w="real"><circle cx="740" cy="200" r="9"/><text x="676" y="232">REFLECT</text></g>
+          <g class="node zone real" tabindex="0" data-t="Analyse – turn results into insight" data-w="real"><circle cx="560" cy="318" r="9"/><text x="532" y="350">ANALYSE</text></g>
+          <g class="pill"><rect x="20" y="364" width="340" height="30"/><text x="190" y="384">DESIGN THINKING</text></g>
+          <g class="pill"><rect x="395" y="364" width="340" height="30"/><text x="565" y="384">DESIGN DOING</text></g>
+        </svg>
+        <p class="dt-info" id="dtInfo" aria-live="polite">Hover or tap a node, or pick a world on the left.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRATEGY -->
+<section id="strategy" aria-labelledby="st-h">
+  <div class="wrap">
+    <div class="strat rv">
+      <div class="strat-left">
+        <p class="eyebrow">Approach</p>
+        <h2 id="st-h">Strategy</h2>
+        <p>We worked with <b>Locofy and AI4UI team</b> to create a set of guidelines. These guidelines helped us during the creation of various components as to how we can leverage them.</p>
+      </div>
+      <ol class="timeline" id="timeline">
+        <li><span>Identified the need for <em>a set of rules to design machine-readable user interfaces.</em></span><small>The starting point: designs had to be readable by a machine, not just by people.</small></li>
+        <li><span><em>Analyzed existing screens</em> from <em>retail and corporate applications</em> to establish a solid foundation.</span><small>Real screens from real products grounded the rules in practice.</small></li>
+        <li><span>Compiled a list of screens ideal for a <em>proof of concept,</em> forming a <em>“pull” design system</em> based on real-world use cases.</span><small>A focused set of screens kept the experiment manageable.</small></li>
+        <li><span><em>Collaborated with Locofy and AI4UI teams</em> working on the <em>next-gen code generation engine.</em></span><small>Design and engine teams worked side by side.</small></li>
+        <li><span>Conducted <em>iterative experimentation</em> through <em>trial and error,</em> testing different UI elements.</span><small>Different UI elements were tried to see what the engine could and could not interpret.</small></li>
+        <li><span><em>Documented insights</em> to understand how various designs behaved in the <em>AI-powered environment.</em></span><small>Every learning was written down so it could become a rule.</small></li>
+        <li><span>Finally conventions were formalised into a comprehensive set of guidelines which formed to be <em>“Inspiro Guidelines”</em></span><small>The result: the Inspiro Guidelines.</small></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process" aria-labelledby="pc-h">
+  <div class="wrap">
+    <p class="eyebrow rv">Approach</p>
+    <h2 id="pc-h" class="rv">How the entire process works?</h2>
+    <div class="flow-card rv">
+      <svg class="flow-svg" viewBox="0 0 900 400" id="flowSvg" role="group" aria-label="Flow from Figma to Locofy to AI Engine, with revised guidelines feeding back to Figma">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#111"/></marker>
+        </defs>
+        <path class="loop" d="M780 172 L780 70 L120 70 L120 170" marker-end="url(#ah)"/>
+        <text class="cap" x="450" y="56">Revised Guidelines</text>
+        <path class="arrow" d="M188 240 L382 240" marker-end="url(#ah)"/>
+        <path class="arrow" d="M518 240 L712 240" marker-end="url(#ah)"/>
+        <text class="cap" x="285" y="268">Designs must follow</text><text class="cap" x="285" y="286">the Inspiro guidelines</text>
+        <text class="cap" x="615" y="268">Text naming and layer</text><text class="cap" x="615" y="286">nomenclature is for AI4UI</text>
+
+        <g class="fnode" tabindex="0" data-i="0" transform="translate(120 240)"><circle class="ring" r="58" /><rect x="-26" y="-26" width="52" height="52" rx="12" fill="#1e1e1e"/><circle cx="-7" cy="-10" r="8" fill="#f24e1e"/><circle cx="9" cy="-10" r="8" fill="#ff7262"/><circle cx="-7" cy="5" r="8" fill="#a259ff"/><circle cx="9" cy="5" r="8" fill="#1abcfe"/><circle cx="-7" cy="20" r="8" fill="#0acf83"/><text class="name" y="100">Figma</text></g>
+        <g class="fnode" tabindex="0" data-i="1" transform="translate(450 240)"><circle class="ring" r="58"/><circle r="30" fill="#3b82f6"/><path d="M4 -19 L-11 4 H-2 L-6 19 L11 -6 H2 Z" fill="#fff"/><text class="name" y="100">Locofy</text></g>
+        <g class="fnode" tabindex="0" data-i="2" transform="translate(780 240)"><circle class="ring" r="58"/><text y="20" text-anchor="middle" style="font-size:54px;font-weight:900;fill:#4aa3ea">AI</text><text class="name" y="100">AI Engine</text></g>
+        <circle class="pulse" r="7" id="pulse" cx="120" cy="182"/>
+      </svg>
+      <div class="steps" role="group" aria-label="Step through the flow">
+        <button data-i="0" class="on">1 · Figma</button>
+        <button data-i="1">2 · Locofy</button>
+        <button data-i="2">3 · AI Engine</button>
+        <button data-i="3">4 · Feedback loop</button>
+      </div>
+      <div class="flow-detail" id="flowDetail" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- GUIDELINES -->
+<section id="guidelines" aria-labelledby="gd-h">
+  <div class="wrap">
+    <div class="center-block rv" style="padding:4rem 2rem">
+      <h2 id="gd-h" style="font-size:clamp(1.6rem,3vw,2.2rem)">After multiple iterations &amp; trial and error</h2>
+      <svg class="scribble" viewBox="0 0 180 14" aria-hidden="true"><path d="M4 8 C40 3 90 3 176 6 M20 11 C70 6 120 7 160 9"/></svg>
+      <p style="font-size:1.15rem">We were able to formalise a set of guidelines</p>
+    </div>
+    <div class="g-intro">
+      <div class="g-left rv">
+        <div>
+          <h2 style="font-size:2rem">What are the Guidelines</h2>
+          <p class="big" style="margin-top:2rem">In a nutshell, <b>Clean</b> them, <b>Frame</b> them, <b>Name</b> them and <b>Group</b> them.</p>
+        </div>
+        <div class="cng">
+          <svg class="rick" id="rick" viewBox="0 0 120 90" role="img" aria-label="Illustration of an auto-rickshaw. Click to make it go.">
+            <path d="M18 60 V30 Q18 18 32 18 H88 Q100 18 104 30 L108 60 Z" fill="#ffe15a"/>
+            <path d="M18 60 H108 V70 H18 Z" fill="#7bd05b"/>
+            <path d="M26 24 H46 V50 H22 Z" fill="#8fd6ff"/>
+            <rect x="54" y="26" width="30" height="26" rx="3" fill="#fff" opacity=".7"/>
+            <circle cx="30" cy="72" r="12" fill="#6e5c6d"/><circle cx="30" cy="72" r="5" fill="#d3c4d2"/>
+            <circle cx="92" cy="72" r="12" fill="#6e5c6d"/><circle cx="92" cy="72" r="5" fill="#d3c4d2"/>
+          </svg>
+          <span>mmm… that’s some Fine <b>CNG</b> you are burning…</span>
+        </div>
+      </div>
+      <div class="g-tabs rv d1" id="gTabs">
+        <button class="g-tab" aria-expanded="true"><h3><i>F</i>FRAME them</h3><p>Designing in frames and following auto-layouting diligently.</p></button>
+        <button class="g-tab" aria-expanded="false"><h3><i>C</i>CLEAN them</h3><p>Some basic art-board level hygiene stuff. Nothing complicated. You might be already following them.</p></button>
+        <button class="g-tab" aria-expanded="false"><h3><i>N</i>NAME them</h3><p>Adhering to correct naming conventions.</p></button>
+        <button class="g-tab" aria-expanded="false"><h3><i>G</i>GROUP them</h3><p>Following the right grouping and ordering structure so that component and patterns are following the correct grouping and ordering structure.</p></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NAMING -->
+<section id="naming" aria-labelledby="nm-h">
+  <div class="wrap">
+    <div class="name-top">
+      <div>
+        <h2 id="nm-h" class="rv">Follow strict naming conventions</h2>
+        <p class="lead rv"><b>Naming creates clarity to interpret.</b> Deconstruct your components, micropatterns, or patterns into their atomic elements. Organize and label these elements correctly within the layers panel. Effective layer naming significantly aids code generation.</p>
+      </div>
+    </div>
+    <div class="chip-row rv" role="group" aria-label="Filter by text prefix">
+      <button class="chip all" data-f="all" aria-pressed="true">all</button>
+      <button class="chip static" data-f="static" aria-pressed="false">static-</button>
+      <button class="chip dynamic" data-f="dynamic" aria-pressed="false">dynamic-</button>
+      <button class="chip input" data-f="input" aria-pressed="false">input-</button>
+      <button class="chip action" data-f="action" aria-pressed="false">action-</button>
+    </div>
+    <div class="demo rv">
+      <div class="panel">
+        <header><span>UI</span><span>Hover an element</span></header>
+        <div class="ui-stage">
+          <div class="pay-card">
+            <div class="row">
+              <span class="el" data-l="tag" style="--c:#2d7ee8"><span class="tag-pill">Due in 9 days</span></span>
+            </div>
+            <div class="pay-type"><span class="el" data-l="type" style="--c:#6b7a90">Loan Payment</span></div>
+            <div class="pay-name"><span class="el" data-l="name" style="--c:#2d7ee8">Emmanuel Augustine</span></div>
+            <div class="pay-no"><span class="el" data-l="no" style="--c:#2d7ee8">126-****12242</span></div>
+            <div class="pay-bal"><span class="el" data-l="bal" style="--c:#2d7ee8">$ 130.89</span></div>
+            <label class="pay-input"><span class="el" data-l="inp" style="--c:#00907a"><span class="fake">Enter amount</span></span></label>
+            <div class="pay-btn"><span class="el" data-l="act" style="--c:#c0561f"><span>Pay now</span></span></div>
+          </div>
+        </div>
+        <div class="layer-note" id="layerNote">Each element on the left maps to a named layer on the right.</div>
+      </div>
+      <div class="panel">
+        <header><span>Layers</span><span>Left side</span></header>
+        <ul class="layers" id="layers">
+          <li class="layer" data-l="tag" style="--c:#2d7ee8" data-p="dynamic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span><span class="p">dynamic-</span><span class="r">Tag-detail</span></span></li>
+          <li class="layer" data-l="type" style="--c:#6b7a90" data-p="static"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span><span class="p">static-</span><span class="r">payment-type</span></span></li>
+          <li class="layer" data-l="name" style="--c:#2d7ee8" data-p="dynamic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span><span class="p">dynamic-</span><span class="r">Account-name</span></span></li>
+          <li class="layer" data-l="no" style="--c:#2d7ee8" data-p="dynamic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span><span class="p">dynamic-</span><span class="r">Account-number</span></span></li>
+          <li class="layer" data-l="bal" style="--c:#2d7ee8" data-p="dynamic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span><span class="p">dynamic-</span><span class="r">account-balance</span></span></li>
+          <li class="layer" data-l="inp" style="--c:#00907a" data-p="input"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span><span class="p">input-</span><span class="r">amount</span></span></li>
+          <li class="layer" data-l="act" style="--c:#c0561f" data-p="action"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span><span class="p">action-</span><span class="r">pay-now</span></span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="def-grid">
+      <div class="def s rv"><code>static-</code><p>Remains unchanged within the UI.</p></div>
+      <div class="def d rv d1"><code>dynamic-</code><p>Updates based on backend data. Also used for all helper text that comes beneath an input or dropdown field.</p></div>
+      <div class="def i rv d2"><code>input-</code><p>Modifies the text in response to user interaction.</p></div>
+      <div class="def a rv d3"><code>action-</code><p>Responds to user actions like clicks or drags. Use for all text elements the user can interact with.</p></div>
+    </div>
+    <p class="rule-note rv">The <code>input-</code> and <code>action-</code> layers above are added to illustrate their rules; the Account name, number, balance, tag and payment type layers follow the original example.</p>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section id="impact" aria-labelledby="im-h">
+  <div class="wrap">
+    <h2 id="im-h" class="rv">Overall Impact</h2>
+    <div class="imp-grid">
+      <article class="imp rv">
+        <svg class="imp-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        <div class="imp-num">60%</div>
+        <h3>Faster Time-To-Market</h3>
+        <p>Reduced UI development cycles by enabling machine-readable designs for faster code generation.</p>
+      </article>
+      <article class="imp rv d1">
+        <svg class="imp-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        <div class="imp-num">45%</div>
+        <h3>Improvement in Dev Efficiency</h3>
+        <p>Minimized manual coding efforts, allowing quicker adaptation to market changes.</p>
+      </article>
+      <article class="imp rv">
+        <svg class="imp-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        <div class="imp-num">3×</div>
+        <h3>Design Consistency Achieved</h3>
+        <p>Ensured uniformity across applications with a standardized, machine-readable design system.</p>
+      </article>
+      <article class="imp rv d1">
+        <svg class="imp-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        <div class="imp-num">∞</div>
+        <h3>Scalable Across Markets</h3>
+        <p>Enabled seamless adaptation of UI templates across different markets, regions and products.</p>
+      </article>
+    </div>
+    <p style="font-size:.8rem;color:var(--muted);margin-top:1.2rem">* Metrics are illustrative estimates based on project observations.</p>
+  </div>
+</section>
+
+<!-- BIGGER PICTURE -->
+<section id="bigger" aria-labelledby="bg-h">
+  <div class="wrap">
+    <h2 id="bg-h" class="rv">Bigger picture</h2>
+    <div class="bp-list rv">
+      <div class="bp-band">
+        <div class="bp-badge"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00907a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <div class="bp-text"><h3>Redefining Industry Standards</h3><p>AI4UI and Inspiro can serve as a blueprint for the future of AI-driven design and development. By eliminating manual handoffs, they set a new standard for rapid, scalable, and high-quality UI delivery.</p></div>
+      </div>
+      <div class="bp-band">
+        <div class="bp-badge"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2a5fae" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
+        <div class="bp-text"><h3>Enabling Continuous Adaptation</h3><p>The ability to generate UI in real-time ensures that businesses remain agile. As market demands and regulations shift, products can be updated swiftly without extended development cycles.</p></div>
+      </div>
+      <div class="bp-band">
+        <div class="bp-badge"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c08020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="bp-text"><h3>Sustainable Innovation</h3><p>By reducing development cycles, the framework also minimizes resource consumption, promoting more sustainable and cost-effective digital product development.</p></div>
+      </div>
+      <div class="bp-band">
+        <div class="bp-badge"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7c5cd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <div class="bp-text"><h3>Global Personalization at Scale</h3><p>The development of localized base models ensures customers experience region-specific interfaces that are culturally relevant. This level of personalization fosters stronger brand loyalty and market penetration.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="thanks" aria-labelledby="th-h">
+  <div class="wrap">
+    <h2 id="th-h">Thank you</h2>
+    <p>AI4UI &amp; Inspiro – Revolutionizing UX for Code Generated Interfaces</p>
+    <button class="top-btn" id="toTop">Back to top</button>
+  </div>
+</section>
+</main>
+<footer>Portfolio case study · UX Designer · 2024 – 2025</footer>
+
+<script>
+(function(){
+  var $=function(s,c){return (c||document).querySelector(s)};
+  var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* progress + nav state */
+  var nav=$('#nav'),prog=$('#progress');
+  function onScroll(){
+    var h=document.documentElement;
+    var p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+    prog.style.width=(p*100)+'%';
+    nav.classList.toggle('solid',h.scrollTop>window.innerHeight*.6);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+  /* scrollspy */
+  var links=$$('.links a');
+  var spy=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        var id=e.target.id;
+        var map={strategy:'approach',naming:'guidelines',thanks:'bigger',toc:null,top:null};
+        var target=id in map?map[id]:id;
+        links.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+target)});
+      }
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  $$('main section[id]').forEach(function(s){spy.observe(s)});
+
+  /* reveal */
+  var rvObs=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');rvObs.unobserve(e.target)}});
+  },{threshold:.15});
+  $$('.rv').forEach(function(el){rvObs.observe(el)});
+
+  /* hero parallax */
+  var shapes=$$('.shape');
+  if(!reduce){
+    $('#top').addEventListener('mousemove',function(e){
+      var x=(e.clientX/window.innerWidth-.5),y=(e.clientY/window.innerHeight-.5);
+      shapes.forEach(function(s){var d=+s.dataset.depth;s.style.transform='translate('+x*d+'px,'+y*d+'px)'});
+    });
+  }
+
+  /* scrabble tiles */
+  $$('.tile').forEach(function(t){t.addEventListener('click',function(){t.classList.add('pop');setTimeout(function(){t.classList.remove('pop')},600)})});
+
+  /* problem bars */
+  var D=$('#bDesign'),V=$('#bDev'),G=$('#bGap'),old=$('#tgOld'),neu=$('#tgNew'),out=$('#outdated');
+  var barsEl=$('.bars');
+  function setMode(isNew){
+    old.setAttribute('aria-pressed',!isNew);neu.setAttribute('aria-pressed',isNew);
+    if(!isNew){
+      D.style.width='50%';V.style.width='100%';G.style.width='85%';
+      $('#lblDesign').textContent='~6 months';$('#lblDev').textContent='~6 months to 1 year';$('#lblGap').textContent='Outdated at launch';
+      out.textContent='By the time the product is live, it is already outdated.';out.classList.remove('ok');
+    }else{
+      D.style.width='50%';V.style.width='22%';G.style.width='8%';
+      $('#lblDesign').textContent='Machine-readable designs';$('#lblDev').textContent='Code generated, not hand-built';$('#lblGap').textContent='Closer to the market';
+      out.textContent='Designs follow Inspiro, so the AI engine can generate the UI instead of it being hand-coded.';out.classList.add('ok');
+    }
+  }
+  old.onclick=function(){setMode(false)};neu.onclick=function(){setMode(true)};
+  var barObs=new IntersectionObserver(function(es){if(es[0].isIntersecting){setMode(false);barObs.disconnect()}},{threshold:.4});
+  barObs.observe(barsEl);
+
+  /* design thinking diagram */
+  var dt=$('#dtSvg'),info=$('#dtInfo');
+  var dtObs=new IntersectionObserver(function(es){if(es[0].isIntersecting){dt.classList.add('draw');dtObs.disconnect()}},{threshold:.3});
+  dtObs.observe(dt);
+  if(reduce)dt.classList.add('draw');
+  var nodes=$$('.node',dt),wbtn=$$('.world-btn');
+  var worldText={concept:'Concept World – ideation, research, and experimentation.',real:'Real World – implementation, feedback, and iterative improvement.'};
+  function pickNode(n){
+    nodes.forEach(function(x){x.classList.toggle('on',x===n)});
+    info.textContent=n.dataset.t;
+  }
+  nodes.forEach(function(n){
+    n.addEventListener('mouseenter',function(){pickNode(n)});
+    n.addEventListener('focus',function(){pickNode(n)});
+    n.addEventListener('click',function(){pickNode(n)});
+  });
+  function pickWorld(w){
+    dt.classList.remove('focus-concept','focus-real');
+    nodes.forEach(function(x){x.classList.remove('on')});
+    var already=wbtn.some(function(b){return b.dataset.world===w&&b.classList.contains('on')});
+    wbtn.forEach(function(b){b.classList.remove('on')});
+    if(already){info.textContent='Hover or tap a node, or pick a world on the left.';return}
+    wbtn.forEach(function(b){b.classList.toggle('on',b.dataset.world===w)});
+    dt.classList.add('focus-'+w);info.textContent=worldText[w];
+  }
+  wbtn.forEach(function(b){b.addEventListener('click',function(){pickWorld(b.dataset.world)})});
+
+  /* strategy timeline */
+  var tl=$$('#timeline li');
+  function paintTl(upto){
+    tl.forEach(function(li,i){li.classList.toggle('seen',i<=upto)});
+    var last=tl[upto];
+    $('#timeline').style.setProperty('--p',last?(last.offsetTop+14-40)+'px':'0');
+  }
+  tl.forEach(function(li,i){
+    li.tabIndex=0;
+    function open(){tl.forEach(function(x){x.classList.remove('open')});li.classList.add('open');paintTl(i)}
+    li.addEventListener('click',open);
+    li.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
+  });
+  var tlObs=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){var i=tl.indexOf(e.target);if(!tl.some(function(x){return x.classList.contains('open')&&tl.indexOf(x)>i}))paintTl(Math.max(i,0))}});
+  },{rootMargin:'-30% 0px -40% 0px'});
+  tl.forEach(function(li){tlObs.observe(li)});
+
+  /* process flow */
+  var fdata=[
+    {h:'Figma · White label product',t:'Atoms, Molecules, Patterns, Templates. The designs live here, and they need to follow the Inspiro guidelines before moving on.'},
+    {h:'Locofy · Layers tagging',t:'Syncing to the builder and base code generation. Layer tagging happens here.'},
+    {h:'AI Engine',t:'All text naming and layer nomenclature is read by AI4UI, which generates the code.'},
+    {h:'Feedback loop · Revised guidelines',t:'What the AI engine does with a design flows back to Figma as revised guidelines, so every iteration makes the next design more machine-readable.'}
+  ];
+  var fnodes=$$('.fnode'),fbtn=$$('.steps button'),pulse=$('#pulse'),cur=0,auto;
+  var pos=[[120,182],[450,182],[780,182],[450,70]];
+  function setFlow(i,stop){
+    cur=i;
+    fnodes.forEach(function(n,k){n.classList.toggle('on',k===i)});
+    fbtn.forEach(function(b,k){b.classList.toggle('on',k===i)});
+    $('#flowDetail').innerHTML='<b>'+fdata[i].h+'</b><br>'+fdata[i].t;
+    pulse.setAttribute('cx',pos[i][0]);pulse.setAttribute('cy',pos[i][1]);
+    pulse.style.transition=reduce?'none':'cx .6s,cy .6s';
+    if(stop&&auto){clearInterval(auto);auto=null}
+  }
+  fnodes.forEach(function(n){
+    var i=+n.dataset.i;
+    n.addEventListener('click',function(){setFlow(i,true)});
+    n.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();setFlow(i,true)}});
+  });
+  fbtn.forEach(function(b){b.addEventListener('click',function(){setFlow(+b.dataset.i,true)})});
+  setFlow(0);
+  var flObs=new IntersectionObserver(function(es){
+    if(es[0].isIntersecting&&!auto&&!reduce){auto=setInterval(function(){setFlow((cur+1)%4)},2600)}
+    else if(!es[0].isIntersecting&&auto){clearInterval(auto);auto=null}
+  },{threshold:.5});
+  flObs.observe($('.flow-card'));
+
+  /* guidelines accordion-tabs */
+  var gt=$$('.g-tab');
+  gt.forEach(function(t){t.addEventListener('click',function(){gt.forEach(function(x){x.setAttribute('aria-expanded',x===t)})})});
+  $('#rick').addEventListener('click',function(){var r=$('#rick');r.classList.add('go');setTimeout(function(){r.classList.remove('go')},900)});
+
+  /* naming demo */
+  var els=$$('.el'),lays=$$('.layer'),note=$('#layerNote');
+  var noteText={
+    tag:'dynamic- : the tag text changes with backend data.',
+    type:'static- : this label never changes in the UI.',
+    name:'dynamic- : the account name comes from the backend.',
+    no:'dynamic- : the account number comes from the backend.',
+    bal:'dynamic- : the balance updates based on backend data.',
+    inp:'input- : the user types here.',
+    act:'action- : the user can click this.'
+  };
+  function hov(k,on){
+    $$('[data-l="'+k+'"]').forEach(function(e){e.classList.toggle('hover',on)});
+    note.textContent=on?noteText[k]:'Each element on the left maps to a named layer on the right.';
+  }
+  els.concat(lays).forEach(function(e){
+    var k=e.dataset.l;
+    e.addEventListener('mouseenter',function(){hov(k,true)});
+    e.addEventListener('mouseleave',function(){hov(k,false)});
+  });
+  var pfx={tag:'dynamic',type:'static',name:'dynamic',no:'dynamic',bal:'dynamic',inp:'input',act:'action'};
+  $$('.chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      var f=c.dataset.f;
+      $$('.chip').forEach(function(x){x.setAttribute('aria-pressed',x===c)});
+      lays.forEach(function(l){l.classList.toggle('dim',f!=='all'&&l.dataset.p!==f)});
+      els.forEach(function(e){e.classList.toggle('dim',f!=='all'&&pfx[e.dataset.l]!==f)});
+    });
+  });
+
+  $('#toTop').addEventListener('click',function(){window.scrollTo({top:0,behavior:reduce?'auto':'smooth'})});
+})();
+</script>
+</body>
+</html>
