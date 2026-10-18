@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fleet Dashboard · UX/UI Case Study</title>
+<meta name="description" content="Case study: how a centralized fleet dashboard streamlined fleet management.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+:root{
+  --navy:#12145e; --navy-2:#0c0e45; --navy-3:#1d2080;
+  --orange:#ec6a2c; --lav:#f2f3fd; --ink:#1a1b25; --muted:#60637a;
+  --line:#e3e5f1; --green:#2f9e5b; --sky:#eaf6fd; --white:#fff;
+  --lng:#62d394; --ulsfo:#f0cf4f; --hsfo:#4a6fa5; --vlsfo:#e0525a;
+  --radius:16px; --shadow:0 10px 30px rgba(18,20,94,.10);
+  --font:"Hanken Grotesk",-apple-system,"Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{font-family:var(--font);color:var(--ink);background:#fff;line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+select,input{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+section{padding:96px 0;position:relative}
+.kicker{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h2{font-size:clamp(30px,4vw,46px);line-height:1.1;font-weight:800;letter-spacing:-.02em;margin:10px 0 0}
+h2::after{content:"";display:block;width:64px;height:3px;background:var(--orange);margin-top:18px;border-radius:2px}
+.lead{color:var(--muted);font-size:18px;max-width:680px;margin-top:22px}
+.bg-lav{background:var(--lav)} .bg-sky{background:var(--sky)}
+
+/* reveal */
+.js .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.js .reveal.in{opacity:1;transform:none}
+
+/* nav */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{font-weight:800;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy)}
+.brand svg{width:26px;height:26px}
+.nav ul{display:flex;gap:4px;list-style:none}
+.nav ul a{display:block;padding:8px 12px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;color:var(--muted)}
+.nav ul a:hover{color:var(--navy);background:var(--lav)}
+.nav ul a.active{color:var(--navy);background:var(--lav);box-shadow:inset 0 -2px 0 var(--orange)}
+.menu-btn{display:none;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-weight:600}
+.progress{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:var(--orange)}
+
+/* hero */
+.hero{background:var(--navy);color:#fff;padding:140px 0 90px;overflow:hidden;position:relative}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.14) 1.6px,transparent 1.8px);background-size:28px 28px;-webkit-mask-image:linear-gradient(135deg,#000 0,transparent 45%);mask-image:linear-gradient(135deg,#000 0,transparent 45%)}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
+.hero .kicker{color:#aab0ff}
+.hero h1{font-size:clamp(34px,4.6vw,56px);line-height:1.08;letter-spacing:-.02em;font-weight:800;margin:18px 0 28px}
+.hero h1 em{font-style:normal;color:#ffb48f}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+.meta div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px 14px}
+.meta b{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#aab0ff;font-weight:600}
+.meta span{font-size:14px}
+.cta{display:inline-flex;gap:10px;align-items:center;margin-top:30px;background:var(--orange);color:#fff;padding:14px 22px;border-radius:12px;font-weight:700;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.cta:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(236,106,44,.4)}
+.frame{border-radius:14px;background:#fff;box-shadow:0 30px 70px rgba(0,0,0,.45);overflow:hidden;transition:transform .2s ease-out;transform-style:preserve-3d}
+.frame .bar{height:28px;background:#eceef8;display:flex;align-items:center;gap:6px;padding:0 12px}
+.frame .bar i{width:10px;height:10px;border-radius:50%;background:#c6c9de}
+.frame img{width:100%}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow)}
+.stat .num{font-size:clamp(36px,4.5vw,54px);font-weight:800;color:var(--navy);line-height:1}
+.stat p{color:var(--muted);margin-top:10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.facts{display:grid;gap:14px}
+.fact{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.fact b{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange)}
+
+/* problem */
+.reqs{display:grid;gap:12px;margin-top:6px}
+.req{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.req button{width:100%;display:flex;align-items:center;gap:14px;padding:18px 20px;text-align:left;font-weight:700}
+.req .ic{flex:none;width:34px;height:34px;border-radius:10px;background:var(--lav);color:var(--navy);display:grid;place-items:center;font-weight:800}
+.req .chev{margin-left:auto;transition:transform .25s}
+.req[data-open="true"] .chev{transform:rotate(180deg)}
+.req .body{display:none;padding:0 20px 18px 68px;color:var(--muted)}
+.req[data-open="true"] .body{display:block}
+
+/* terminology */
+.card{background:#fff;border-radius:20px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.term{margin-top:44px;overflow:hidden}
+.voy{padding:32px;display:grid;grid-template-columns:1.6fr 1fr;gap:32px;align-items:center;border-bottom:1px solid var(--line)}
+.voy svg{width:100%;height:auto;overflow:visible}
+.node circle{fill:#fff;stroke:var(--navy);stroke-width:3}
+.node text{font-size:15px;font-weight:700;text-anchor:middle;fill:var(--ink)}
+.node .l{font-size:13px;fill:var(--muted);font-weight:600}
+.seg{stroke:#c9ccea;stroke-width:5;stroke-linecap:round;fill:none;transition:stroke .3s}
+.seg.on{stroke:var(--orange);stroke-dasharray:2 10;animation:dash 1s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-24}}
+#ship{transition:transform 1s cubic-bezier(.5,0,.3,1)}
+.leg-ctl{display:grid;gap:10px}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{padding:9px 16px;border-radius:999px;border:1px solid var(--line);background:#fff;font-weight:600;font-size:14px;transition:all .2s}
+.pill:hover{border-color:var(--navy)}
+.pill[aria-pressed="true"],.pill[aria-selected="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.note{font-size:13px;color:var(--muted)}
+.ops{display:grid;grid-template-columns:repeat(3,1fr)}
+.op{padding:28px 20px;text-align:center;border-right:1px solid var(--line);transition:background .2s}
+.op:last-child{border-right:0}
+.op:hover{background:var(--lav)}
+.op[aria-selected="true"]{background:var(--lav);box-shadow:inset 0 -3px 0 var(--orange)}
+.op svg{width:60px;height:60px;fill:var(--navy);margin:0 auto 10px}
+.op h3{font-size:19px}
+.opdetail{padding:22px 28px;border-top:1px solid var(--line);display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.opdetail p{max-width:600px}
+.link-btn{color:var(--navy);font-weight:700;border-bottom:2px solid var(--orange);padding:2px 0}
+
+/* research */
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.chip{padding:11px 18px;border-radius:12px;background:#fff;border:1px solid var(--line);font-weight:600;transition:all .2s}
+.chip:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.chip[aria-pressed="true"]{border-color:var(--orange);color:var(--orange);box-shadow:var(--shadow)}
+.chipinfo{margin-top:18px;padding:18px 22px;background:#fff;border-left:4px solid var(--orange);border-radius:0 12px 12px 0;min-height:70px}
+.persona{display:grid;grid-template-columns:1.4fr 1fr;margin-top:56px;overflow:hidden}
+.persona .txt{padding:36px}
+.persona h3{font-size:34px;line-height:1.1}
+.persona .sub{color:var(--muted);margin-bottom:18px}
+.persona img{width:100%;height:100%;object-fit:cover;min-height:360px}
+.persona h4{margin:18px 0 6px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tabs{display:flex;gap:8px;margin:18px 0 12px}
+.plist{list-style:none;display:grid;gap:8px}
+.plist button{width:100%;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid var(--line);display:flex;gap:10px;transition:all .2s}
+.plist button:hover{background:var(--lav)}
+.plist .resp{display:none;margin-top:8px;font-size:14px;color:var(--green);font-weight:600}
+.plist button[aria-expanded="true"]{background:var(--lav);border-color:var(--navy)}
+.plist button[aria-expanded="true"] .resp{display:block}
+.plist .mark{flex:none;width:8px;height:8px;border-radius:2px;background:var(--navy);margin-top:9px}
+
+/* concepts */
+.gallery{margin-top:40px;display:grid;grid-template-columns:320px 1fr;gap:32px;align-items:start}
+.gtabs{display:grid;gap:8px}
+.gtab{text-align:left;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:600;transition:all .2s}
+.gtab small{display:block;font-weight:400;color:var(--muted)}
+.gtab[aria-selected="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.gtab[aria-selected="true"] small{color:#c4c8ff}
+.gview{background:#d6d7da;padding:22px;border-radius:18px}
+.gview img{border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);width:100%;animation:fade .4s}
+@keyframes fade{from{opacity:0;transform:scale(.99)}to{opacity:1;transform:none}}
+.considers{margin-top:18px;display:grid;gap:8px;list-style:none}
+.considers li{padding-left:22px;position:relative;font-size:15px}
+.considers li::before{content:"";position:absolute;left:0;top:9px;width:8px;height:8px;background:var(--orange);border-radius:2px}
+.iter{margin-top:80px;text-align:center}
+.iter h3{font-size:clamp(26px,3.5vw,38px);position:relative;display:inline-block}
+.iter h3::after{content:"";position:absolute;left:30%;right:-10%;bottom:-8px;height:6px;background:linear-gradient(90deg,transparent,#2f6df0 20%,#2f6df0 80%,transparent);border-radius:6px;transform:rotate(-1.2deg)}
+.iter p{margin-top:26px;color:var(--muted);font-size:18px}
+
+/* solution */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
+.pillar{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:28px;transition:transform .25s,box-shadow .25s}
+.pillar:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.pillar .n{width:42px;height:42px;border-radius:12px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800;margin-bottom:16px}
+
+/* design / prototype */
+.design-grid{display:grid;grid-template-columns:260px 1fr;gap:28px;margin-top:40px;align-items:start}
+.annots{position:sticky;top:84px;display:grid;gap:8px}
+.annots h4{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.annot{display:flex;gap:10px;text-align:left;padding:12px 14px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:14px;font-weight:600;transition:all .2s}
+.annot i{flex:none;width:10px;height:10px;border-radius:50%;background:var(--orange);margin-top:6px}
+.annot:hover{border-color:var(--orange);transform:translateX(4px)}
+.proto{border-radius:16px;overflow:hidden;border:1px solid #cfd2e8;background:#f4f5fa;box-shadow:var(--shadow);font-size:14px}
+.p-head{background:#fff;display:flex;align-items:center;justify-content:space-between;padding:12px 24px}
+.p-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:19px;color:var(--navy-2)}
+.p-logo svg{width:26px;height:26px}
+.p-right{display:flex;align-items:center;gap:16px;position:relative}
+.icon-btn{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;position:relative}
+.icon-btn:hover{background:var(--lav)}
+.icon-btn svg{width:20px;height:20px;stroke:var(--navy);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.badge{position:absolute;top:2px;right:2px;min-width:16px;height:16px;border-radius:8px;background:var(--orange);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center}
+.user{display:flex;gap:8px;align-items:center;line-height:1.1}
+.user .av{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700}
+.user small{display:block;font-size:10px;color:var(--muted)}
+.pop{position:absolute;right:0;top:44px;width:300px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:10px;display:none;z-index:5}
+.pop.open{display:block}
+.pop h5{padding:6px 8px;font-size:13px}
+.pop li{list-style:none;padding:8px;border-radius:8px;font-size:13px;display:flex;gap:8px}
+.pop li:hover{background:var(--lav)}
+.pop li b{color:var(--orange)}
+.p-tabs{background:var(--navy);display:flex;align-items:center;padding:0 24px;height:48px}
+.p-tab{color:#cfd1ff;font-weight:600;letter-spacing:.04em;padding:14px 18px;position:relative;font-size:14px}
+.p-tab[aria-selected="true"]{color:#fff}
+.p-tab[aria-selected="true"]::after{content:"";position:absolute;left:18px;right:18px;bottom:6px;height:3px;background:var(--orange);border-radius:2px}
+.p-sep{width:1px;height:20px;background:#5a5db0}
+.p-back{margin-left:auto;color:#fff;font-weight:600;font-size:13px;opacity:1}
+.p-back[disabled]{opacity:.4;cursor:default}
+.p-body{padding:16px;display:grid;gap:14px}
+.panel[hidden]{display:none}
+.panel{display:grid;gap:14px}
+.pc{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(18,20,94,.08)}
+.filters{display:flex;flex-wrap:wrap;gap:20px;padding:16px 20px;align-items:flex-end}
+.field{display:grid;gap:2px;min-width:130px;flex:1}
+.field label{font-size:12px;color:var(--muted)}
+.field select,.field input{border:0;border-bottom:1px solid #c9ccdf;padding:6px 2px;background:transparent;font-size:14px;width:100%;border-radius:0}
+.field select:focus,.field input:focus{border-bottom-color:var(--orange);outline:0}
+.field.wide{flex:2;min-width:260px}
+.dates{display:flex;gap:10px;align-items:flex-end}
+.dates span{color:var(--muted);padding-bottom:6px}
+.radio{display:flex;gap:14px;padding:6px 0}
+.radio label{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--ink)}
+.err{color:#c8323c;font-size:12px;min-height:16px;padding:0 20px 8px}
+.t-head{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;gap:12px;flex-wrap:wrap}
+.t-head h4{color:var(--navy);font-size:15px}
+.t-head h4 span{color:var(--ink);font-weight:600;margin-left:8px;padding-left:10px;border-left:1px solid var(--line)}
+.pager{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:13px}
+.pager button{width:28px;height:28px;border-radius:50%;font-weight:600;color:var(--ink)}
+.pager button:hover:not([disabled]){background:var(--lav)}
+.pager button[aria-current="page"]{background:var(--orange);color:#fff}
+.pager button[disabled]{opacity:.35;cursor:default}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th{background:#eceef6;text-align:left;font-size:12px;font-weight:700;padding:10px 12px;line-height:1.3;white-space:nowrap;color:#2b2d46}
+th button{font-weight:700;font-size:12px;text-align:left;display:flex;gap:4px;align-items:flex-start;line-height:1.3}
+th button:hover{color:var(--orange)}
+th .s{opacity:.35;font-size:10px;margin-top:2px}
+th[aria-sort="ascending"] .s,th[aria-sort="descending"] .s{opacity:1;color:var(--orange)}
+td{padding:13px 12px;border-top:1px solid #eef0f7;font-size:13.5px;white-space:nowrap}
+tbody tr{transition:background .15s}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover{background:#f6f7ff}
+.up{color:var(--green)} .dn{color:#c8323c}
+.arrow{font-size:12px;margin-left:4px}
+.row-go{opacity:0;color:var(--orange);font-weight:700;font-size:12px;transition:opacity .15s}
+tr:hover .row-go,tr:focus-visible .row-go{opacity:1}
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.chart{padding:16px 18px;min-width:0}
+.chart header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.chart h4{font-size:14px;color:var(--navy);font-weight:600;line-height:1.3}
+.chart select{border:0;background:transparent;font-size:12px;color:var(--muted);cursor:pointer;padding:2px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 10px;margin:8px 0 2px;justify-content:flex-end}
+.legend button{display:flex;gap:5px;align-items:center;font-size:11.5px;color:var(--ink);padding:2px 4px;border-radius:6px}
+.legend button i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.legend button[aria-pressed="false"]{opacity:.35;text-decoration:line-through}
+.pie-wrap{display:flex;gap:14px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.pie-wrap svg{width:150px;height:150px;flex:none;overflow:visible}
+.slice{transition:transform .2s;cursor:pointer}
+.slice.on{transform:translate(var(--dx),var(--dy))}
+.pl{display:grid;gap:10px;flex:1;min-width:130px}
+.pl div{display:flex;gap:8px;align-items:center;font-size:13px;padding:2px 4px;border-radius:6px}
+.pl div.on{background:var(--lav)}
+.pl i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.pl b{font-size:17px;margin-left:auto}
+.pl small{color:var(--muted);font-size:11px;min-width:34px}
+.empty-card{display:flex;flex-direction:column;justify-content:center;gap:8px;color:var(--muted);font-size:13px}
+.empty-card b{display:flex;gap:8px;align-items:center;color:var(--navy);font-size:15px}
+.empty-card b::before{content:"i";width:20px;height:20px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:12px}
+.plot svg{width:100%;height:auto;display:block;overflow:visible}
+.plot .grid{stroke:#e8eaf4;stroke-dasharray:3 4}
+.plot .ax{font-size:10.5px;fill:#80839c}
+.plot .avg{stroke:#9a9db5;stroke-dasharray:4 3}
+.plot .hit{fill:transparent}
+.plot .col:hover .hit{fill:rgba(18,20,94,.06)}
+.plot .dot{fill:#fff;stroke-width:2;transition:r .15s}
+.plot .dot:hover{r:6}
+.dates-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.dcard{padding:14px 18px;text-align:center}
+.dcard small{display:flex;justify-content:center;gap:6px;align-items:center;color:var(--muted);font-size:12px}
+.dcard b{font-size:15px;display:block;margin-top:4px;color:var(--muted)}
+.dcard.hl{box-shadow:0 8px 24px rgba(18,20,94,.18);transform:translateY(-4px);border:1px solid var(--line)}
+.dcard.hl b{color:var(--ink);font-size:17px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi{padding:14px 18px}
+.kpi small{color:var(--muted);font-size:12px}
+.kpi b{display:block;font-size:24px;color:var(--navy);line-height:1.2}
+.pulse{animation:pulse 1.8s ease 1}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(236,106,44,.0);outline:3px solid var(--orange);outline-offset:3px}60%{box-shadow:0 0 0 14px rgba(236,106,44,.2);outline:3px solid var(--orange);outline-offset:3px}100%{box-shadow:0 0 0 22px rgba(236,106,44,0);outline:3px solid transparent;outline-offset:3px}}
+.proto-note{font-size:13px;color:var(--muted);margin-top:12px;text-align:center}
+#tip{position:fixed;z-index:200;pointer-events:none;background:#fff;border:1px solid var(--line);box-shadow:0 10px 30px rgba(18,20,94,.2);border-radius:10px;padding:10px 12px;font-size:12px;display:none;min-width:150px}
+#tip b{display:block;margin-bottom:4px;color:var(--navy)}
+#tip div{display:flex;gap:6px;align-items:center;justify-content:space-between}
+#tip i{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.ds{margin-top:32px;padding:28px}
+.ds h3{font-size:20px}
+.swatches{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+.sw{width:112px;text-align:left;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;transition:transform .2s}
+.sw:hover{transform:translateY(-4px)}
+.sw i{display:block;height:54px;background:var(--c)}
+.sw span{display:block;padding:8px 10px;font-size:12px;line-height:1.3}
+.sw b{display:block;font-size:12.5px}
+.finals{margin-top:56px}
+.fview{margin-top:20px;border-radius:16px;border:1px solid var(--line);background:#fff;overflow:hidden}
+.fview.tall{max-height:640px;overflow-y:auto}
+.fview img{width:100%;animation:fade .4s}
+.cap{margin-top:12px;color:var(--muted);font-size:15px}
+
+/* impact */
+.impact{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:48px}
+.imp{background:#fff;border-radius:var(--radius);padding:32px;border:1px solid #d5e9f5;transition:transform .25s,box-shadow .25s}
+.imp:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.imp svg{width:44px;height:44px;stroke:var(--green);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.imp .big{font-size:clamp(40px,5vw,60px);font-weight:800;color:var(--green);line-height:1;margin-top:16px}
+.imp h3{font-size:22px;margin-top:6px}
+.imp p{color:var(--muted);margin-top:8px}
+
+/* footer */
+.thanks{background:var(--navy);color:#fff;text-align:center;padding:100px 0 60px}
+.thanks h2{font-size:clamp(40px,7vw,80px)}
+.thanks h2::after{margin:18px auto 0}
+.thanks p{color:#b9bdff;margin-top:20px}
+.thanks small{display:block;margin-top:60px;color:#8388d6}
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,40px);background:var(--navy);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;transition:all .3s;z-index:300;pointer-events:none}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:1000px){
+  .hero .wrap,.two,.persona,.gallery,.design-grid,.voy{grid-template-columns:1fr}
+  .annots{position:static;grid-template-columns:repeat(2,1fr)}
+  .annots h4{grid-column:1/-1}
+  .cgrid{grid-template-columns:1fr 1fr}
+  .stats,.pillars{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr 1fr}
+  .nav ul{display:none;position:absolute;top:64px;left:0;right:0;background:#fff;flex-direction:column;padding:10px 20px;border-bottom:1px solid var(--line)}
+  .nav ul.open{display:flex}
+  .menu-btn{display:block}
+  .gtabs{grid-template-columns:1fr 1fr}
+}
+@media (max-width:640px){
+  section{padding:70px 0}
+  .impact,.ops,.cgrid,.dates-row{grid-template-columns:1fr}
+  .op{border-right:0;border-bottom:1px solid var(--line)}
+  .meta{grid-template-columns:1fr}
+  .user div{display:none}
+  .annots{grid-template-columns:1fr}
+  .gtabs{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .js .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="hl-mark" viewBox="0 0 32 32"><path fill="currentColor" d="M2 4h9l9 12-9 12H2l9-12zM14 4h8l8 12-8 12h-8l8-12z"/></symbol>
+</svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Back to top"><svg style="color:var(--navy)"><use href="#hl-mark"/></svg> Fleet Dashboard</a>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navList">Menu</button>
+    <ul id="navList">
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#terminology">Terminology</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#concepts">Concepts</a></li>
+      <li><a href="#design">Design</a></li>
+      <li><a href="#impact">Impact</a></li>
+    </ul>
+  </div>
+  <div class="progress" id="progress"></div>
+</header>
+
+<main id="top">
+<!-- HERO -->
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <div class="kicker">Fleet Dashboard · Logistics &amp; Distribution</div>
+      <h1>Navigating the Future: How Fleet Dashboard Streamlined <em>Fleet Management</em> with a Centralized Dashboard</h1>
+      <div class="meta">
+        <div><b>My role</b><span>UX / UI Designer</span></div>
+        <div><b>Timeline</b><span>3 months · Jul–Sep 2022</span></div>
+        <div><b>Team</b><span>3 Designers + Manager</span></div>
+      </div>
+      <a class="cta" href="#design">Try the interactive dashboard <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="frame" id="heroFrame">
+      <div class="bar"><i></i><i></i><i></i></div>
+      <img src="assets/web/cluster.jpg" alt="Final Cluster dashboard design with filters, KPI table and fuel consumption charts">
+    </div>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="wrap">
+    <div class="kicker">01 · Overview</div>
+    <h2>Fleet Dashboard</h2>
+    <div class="two reveal" style="margin-top:28px">
+      <p class="lead" style="margin-top:0">Fleet Dashboard is a centralized fleet management tool built for a leading international shipping and container transportation company. The company's roots stretch back to the 19th century, when its founding companies put their first ships to sea carrying general cargo and passengers to New York.</p>
+      <div class="facts">
+        <div class="fact"><b>My role</b>As the UX/UI Designer, I designed clear, easy-to-use interfaces and visuals that help make better decisions, by focusing on what end users actually need.</div>
+        <div class="fact"><b>Timeline</b>3 months · July 2022 – Sep 2022</div>
+        <div class="fact"><b>Team size</b>3 Designers + Manager</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat reveal"><div class="num"><span data-count="253">0</span></div><p>vessels in the fleet</p></div>
+      <div class="stat reveal"><div class="num"><span data-count="11.9" data-dec="1">0</span>M</div><p>TEU transport volume</p></div>
+      <div class="stat reveal"><div class="num"><span data-count="137">0</span>+</div><p>countries of operation</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem" class="bg-lav">
+  <div class="wrap two">
+    <div class="reveal">
+      <div class="kicker">02 · Problem identification</div>
+      <h2>Fragmented data, slow decisions</h2>
+      <p class="lead">Fleet Dashboard needed a centralized dashboard to streamline fleet management by consolidating fragmented data. They sought real-time insights, KPI tracking, and support for decision-making to enhance operations and meet sustainability goals.</p>
+    </div>
+    <div class="reveal">
+      <p style="font-weight:700;margin-bottom:12px">The goal: an integrated dashboard with…</p>
+      <div class="reqs" id="reqs">
+        <div class="req" data-open="false"><button aria-expanded="false"><span class="ic">1</span>Various KPIs<span class="chev">⌄</span></button><div class="body">Like fuel consumption and average weather, tracked over time and comparable across the fleet.</div></div>
+        <div class="req" data-open="false"><button aria-expanded="false"><span class="ic">2</span>Data about the ships &amp; their voyages<span class="chev">⌄</span></button><div class="body">Vessel, voyage and port-pair information in one place instead of scattered across systems.</div></div>
+        <div class="req" data-open="false"><button aria-expanded="false"><span class="ic">3</span>Comparisons between different KPIs<span class="chev">⌄</span></button><div class="body">Side-by-side views that support decisions and sustainability goals.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TERMINOLOGY -->
+<section id="terminology">
+  <div class="wrap">
+    <div class="kicker">Background</div>
+    <h2>Terminology</h2>
+    <p class="lead">Before designing, we had to speak the language of the fleet. Try the route below, then pick an operation.</p>
+    <div class="card term reveal">
+      <div class="voy">
+        <div>
+          <svg viewBox="0 0 600 150" role="img" aria-label="Voyage route Mumbai to Dubai to Mumbai">
+            <path id="seg1" class="seg" d="M80 70 L300 70"/>
+            <path id="seg2" class="seg" d="M300 70 L520 70"/>
+            <g class="node"><circle cx="80" cy="70" r="12"/><text x="80" y="35">A</text><text class="l" x="80" y="115">Mumbai</text></g>
+            <g class="node"><circle cx="300" cy="70" r="12"/><text x="300" y="35">B</text><text class="l" x="300" y="115">Dubai</text></g>
+            <g class="node"><circle cx="520" cy="70" r="12"/><text x="520" y="35">C</text><text class="l" x="520" y="115">Mumbai</text></g>
+            <g id="ship" style="transform:translate(80px,70px)"><circle r="9" fill="#ec6a2c"/><path d="M-4 0h8M0 -4v8" stroke="#fff" stroke-width="0" /></g>
+          </svg>
+          <p class="note" id="legNote">1 voyage = A → B → C. <em>A voyage can have 3–5 legs.</em></p>
+        </div>
+        <div class="leg-ctl">
+          <b>Explore</b>
+          <div class="pills" role="group" aria-label="Voyage selection">
+            <button class="pill" data-leg="all" aria-pressed="true">1 Voyage</button>
+            <button class="pill" data-leg="1" aria-pressed="false">Leg 1 · A→B</button>
+            <button class="pill" data-leg="2" aria-pressed="false">Leg 2 · B→C</button>
+          </div>
+        </div>
+      </div>
+      <div class="ops" role="tablist" aria-label="Ship operations">
+        <button class="op" role="tab" aria-selected="true" data-op="At Sea">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40c6 0 6-4 12-4s6 4 12 4 6-4 12-4 6 4 12 4v6c-6 0-6-4-12-4s-6 4-12 4-6-4-12-4-6 4-12 4zm0 10c6 0 6-4 12-4s6 4 12 4 6-4 12-4 6 4 12 4v6c-6 0-6-4-12-4s-6 4-12 4-6-4-12-4-6 4-12 4zM12 36C12 18 26 8 40 8c-8 4-8 14 0 18 4 2 8 0 12-4 0 8-6 14-14 14z"/></svg>
+          <h3>At Sea</h3>
+        </button>
+        <button class="op" role="tab" aria-selected="false" data-op="At Port">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40h48l-8 12H14zM12 28h10v12H12zM24 30h6v10h-6zM32 24h8v16h-8zM42 28h8v12h-8zM16 14h4v14h-4zM12 14h12v4H12z"/></svg>
+          <h3>At Port</h3>
+        </button>
+        <button class="op" role="tab" aria-selected="false" data-op="At Maneuvering">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M26 8h12l8 38H18zM22 46h20l8 6v4H14v-4zM24 22h16l-1-4H25zM21 34h22l-1-4H22z" fill-rule="evenodd"/></svg>
+          <h3>Maneuvering</h3>
+        </button>
+      </div>
+      <div class="opdetail">
+        <p id="opText"></p>
+        <button class="link-btn" id="opTry">See “<span id="opName"></span>” in the dashboard →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section id="research" class="bg-lav">
+  <div class="wrap">
+    <div class="kicker">03 · Research sprint</div>
+    <h2>Understanding the fleet</h2>
+    <p class="lead">After rigorous discussions with stakeholders we understood the fleet and logistics data in detail, including these key indicators. Select one to see where it lives in the final design.</p>
+    <div class="chips" id="chips">
+      <button class="chip" aria-pressed="true" data-k="co2">CO₂ emissions</button>
+      <button class="chip" aria-pressed="false" data-k="fuel">Engine fuel consumption</button>
+      <button class="chip" aria-pressed="false" data-k="speed">Average speed</button>
+      <button class="chip" aria-pressed="false" data-k="ops">Operations</button>
+      <button class="chip" aria-pressed="false" data-k="time">Time period</button>
+      <button class="chip" aria-pressed="false" data-k="own">Fleet ownership</button>
+    </div>
+    <div class="chipinfo" id="chipInfo" aria-live="polite"></div>
+
+    <div class="card persona reveal">
+      <div class="txt">
+        <div class="kicker">Persona</div>
+        <h3>Smith Jones</h3>
+        <div class="sub">35, Chief Officer</div>
+        <p>Smith Jones is a Chief Officer whose job concerns ship’s safety, ship’s security &amp; environmental protection issues.</p>
+        <div class="tabs" role="tablist">
+          <button class="pill" role="tab" aria-selected="true" data-p="goals">Goals</button>
+          <button class="pill" role="tab" aria-selected="false" data-p="frus">Frustrations</button>
+        </div>
+        <ul class="plist" id="plist"></ul>
+        <p class="note" style="margin-top:10px">Tap an item to see how the dashboard responds.</p>
+      </div>
+      <img src="assets/web/persona.jpg" alt="Portrait of persona Smith Jones, Chief Officer" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- CONCEPTS -->
+<section id="concepts">
+  <div class="wrap">
+    <div class="kicker">04 · Low &amp; high fidelity</div>
+    <h2>High fidelity wireframes</h2>
+    <p class="lead">Several brainstorming sessions led to initial wireframes that gave us a direction for the solution.</p>
+    <div class="gallery reveal">
+      <div>
+        <div class="gtabs" role="tablist" aria-label="Wireframes" id="gtabs"></div>
+        <ul class="considers" id="considers"></ul>
+      </div>
+      <div class="gview"><img id="gimg" src="" alt="" loading="lazy"></div>
+    </div>
+    <div class="iter reveal">
+      <h3>After multiple iterations</h3>
+      <p>…and final approval</p>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution" class="bg-lav">
+  <div class="wrap">
+    <div class="kicker">05 · The solution</div>
+    <h2>An integrated dashboard</h2>
+    <div class="pillars">
+      <div class="pillar reveal"><div class="n">1</div><h3>User-friendly</h3><p style="color:var(--muted);margin-top:8px">Easy to navigate and requires minimum steps to do tasks.</p></div>
+      <div class="pillar reveal"><div class="n">2</div><h3>Information hierarchy</h3><p style="color:var(--muted);margin-top:8px">Used to highlight important data first.</p></div>
+      <div class="pillar reveal"><div class="n">3</div><h3>Data visualisation</h3><p style="color:var(--muted);margin-top:8px">Different types of graphs to avoid cognitive load &amp; monotony.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN -->
+<section id="design">
+  <div class="wrap">
+    <div class="kicker">06 · Design solution</div>
+    <h2>The design, hands-on</h2>
+    <p class="lead">The landing page has two parts: <b>Cluster</b> and <b>Voyage</b>. Everything below is interactive. Change filters, sort the table, drill into a vessel, and toggle chart legends.</p>
+
+    <div class="design-grid">
+      <aside class="annots" aria-label="Design callouts">
+        <h4>Design callouts</h4>
+        <button class="annot" data-a="filters"><i></i>Filter options of category and operations to see results accordingly</button>
+        <button class="annot" data-a="table"><i></i>Table view (basic information)</button>
+        <button class="annot" data-a="system"><i></i>A design system built by keeping the essence of the brand guidelines</button>
+        <button class="annot" data-a="dates"><i></i>Highlighted information that is required to see briefly</button>
+        <button class="annot" data-a="kpis"><i></i>Color-coded KPIs, curated by weekly / monthly / quarterly</button>
+        <button class="annot" data-a="graphs"><i></i>Graphical view (KPIs)</button>
+      </aside>
+
+      <div>
+        <div class="proto" id="proto">
+          <div class="p-head">
+            <div class="p-logo"><svg style="color:var(--navy)"><use href="#hl-mark"/></svg>Fleet Dashboard</div>
+            <div class="p-right">
+              <button class="icon-btn" id="bell" aria-label="Notifications" aria-expanded="false">
+                <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 1112 0c0 6 2 7 2 7H4s2-1 2-7zM10 20a2 2 0 004 0"/></svg><span class="badge">3</span>
+              </button>
+              <button class="icon-btn" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.3l2-1.5-2-3.4-2.3.9a7 7 0 00-2.2-1.3L14 3h-4l-.4 2.4a7 7 0 00-2.2 1.3l-2.3-.9-2 3.4 2 1.5A7 7 0 005 12c0 .4 0 .9.1 1.3l-2 1.5 2 3.4 2.3-.9a7 7 0 002.2 1.3L10 21h4l.4-2.4a7 7 0 002.2-1.3l2.3.9 2-3.4-2-1.5c.1-.4.1-.9.1-1.3z"/></svg></button>
+              <div class="user"><span class="av">UN</span><div>User Name<small>User Title</small></div></div>
+              <div class="pop" id="pop" role="dialog" aria-label="Notifications">
+                <h5>Alerts</h5>
+                <ul>
+                  <li><b>●</b> Dry dock due: Hamburg Express (21 Jun 2021)</li>
+                  <li><b>●</b> Hull cleaning completed: 14 Jul 2021</li>
+                  <li><b>●</b> Propeller polish scheduled: 08 Aug 2021</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="p-tabs" role="tablist">
+            <button class="p-tab" role="tab" id="tabCluster" aria-selected="true" aria-controls="panelCluster">CLUSTER</button>
+            <span class="p-sep"></span>
+            <button class="p-tab" role="tab" id="tabVoyage" aria-selected="false" aria-controls="panelVoyage">VOYAGE</button>
+            <button class="p-back" id="back" disabled>‹ Go To Previous Page</button>
+          </div>
+
+          <div class="p-body">
+            <!-- CLUSTER -->
+            <div class="panel" id="panelCluster" role="tabpanel" aria-labelledby="tabCluster">
+              <div class="pc" id="cFilters">
+                <div class="filters">
+                  <div class="field"><label for="cCat">Cluster Category</label><select id="cCat"></select></div>
+                  <div class="field"><label for="cSub">Sub Cluster Category</label><select id="cSub"></select></div>
+                  <div class="field" id="fOwn"><label for="cOwn">Fleet Ownership</label><select id="cOwn"></select></div>
+                  <div class="field" id="fOp"><label for="cOp">Operation</label><select id="cOp"></select></div>
+                  <div class="field wide" id="fTime"><label>Time Period</label>
+                    <div class="dates"><input type="date" id="cFrom" aria-label="From date" min="2021-01-01" max="2021-12-31"><span>To</span><input type="date" id="cTo" aria-label="To date" min="2021-01-01" max="2021-12-31"></div>
+                  </div>
+                </div>
+                <div class="err" id="cErr" role="alert"></div>
+              </div>
+
+              <div class="pc" id="cTable">
+                <div class="t-head">
+                  <h4>KPIs <span id="cTitle"></span></h4>
+                  <div class="pager" id="cPager"></div>
+                </div>
+                <div class="tscroll"><table id="cTbl"><thead></thead><tbody></tbody></table></div>
+              </div>
+
+              <div class="cgrid" id="cCharts">
+                <div class="pc chart"><header><h4>Total Fuel Consumption (T)</h4></header><div class="pie-wrap" id="pie1"></div></div>
+                <div class="pc chart"><header><h4>Average Alternate Fuels Consumption (T)</h4>
+                  <select id="altP" aria-label="Period"><option>Weekly</option><option selected>Monthly</option><option>Quarterly</option></select></header>
+                  <div class="pie-wrap" id="pie2"></div></div>
+                <div class="pc chart empty-card"><b>Graph Section</b><span id="gNote"></span></div>
+              </div>
+            </div>
+
+            <!-- VOYAGE -->
+            <div class="panel" id="panelVoyage" role="tabpanel" aria-labelledby="tabVoyage" hidden>
+              <div class="pc" id="vFilters">
+                <div class="filters">
+                  <div class="field"><label>Search using</label>
+                    <div class="radio"><label><input type="radio" name="vmode" value="imo" checked> IMO number</label><label><input type="radio" name="vmode" value="name"> Vessel Name</label></div></div>
+                  <div class="field"><label for="vVessel" id="vVesselL">IMO number</label><select id="vVessel"></select></div>
+                  <div class="field"><label for="vVoyage">Voyage ID(s)</label><select id="vVoyage"></select></div>
+                </div>
+              </div>
+
+              <div class="kpis" id="vKpis"></div>
+
+              <div class="pc" id="vTable">
+                <div class="t-head"><h4>KPIs <span id="vTitle"></span></h4><span class="note" id="vCount"></span></div>
+                <div class="tscroll"><table id="vTbl"><thead>
+                  <tr><th>Sl. No.</th><th>Port Pair</th><th>Time Period</th><th>Total Fuel Consumption (T)<br>(Avg in T/D)</th><th>Distance<br>Travelled (NM)</th><th>Average<br>Speed (Knots)</th><th>Cargo<br>Weight</th><th>Total TEU<br>Onboard</th></tr>
+                </thead><tbody></tbody></table></div>
+              </div>
+
+              <div class="dates-row" id="vDates">
+                <div class="pc dcard hl"><small>◷ Last date</small><b>Dry Dock<br>21 JUN 2021</b></div>
+                <div class="pc dcard"><small>◷ Last date</small><b>Hull Cleaning<br>14 JUL 2021</b></div>
+                <div class="pc dcard"><small>◷ Last date</small><b>Propeller Polish<br>08 AUG 2021</b></div>
+              </div>
+
+              <div class="cgrid" id="vCharts" style="grid-template-columns:1fr 1fr"></div>
+            </div>
+          </div>
+          <div style="text-align:center;padding:10px;background:#e9eaf3;font-size:12px;color:var(--muted)">© Fleet Dashboard</div>
+        </div>
+        <p class="proto-note">Interactive recreation of the final design. Data shown is illustrative and generated for this portfolio piece.</p>
+      </div>
+    </div>
+
+    <div class="card ds reveal" id="dsPanel">
+      <h3>Design system</h3>
+      <p class="note">Built by keeping the essence of the brand guidelines. Click a swatch to copy its hex value.</p>
+      <div class="swatches" id="swatches"></div>
+    </div>
+
+    <div class="finals reveal">
+      <h3 style="font-size:26px">Final screens</h3>
+      <div class="pills" style="margin-top:14px" id="ftabs" role="tablist">
+        <button class="pill" role="tab" aria-selected="true" data-f="filters">Filters &amp; date picker</button>
+        <button class="pill" role="tab" aria-selected="false" data-f="cluster">Cluster dashboard</button>
+        <button class="pill" role="tab" aria-selected="false" data-f="solution">Voyage dashboard</button>
+      </div>
+      <div class="fview" id="fview"><img id="fimg" src="assets/web/filters.jpg" alt="" loading="lazy"></div>
+      <p class="cap" id="fcap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section id="impact" class="bg-sky">
+  <div class="wrap">
+    <div class="kicker">07 · Results</div>
+    <h2>Overall impact</h2>
+    <div class="impact">
+      <div class="imp reveal"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 8v10h10"/></svg><div class="big"><span data-count="50">0</span>%</div><h3>Reduction in decision-making time</h3><p>Faster access to insights allowed quicker responses to operational challenges.</p></div>
+      <div class="imp reveal"><svg viewBox="0 0 24 24"><path d="M6 18L18 6M8 6h10v10"/></svg><div class="big"><span data-count="40">0</span>%</div><h3>Improvement in operational efficiency</h3><p>Reduced time spent on data consolidation and analysis.</p></div>
+      <div class="imp reveal"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 8v10h10"/></svg><div class="big"><span data-count="20">0</span>%</div><h3>Reduction in CO₂ emissions</h3><p>Enhanced tracking and monitoring facilitated sustainable operational practices.</p></div>
+      <div class="imp reveal"><svg viewBox="0 0 24 24"><path d="M6 18L18 6M8 6h10v10"/></svg><div class="big"><span data-count="80">0</span>%</div><h3>Increase in user satisfaction</h3><p>Improved user experience through intuitive design and real-time data visualization.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="thanks">
+  <div class="wrap reveal">
+    <h2>Thank you</h2>
+    <p>Fleet Dashboard · UX/UI Case Study</p>
+    <a class="cta" href="#top">Back to top ↑</a>
+    <small>Portfolio case study · UX Designer · 2024</small>
+  </div>
+</div>
+</main>
+
+<div id="tip" role="tooltip"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- utilities ---------- */
+function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function rng(seed){let s=(seed>>>0)||1;return function(){s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296}}
+function fillSel(el,opts,val){el.innerHTML=opts.map(o=>{const v=typeof o==='string'?o:o.value,l=typeof o==='string'?o:o.label;return '<option value="'+v+'"'+(v===val?' selected':'')+'>'+l+'</option>'}).join('')}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),1800)}
+const tip=$('#tip');
+function showTip(html,e){tip.innerHTML=html;tip.style.display='block';const w=tip.offsetWidth,h=tip.offsetHeight;let x=e.clientX+14,y=e.clientY+14;if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+h>innerHeight-8)y=e.clientY-h-14;tip.style.left=Math.max(8,x)+'px';tip.style.top=Math.max(8,y)+'px'}
+function hideTip(){tip.style.display='none'}
+
+/* ---------- nav, progress, menu ---------- */
+const menuBtn=$('#menuBtn'),navList=$('#navList');
+menuBtn.addEventListener('click',()=>{const o=navList.classList.toggle('open');menuBtn.setAttribute('aria-expanded',o)});
+navList.addEventListener('click',e=>{if(e.target.tagName==='A'){navList.classList.remove('open');menuBtn.setAttribute('aria-expanded','false')}});
+const prog=$('#progress');
+function onScroll(){const h=document.documentElement.scrollHeight-innerHeight;prog.style.width=(h>0?scrollY/h*100:0)+'%'}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* scroll spy */
+const links=$$('#navList a');
+const secs=links.map(a=>$(a.getAttribute('href'))).filter(Boolean);
+if('IntersectionObserver' in window){
+  const spy=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+en.target.id))}})},{rootMargin:'-45% 0px -50% 0px'});
+  secs.forEach(s=>spy.observe(s));
+}
+
+/* reveal + count-up */
+function countUp(el){
+  const target=parseFloat(el.dataset.count),dec=parseInt(el.dataset.dec||'0',10);
+  if(reduce){el.textContent=target.toFixed(dec);return}
+  const t0=performance.now(),dur=1400;
+  (function step(t){const p=Math.min(1,(t-t0)/dur),eased=1-Math.pow(1-p,3);el.textContent=(target*eased).toFixed(dec);if(p<1)requestAnimationFrame(step)})(t0);
+}
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');$$('[data-count]',en.target).forEach(countUp);io.unobserve(en.target)}})},{threshold:.15});
+  $$('.reveal').forEach(el=>io.observe(el));
+}else{
+  $$('.reveal').forEach(el=>el.classList.add('in'));$$('[data-count]').forEach(countUp);
+}
+/* count-ups outside .reveal containers (overview stats are inside .stat.reveal so ok) */
+
+/* hero tilt */
+const hf=$('#heroFrame');
+if(hf&&!reduce&&matchMedia('(hover:hover)').matches){
+  hf.parentElement.addEventListener('mousemove',e=>{const r=hf.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;hf.style.transform='perspective(900px) rotateY('+(x*8)+'deg) rotateX('+(-y*8)+'deg)'});
+  hf.parentElement.addEventListener('mouseleave',()=>{hf.style.transform=''});
+}
+
+/* ---------- problem accordion ---------- */
+$$('#reqs .req button').forEach(b=>b.addEventListener('click',()=>{const r=b.parentElement,o=r.dataset.open!=='true';r.dataset.open=o;b.setAttribute('aria-expanded',o)}));
+
+/* ---------- terminology ---------- */
+const ship=$('#ship'),seg1=$('#seg1'),seg2=$('#seg2'),legNote=$('#legNote');
+let shipTimer;
+function moveShip(x){ship.style.transform='translate('+x+'px,70px)'}
+function setLeg(k){
+  clearTimeout(shipTimer);
+  $$('[data-leg]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.leg===k));
+  seg1.classList.toggle('on',k==='all'||k==='1');seg2.classList.toggle('on',k==='all'||k==='2');
+  if(k==='1'){moveShip(80);setTimeout(()=>moveShip(300),30);legNote.innerHTML='<b>Leg 1:</b> Mumbai → Dubai. A leg connects two consecutive ports.'}
+  else if(k==='2'){moveShip(300);setTimeout(()=>moveShip(520),30);legNote.innerHTML='<b>Leg 2:</b> Dubai → Mumbai.'}
+  else{moveShip(80);setTimeout(()=>moveShip(300),30);shipTimer=setTimeout(()=>moveShip(520),1100);legNote.innerHTML='<b>1 voyage</b> = A → B → C. <em>A voyage can have 3–5 legs.</em>'}
+}
+$$('[data-leg]').forEach(b=>b.addEventListener('click',()=>setLeg(b.dataset.leg)));
+setLeg('all');
+
+const OPS={
+  'At Sea':'The operation when a ship is at sea.',
+  'At Port':'The operation when a ship is at port.',
+  'At Maneuvering':'When a ship is arriving, departing a port or crossing canals & traffic zones.'
+};
+let curOp='At Sea';
+function setOp(o){curOp=o;$$('.op').forEach(b=>b.setAttribute('aria-selected',b.dataset.op===o));$('#opText').textContent=OPS[o];$('#opName').textContent=o==='At Maneuvering'?'Maneuvering':o}
+$$('.op').forEach(b=>b.addEventListener('click',()=>setOp(b.dataset.op)));
+setOp('At Sea');
+$('#opTry').addEventListener('click',()=>{C.op=curOp;showTab('cluster');syncCluster();renderCluster();$('#proto').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});setTimeout(()=>pulse('#fOp'),500)});
+
+/* ---------- research chips ---------- */
+const CHIPS={
+  co2:{t:'CO₂ emissions appear as a KPI column in the Cluster table and drive the sustainability story.',sel:'th[data-col="co2"]',tab:'cluster'},
+  fuel:{t:'Total and main-engine fuel consumption are in the Cluster table, with fuel breakups by type in the charts.',sel:'th[data-col="tot"]',tab:'cluster'},
+  speed:{t:'Average speed is tracked per vessel and per port pair, with trend arrows for quick scanning.',sel:'th[data-col="spd"]',tab:'cluster'},
+  ops:{t:'Operation (At Sea, At Port, Maneuvering) is a primary filter so the same KPIs can be read in context.',sel:'#fOp',tab:'cluster'},
+  time:{t:'A flexible time period filter, plus weekly / monthly / quarterly chart views for curated data.',sel:'#fTime',tab:'cluster'},
+  own:{t:'Fleet ownership (Owned / Chartered) is a filter alongside cluster category.',sel:'#fOwn',tab:'cluster'}
+};
+function setChip(k){
+  $$('#chips .chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.k===k));
+  const c=CHIPS[k];
+  $('#chipInfo').innerHTML=c.t+' <button class="link-btn" id="chipGo">Show in prototype →</button>';
+  $('#chipGo').addEventListener('click',()=>{goProto(c.tab,c.sel)});
+}
+$$('#chips .chip').forEach(c=>c.addEventListener('click',()=>setChip(c.dataset.k)));
+setChip('co2');
+
+/* ---------- persona ---------- */
+const PERSONA={
+  goals:[
+    ['To be aware of all the periodical data regarding ships, like CO₂ emissions etc.','Color-coded KPIs, curated by weekly / monthly / quarterly preference.'],
+    ['To get updates about important tasks.','Highlighted “last date” cards (dry dock, hull cleaning, propeller polish) and a notification bell.']
+  ],
+  frus:[
+    ['Unable to keep track of data for ships, vessels & voyages.','One dashboard with Cluster → Voyage drill-down and consistent filters.'],
+    ['Missing important alerts or unaware of urgent tasks that might need tending.','Alerts in the header and key dates promoted in the information hierarchy.']
+  ]
+};
+function renderPersona(k){
+  $$('[data-p]').forEach(b=>b.setAttribute('aria-selected',b.dataset.p===k));
+  $('#plist').innerHTML=PERSONA[k].map((p,i)=>'<li><button aria-expanded="false" data-i="'+i+'"><span class="mark"></span><span>'+p[0]+'<span class="resp">→ '+p[1]+'</span></span></button></li>').join('');
+}
+$('#plist').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const o=b.getAttribute('aria-expanded')==='true';b.setAttribute('aria-expanded',!o)});
+$$('[data-p]').forEach(b=>b.addEventListener('click',()=>renderPersona(b.dataset.p)));
+renderPersona('goals');
+
+/* ---------- wireframe gallery ---------- */
+const WF=[
+  {k:'Ship · empty state',s:'“Select filters to show results”',img:'assets/web/wf1.jpg',alt:'Wireframe of the Ship tab before filters are selected',c:['Simplified navigation with clear data hierarchies','Color-coded KPIs for intuitive understanding']},
+  {k:'Ship · map view',s:'Voyage route with map toggle',img:'assets/web/wf2.jpg',alt:'Wireframe of the Ship tab with an map view of a vessel route',c:['Simplified navigation with clear data hierarchies','Color-coded KPIs for intuitive understanding']},
+  {k:'Voyage · KPI tiles',s:'Snippet and fuel KPI tiles',img:'assets/web/wf3.jpg',alt:'Wireframe of voyage details with fuel consumption KPI tiles',c:['Customizable filters for relevant data extraction','Visual and tabular views to reduce cognitive load']},
+  {k:'Port pair details',s:'Chart view with tooltip',img:'assets/web/wf4.jpg',alt:'Wireframe of fuel consumption per port pair as an area chart',c:['Customizable filters for relevant data extraction','Visual and tabular views to reduce cognitive load']}
+];
+const gt=$('#gtabs');
+gt.innerHTML=WF.map((w,i)=>'<button class="gtab" role="tab" data-i="'+i+'" aria-selected="false">'+w.k+'<small>'+w.s+'</small></button>').join('');
+function setWF(i){
+  $$('.gtab').forEach((b,j)=>b.setAttribute('aria-selected',j===i));
+  const w=WF[i],img=$('#gimg');img.src=w.img;img.alt=w.alt;
+  $('#considers').innerHTML='<li style="font-weight:700;padding-left:0">Key design considerations</li>'+w.c.map(t=>'<li>'+t+'</li>').join('');
+}
+gt.addEventListener('click',e=>{const b=e.target.closest('.gtab');if(b)setWF(+b.dataset.i)});
+setWF(0);
+
+/* ---------- final screens ---------- */
+const FS={
+  filters:{img:'assets/web/filters.jpg',alt:'Final design showing filter dropdowns and the date range picker',cap:'Filter options for category, ownership, operation and a calendar-based time period.',tall:false},
+  cluster:{img:'assets/web/cluster.jpg',alt:'Final Cluster dashboard design',cap:'Choosing the cluster category as vessel size shows fleet data as tables and graphs, with inline pagination for extensive data.',tall:false},
+  solution:{img:'assets/web/solution.jpg',alt:'Full Voyage dashboard design with multiple charts',cap:'Voyage view: port-pair table followed by color-coded fuel charts. Scroll inside the frame.',tall:true}
+};
+function setF(k){
+  $$('#ftabs .pill').forEach(b=>b.setAttribute('aria-selected',b.dataset.f===k));
+  const f=FS[k],img=$('#fimg');img.src=f.img;img.alt=f.alt;$('#fcap').textContent=f.cap;$('#fview').classList.toggle('tall',f.tall);$('#fview').scrollTop=0;
+}
+$$('#ftabs .pill').forEach(b=>b.addEventListener('click',()=>setF(b.dataset.f)));
+setF('filters');
+
+/* ---------- design system swatches ---------- */
+const SW=[['Navy','#12145e'],['Navy dark','#0c0e45'],['Accent orange','#ec6a2c'],['Lavender','#f2f3fd'],['LNG','#62d394'],['ULSFO','#f0cf4f'],['HSFO','#4a6fa5'],['VLSFO','#e0525a'],['Positive','#2f9e5b']];
+$('#swatches').innerHTML=SW.map(s=>'<button class="sw" style="--c:'+s[1]+'" data-hex="'+s[1]+'"><i></i><span><b>'+s[0]+'</b>'+s[1]+'</span></button>').join('');
+$('#swatches').addEventListener('click',e=>{
+  const b=e.target.closest('.sw');if(!b)return;
+  const hex=b.dataset.hex;
+  const done=()=>toast('Copied '+hex);
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(hex).then(done,()=>toast(hex))}else toast(hex)}catch(err){toast(hex)}
+});
+
+/* =====================================================
+   PROTOTYPE
+   ===================================================== */
+const FUELS=[{name:'LNG',color:'#62d394'},{name:'ULSFO',color:'#f0cf4f'},{name:'HSFO',color:'#4a6fa5'},{name:'VLSFO',color:'#e0525a'}];
+const VESSELS=[['9461051','Hamburg Express'],['9612997','Antwerpen Express'],['9501344','Basle Express'],['9501370','Essen Express'],['9501356','Hong Kong Express'],['9461063','Bremen Express'],['9461075','Kiel Express'],['9501382','Dallas Express'],['9501394','Lisbon Express'],['9612802','Tokyo Express'],['9612814','Busan Express'],['9612826','Dubai Express'],['9461087','Colombo Express'],['9461099','Mumbai Express'],['9501409','Genoa Express'],['9501411','Oslo Express']];
+const SUBS={
+  'Vessel Size':[['6000 TEU',40],['6500 TEU',35],['8000 TEU',45],['9000 TEU',40],['10000 TEU',35]],
+  'Sister Ships':[['Hamburg Express Class',18],['Colombo Express Class',12],['Sydney Express Class',9]],
+  'Service':[['BDF',22],['AE1',16],['FAL',14]]
+};
+const OPMUL={'At Sea':1,'At Maneuvering':.35,'At Port':.5};
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const PAGE=5;
+
+const C={cat:'Vessel Size',sub:'6000 TEU',own:'Owned',op:'At Sea',from:'2021-07-10',to:'2021-10-12',page:1,sortKey:null,sortDir:1,alt:'Monthly'};
+const V={imo:'9461051',voyage:'018 W-E',mode:'imo',hidden:{},period:{}};
+let prevTab=null, curTab='cluster';
+
+/* ----- tabs ----- */
+function showTab(t){
+  if(t===curTab)return;
+  prevTab=curTab;curTab=t;
+  $('#tabCluster').setAttribute('aria-selected',t==='cluster');
+  $('#tabVoyage').setAttribute('aria-selected',t==='voyage');
+  $('#panelCluster').hidden=t!=='cluster';
+  $('#panelVoyage').hidden=t!=='voyage';
+  $('#back').disabled=!prevTab;
+  if(t==='voyage'){syncVoyage();renderVoyage()}
+}
+$('#tabCluster').addEventListener('click',()=>showTab('cluster'));
+$('#tabVoyage').addEventListener('click',()=>showTab('voyage'));
+$('#back').addEventListener('click',()=>{if(prevTab)showTab(prevTab)});
+
+/* notifications */
+const bell=$('#bell'),pop=$('#pop');
+bell.addEventListener('click',e=>{e.stopPropagation();const o=pop.classList.toggle('open');bell.setAttribute('aria-expanded',o)});
+document.addEventListener('click',e=>{if(!pop.contains(e.target)){pop.classList.remove('open');bell.setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){pop.classList.remove('open');bell.setAttribute('aria-expanded','false')}});
+
+/* ----- cluster ----- */
+function isDefault(){return C.cat==='Vessel Size'&&C.sub==='6000 TEU'&&C.own==='Owned'&&C.op==='At Sea'&&C.from==='2021-07-10'&&C.to==='2021-10-12'}
+const FIXED_DIRS=[['up','dn'],['dn','dn'],['up','up'],['up','dn'],['up','up']];
+function buildRows(){
+  const key=[C.cat,C.sub,C.own,C.op,C.from,C.to].join('|');
+  const def=isDefault(),m=OPMUL[C.op];
+  return VESSELS.map((v,i)=>{
+    if(def&&i<5)return {imo:v[0],name:v[1],tot:200,totA:60,me:150,meA:45,co2:600,co2A:180,dist:2000,spd:18,spdD:FIXED_DIRS[i][0],fuel:400,fuelD:FIXED_DIRS[i][1]};
+    const r=rng(hash(key+v[0]));
+    const tot=Math.round((120+r()*160)*m);
+    return {imo:v[0],name:v[1],tot:tot,totA:Math.round(tot*.3),me:Math.round(tot*.75),meA:Math.round(tot*.225),co2:Math.round(tot*3),co2A:Math.round(tot*.9),dist:Math.round((1400+r()*1400)*(m<1?.6:1)),spd:Math.round(12+r()*9),spdD:r()>.5?'up':'dn',fuel:Math.round(300+r()*220),fuelD:r()>.5?'up':'dn'};
+  });
+}
+const COLS=[
+  {k:'imo',h:'IMO<br>Number',get:r=>+r.imo,fmt:r=>r.imo},
+  {k:'name',h:'Vessel<br>Name',get:r=>r.name,fmt:r=>r.name},
+  {k:'tot',h:'Total Consumption (T)<br>(Per Day Avg in T/D)',get:r=>r.tot,fmt:r=>r.tot+' ('+r.totA+')'},
+  {k:'me',h:'M.E Fuel Consumption (T)<br>(Per Day Avg in T/D)',get:r=>r.me,fmt:r=>r.me+' ('+r.meA+')'},
+  {k:'co2',h:'CO<sub>2</sub> Emission (T)<br>(Per Day Avg in T/D)',get:r=>r.co2,fmt:r=>r.co2+' ('+r.co2A+')'},
+  {k:'dist',h:'Distance<br>Travelled (NM)',get:r=>r.dist,fmt:r=>r.dist},
+  {k:'spd',h:'Average<br>Speed (Knots)',get:r=>r.spd,fmt:r=>r.spd+arrow(r.spdD)},
+  {k:'fuel',h:'Fuel Consumption<br>/TEU/NM (Kg)',get:r=>r.fuel,fmt:r=>r.fuel+arrow(r.fuelD)}
+];
+function arrow(d){return '<span class="arrow '+(d==='up'?'up':'dn')+'" aria-label="'+(d==='up'?'up':'down')+'">'+(d==='up'?'↑':'↓')+'</span>'}
+
+function renderHead(){
+  $('#cTbl thead').innerHTML='<tr>'+COLS.map(c=>{
+    const s=C.sortKey===c.k?(C.sortDir===1?'ascending':'descending'):'none';
+    return '<th data-col="'+c.k+'" aria-sort="'+s+'"><button data-sort="'+c.k+'">'+c.h+'<span class="s">'+(s==='descending'?'▼':'▲')+'</span></button></th>';
+  }).join('')+'<th></th></tr>';
+}
+function renderCluster(){
+  const rows=buildRows();
+  if(C.sortKey){const col=COLS.find(c=>c.k===C.sortKey);rows.sort((a,b)=>{const x=col.get(a),y=col.get(b);return (x>y?1:x<y?-1:0)*C.sortDir})}
+  const pages=Math.ceil(rows.length/PAGE);
+  if(C.page>pages)C.page=pages;
+  const slice=rows.slice((C.page-1)*PAGE,C.page*PAGE);
+  const subs=SUBS[C.cat],count=(subs.find(s=>s[0]===C.sub)||[0,0])[1];
+  $('#cTitle').textContent=C.sub+' ('+count+' '+(count===1?'Vessel':'Vessels')+')';
+  renderHead();
+  $('#cTbl tbody').innerHTML=slice.map(r=>'<tr class="click" tabindex="0" data-imo="'+r.imo+'" title="Open voyage view for '+r.name+'">'+COLS.map(c=>'<td>'+c.fmt(r)+'</td>').join('')+'<td><span class="row-go">Voyages →</span></td></tr>').join('');
+  let pg='<span>Showing '+slice.length+' of '+rows.length+' Results</span>&nbsp;&nbsp;<button data-pg="prev" aria-label="Previous page"'+(C.page===1?' disabled':'')+'>‹</button>';
+  for(let i=1;i<=pages;i++)pg+='<button data-pg="'+i+'"'+(i===C.page?' aria-current="page"':'')+'>'+i+'</button>';
+  pg+='<button data-pg="next" aria-label="Next page"'+(C.page===pages?' disabled':'')+'>›</button>';
+  $('#cPager').innerHTML=pg;
+  renderPies(rows);
+}
+function pieChart(el,data){
+  const total=data.reduce((a,d)=>a+d.v,0),R=70,cx=75,cy=75;
+  let a0=-Math.PI/2,paths='';
+  data.forEach((d,i)=>{
+    const f=d.v/total,a1=a0+f*Math.PI*2,mid=(a0+a1)/2;
+    const x0=cx+R*Math.cos(a0),y0=cy+R*Math.sin(a0),x1=cx+R*Math.cos(a1),y1=cy+R*Math.sin(a1);
+    paths+='<path class="slice" data-i="'+i+'" style="--dx:'+(Math.cos(mid)*5).toFixed(2)+'px;--dy:'+(Math.sin(mid)*5).toFixed(2)+'px" fill="'+d.c+'" d="M'+cx+' '+cy+' L'+x0.toFixed(2)+' '+y0.toFixed(2)+' A'+R+' '+R+' 0 '+(f>.5?1:0)+' 1 '+x1.toFixed(2)+' '+y1.toFixed(2)+' Z"><title>'+d.n+': '+d.v+' T</title></path>';
+    a0=a1;
+  });
+  const legend=data.map((d,i)=>'<div data-i="'+i+'" style="--c:'+d.c+'"><i></i>'+d.n+'<b>'+d.v+(d.u?'<sup style="font-size:10px">'+d.u+'</sup>':'')+'</b><small>('+Math.round(d.v/total*100)+'%)</small></div>').join('');
+  el.innerHTML='<svg viewBox="0 0 150 150" role="img" aria-label="Pie chart">'+paths+'</svg><div class="pl">'+legend+'</div>';
+  const set=(i,on)=>{const s=$('.slice[data-i="'+i+'"]',el),l=$('.pl [data-i="'+i+'"]',el);if(s)s.classList.toggle('on',on);if(l)l.classList.toggle('on',on)};
+  $$('.slice,.pl [data-i]',el).forEach(n=>{n.addEventListener('mouseenter',()=>set(n.dataset.i,true));n.addEventListener('mouseleave',()=>set(n.dataset.i,false))});
+}
+function renderPies(rows){
+  const r=rng(hash('pie'+C.cat+C.sub+C.own+C.op+C.from+C.to)),def=isDefault(),m=OPMUL[C.op];
+  const base=def?{HSFO:45,VLSFO:18,ULSFO:90,LNG:27}:{HSFO:Math.round((30+r()*40)*m)+1,VLSFO:Math.round((10+r()*40)*m)+1,ULSFO:Math.round((40+r()*80)*m)+1,LNG:Math.round((10+r()*40)*m)+1};
+  pieChart($('#pie1'),[{n:'HSFO',v:base.HSFO,c:'#4a6fa5'},{n:'VLSFO',v:base.VLSFO,c:'#e0525a'},{n:'ULSFO',v:base.ULSFO,c:'#f0cf4f'},{n:'LNG',v:base.LNG,c:'#62d394'}]);
+  const f={Weekly:.25,Monthly:1,Quarterly:3}[C.alt];
+  const bio=def?22:Math.round((10+r()*20)*m)+1,lng=def?15:Math.round((8+r()*14)*m)+1,conv=def?148:Math.round((80+r()*100)*m)+5;
+  pieChart($('#pie2'),[{n:'BIO FUEL',v:Math.max(1,Math.round(bio*f)),c:'#35b9ac',u:'T'},{n:'LNG',v:Math.max(1,Math.round(lng*f)),c:'#2c6f9a',u:'T'},{n:'Conventional',v:Math.max(1,Math.round(conv*f)),c:'#e1e8ea'}]);
+  const n=(SUBS[C.cat].find(s=>s[0]===C.sub)||[0,0])[1];
+  $('#gNote').textContent=n>1?'The graph section is not available because there are numerous ships in this '+(C.cat==='Vessel Size'?'vessel size':'cluster')+'. Select a single vessel in the table to see its voyages.':'Select a vessel to see its graph.';
+}
+function syncCluster(){
+  fillSel($('#cCat'),Object.keys(SUBS),C.cat);
+  fillSel($('#cSub'),SUBS[C.cat].map(s=>s[0]),C.sub);
+  fillSel($('#cOwn'),['Owned','Chartered'],C.own);
+  fillSel($('#cOp'),['At Sea','At Maneuvering','At Port'],C.op);
+  $('#cFrom').value=C.from;$('#cTo').value=C.to;$('#altP').value=C.alt;
+}
+function clusterChanged(){C.page=1;renderCluster()}
+$('#cCat').addEventListener('change',e=>{C.cat=e.target.value;C.sub=SUBS[C.cat][0][0];fillSel($('#cSub'),SUBS[C.cat].map(s=>s[0]),C.sub);clusterChanged()});
+$('#cSub').addEventListener('change',e=>{C.sub=e.target.value;clusterChanged()});
+$('#cOwn').addEventListener('change',e=>{C.own=e.target.value;clusterChanged()});
+$('#cOp').addEventListener('change',e=>{C.op=e.target.value;clusterChanged()});
+function dateChange(){
+  const f=$('#cFrom').value,t=$('#cTo').value,err=$('#cErr');
+  if(!f||!t){err.textContent='Please choose both a start and an end date.';return}
+  if(f>t){err.textContent='“From” date must be on or before the “To” date.';return}
+  err.textContent='';C.from=f;C.to=t;clusterChanged();
+}
+$('#cFrom').addEventListener('change',dateChange);$('#cTo').addEventListener('change',dateChange);
+$('#altP').addEventListener('change',e=>{C.alt=e.target.value;renderCluster()});
+$('#cPager').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b||b.disabled)return;
+  const v=b.dataset.pg;
+  if(v==='prev')C.page--;else if(v==='next')C.page++;else C.page=+v;
+  renderCluster();
+});
+$('#cTbl').addEventListener('click',e=>{
+  const s=e.target.closest('[data-sort]');
+  if(s){const k=s.dataset.sort;if(C.sortKey===k)C.sortDir*=-1;else{C.sortKey=k;C.sortDir=1}C.page=1;renderCluster();return}
+  const tr=e.target.closest('tr[data-imo]');if(tr)openVessel(tr.dataset.imo);
+});
+$('#cTbl').addEventListener('keydown',e=>{if(e.key==='Enter'){const tr=e.target.closest('tr[data-imo]');if(tr)openVessel(tr.dataset.imo)}});
+function openVessel(imo){V.imo=imo;showTab('voyage');renderVoyage()}
+
+/* ----- voyage ----- */
+const VOYAGES={
+  '018 W-E':{route:'Bahrain - India',start:'2021-07-10',len:[20,10,10,10],pairs:['AEDXB-INBOM1','AEAUH-AEDXB','QADOH-AEAUH','BHKBS-QADOH'],fixed:true},
+  '019 W-E':{route:'India - Bahrain',start:'2021-09-01',len:[8,10,10,12],pairs:['INBOM1-AEDXB','AEDXB-AEAUH','AEAUH-QADOH','QADOH-BHKBS']},
+  '020 W-E':{route:'Singapore - Dubai',start:'2021-08-05',len:[6,9,12,14],pairs:['SGSIN-MYPKG','MYPKG-LKCMB','LKCMB-INNSA','INNSA-AEDXB']},
+  '021 W-E':{route:'Hamburg - Hamburg',start:'2021-07-20',len:[7,6,5,9],pairs:['DEHAM-NLRTM','NLRTM-BEANR','BEANR-GBFXT','GBFXT-DEHAM']}
+};
+function pad(n){return (n<10?'0':'')+n}
+function fmtD(d,hh,mm){return pad(d.getUTCDate())+' '+MON[d.getUTCMonth()]+' '+String(d.getUTCFullYear()).slice(2)+','+hh+':'+mm+' Hrs'}
+function voyageRows(id){
+  const v=VOYAGES[id],r=rng(hash(V.imo+id));
+  let cur=new Date(v.start+'T00:00:00Z');
+  return v.pairs.map((p,i)=>{
+    const s=new Date(cur.getTime()),e=new Date(cur.getTime()+(v.len[i]-1)*864e5+(i===0?0:0));
+    cur=new Date(e.getTime()+864e5);
+    const fixed=v.fixed&&V.imo==='9461051';
+    return {
+      n:i+1,pair:p,
+      time:fmtD(s,'12','00')+' - '+fmtD(e,'11','59'),
+      tot:fixed?200:Math.round(150+r()*100),
+      totA:fixed?60:Math.round(40+r()*40),
+      dist:fixed?2000:Math.round(1200+r()*1400),
+      spd:fixed?18:Math.round(13+r()*7),
+      spdD:fixed?['up','dn','up','up'][i]:(r()>.5?'up':'dn'),
+      cargo:fixed?152400:Math.round(120000+r()*60000),
+      teu:fixed?5900:Math.round(4800+r()*1800)
+    };
+  });
+}
+function voyageTitle(){return V.voyage+' ('+VOYAGES[V.voyage].route+')'}
+function syncVoyage(){
+  const nameMode=V.mode==='name';
+  $('#vVesselL').textContent=nameMode?'Vessel Name':'IMO number';
+  fillSel($('#vVessel'),VESSELS.map(v=>({value:v[0],label:nameMode?v[1]:v[0]+'/'+v[1]})),V.imo);
+  fillSel($('#vVoyage'),Object.keys(VOYAGES),V.voyage);
+}
+const CHARTS=[
+  {id:'sea',title:'Breakup of Fuel Consumption at Sea (T)',type:'stack',scale:1},
+  {id:'port',title:'Breakup of Fuel Consumption at Port (T)',type:'stack',scale:.45},
+  {id:'bf5',title:'Time Spent in BF 5 or More',type:'area'},
+  {id:'split',title:'Time spent at sea v/s at port (Hrs.)',type:'split'},
+  {id:'me',title:'Total ME Fuel Consumption (T)',type:'stack',scale:1.2},
+  {id:'ae',title:'Total AE Fuel Consumption (T)',type:'stack',scale:.8}
+];
+const PLABELS={
+  Weekly:['10 Jul','17 Jul','24 Jul','31 Jul','7 Aug','14 Aug','21 Aug','28 Aug','4 Sep','11 Sep','18 Sep','25 Sep'],
+  Monthly:['Jul','Aug','Sep','Oct'],
+  Quarterly:['Q4 20','Q1 21','Q2 21','Q3 21']
+};
+const PSCALE={Weekly:6,Monthly:14,Quarterly:32};
+function chartHTML(c){
+  const sel=c.type==='split'?'<span class="note">Quarter</span>':'<select data-ch="'+c.id+'" aria-label="Period for '+c.title+'"><option>Weekly</option><option selected>Monthly</option><option>Quarterly</option></select>';
+  return '<article class="pc chart" id="ch-'+c.id+'"'+(c.type==='split'||c.type==='bf5'?'':'')+'><header><h4>'+c.title+'</h4>'+sel+'</header>'+(c.type==='stack'?'<div class="legend" data-leg="'+c.id+'"></div>':'')+'<div class="plot" data-plot="'+c.id+'"></div></article>';
+}
+function nice(m){const raw=m*1.08/5,mag=Math.pow(10,Math.floor(Math.log10(raw))),step=[1,2,2.5,5,10].find(k=>k*mag>=raw)*mag;return {step:step,max:step*5}}
+function stackSeries(c){
+  const per=V.period[c.id]||'Monthly',n=PLABELS[per].length,r=rng(hash(V.imo+V.voyage+c.id+per));
+  const w={LNG:.9,ULSFO:.8,HSFO:.7,VLSFO:.9};
+  return {labels:PLABELS[per],series:FUELS.map(f=>({name:f.name,color:f.color,values:Array.from({length:n},()=>+(r()*PSCALE[per]*c.scale*w[f.name]+0.4).toFixed(1))}))};
+}
+function drawStack(c){
+  const el=$('[data-plot="'+c.id+'"]'),lg=$('[data-leg="'+c.id+'"]');
+  const hid=V.hidden[c.id]||(V.hidden[c.id]=new Set()),d=stackSeries(c);
+  lg.innerHTML=FUELS.map(f=>'<button style="--c:'+f.color+'" data-f="'+f.name+'" aria-pressed="'+!hid.has(f.name)+'"><i></i>'+f.name+'</button>').join('');
+  const vis=d.series.filter(s=>!hid.has(s.name));
+  const W=560,H=240,L=40,R=8,T=10,B=26,iw=W-L-R,ih=H-T-B;
+  const totals=d.labels.map((_,i)=>vis.reduce((a,s)=>a+s.values[i],0));
+  const nz=nice(Math.max.apply(null,totals.concat([1])));
+  let g='';
+  for(let v=0;v<=nz.max+1e-9;v+=nz.step){const y=T+ih-v/nz.max*ih;g+='<line class="grid" x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'"/><text class="ax" x="'+(L-6)+'" y="'+(y+3)+'" text-anchor="end">'+(+v.toFixed(1))+'</text>'}
+  const cw=iw/d.labels.length,bw=Math.min(44,cw*.6);
+  d.labels.forEach((lb,i)=>{
+    const cx=L+cw*(i+.5);let acc=0,bars='';
+    vis.slice().reverse().forEach(s=>{const v=s.values[i],h=v/nz.max*ih,y=T+ih-(acc+v)/nz.max*ih;bars+='<rect x="'+(cx-bw/2)+'" y="'+y+'" width="'+bw+'" height="'+h+'" fill="'+s.color+'"/>';acc+=v});
+    g+='<g class="col" data-i="'+i+'">'+bars+'<rect class="hit" x="'+(cx-cw/2)+'" y="'+T+'" width="'+cw+'" height="'+ih+'"/></g><text class="ax" x="'+cx+'" y="'+(H-8)+'" text-anchor="middle">'+lb+'</text>';
+  });
+  if(vis.length){const avg=totals.reduce((a,b)=>a+b,0)/totals.length,y=T+ih-avg/nz.max*ih;g+='<line class="avg" x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'"/><text class="ax" x="'+(L+4)+'" y="'+(y-4)+'">Average</text>'}
+  el.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+c.title+'">'+g+'</svg>';
+  $$('.col',el).forEach(col=>{
+    const i=+col.dataset.i;
+    const html=()=>{const tot=totals[i]||1;return '<b>'+d.labels[i]+'</b>'+vis.map(s=>'<div><span><i style="background:'+s.color+'"></i>'+s.name+'</span><span>'+s.values[i].toFixed(1)+' T · '+Math.round(s.values[i]/tot*100)+'%</span></div>').join('')+'<div style="margin-top:4px;border-top:1px solid #eee;padding-top:4px"><b style="margin:0">Total</b><b style="margin:0">'+totals[i].toFixed(1)+' T</b></div>'};
+    col.addEventListener('mousemove',e=>showTip(html(),e));col.addEventListener('mouseleave',hideTip);
+  });
+}
+function drawArea(c){
+  const el=$('[data-plot="'+c.id+'"]'),per=V.period[c.id]||'Monthly',labels=PLABELS[per],r=rng(hash(V.imo+V.voyage+'bf5'+per));
+  const vals=labels.map(()=>Math.round(10+r()*35));
+  const W=560,H=240,L=40,R=14,T=10,B=26,iw=W-L-R,ih=H-T-B,max=60;
+  let g='';
+  for(let v=0;v<=max;v+=10){const y=T+ih-v/max*ih;g+='<line class="grid" x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'"/><text class="ax" x="'+(L-6)+'" y="'+(y+3)+'" text-anchor="end">'+v+'</text>'}
+  const px=i=>L+iw*(labels.length===1?.5:(i+.5)/labels.length),py=v=>T+ih-v/max*ih;
+  const pts=vals.map((v,i)=>px(i).toFixed(1)+','+py(v).toFixed(1));
+  g+='<polygon points="'+px(0).toFixed(1)+','+(T+ih)+' '+pts.join(' ')+' '+px(labels.length-1).toFixed(1)+','+(T+ih)+'" fill="#4a8fb5" fill-opacity=".35"/><polyline points="'+pts.join(' ')+'" fill="none" stroke="#2f7fa8" stroke-width="2"/>';
+  const avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+  g+='<line class="avg" x1="'+L+'" x2="'+(W-R)+'" y1="'+py(avg)+'" y2="'+py(avg)+'"/><text class="ax" x="'+(L+4)+'" y="'+(py(avg)-4)+'">Average</text>';
+  labels.forEach((lb,i)=>{g+='<text class="ax" x="'+px(i)+'" y="'+(H-8)+'" text-anchor="middle">'+lb+'</text><circle class="dot" cx="'+px(i)+'" cy="'+py(vals[i])+'" r="4" stroke="#2f7fa8" data-i="'+i+'"/>'});
+  el.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+c.title+'">'+g+'</svg>';
+  $$('.dot',el).forEach(dot=>{const i=+dot.dataset.i;dot.addEventListener('mousemove',e=>showTip('<b>'+labels[i]+'</b><div><span>% of time above BF-5</span><span>'+vals[i]+'%</span></div>',e));dot.addEventListener('mouseleave',hideTip)});
+}
+function drawSplit(c){
+  const el=$('[data-plot="'+c.id+'"]'),r=rng(hash(V.imo+V.voyage+'split'));
+  const port=Math.round(15+r()*15),sea=Math.round(110+r()*25),tot=sea+port;
+  el.classList.add('pie-wrap');
+  pieChart(el,[{n:'Time spent at Sea',v:sea,c:'#1f7ea1'},{n:'Time spent at Port',v:port,c:'#26c1b2'}]);
+  el.insertAdjacentHTML('beforeend','<p class="note" style="margin-top:6px;flex-basis:100%">Total: '+tot+' Hrs (port includes maneuvering)</p>');
+}
+function drawChart(c){if(c.type==='stack')drawStack(c);else if(c.type==='area')drawArea(c);else drawSplit(c)}
+function renderVoyage(){
+  const rows=voyageRows(V.voyage),vessel=VESSELS.find(v=>v[0]===V.imo)||VESSELS[0];
+  $('#vTitle').textContent=voyageTitle()+' · '+vessel[1];
+  $('#vCount').textContent='Showing '+rows.length+' Port Pairs';
+  $('#vTbl tbody').innerHTML=rows.map(r=>'<tr><td>'+r.n+'</td><td><b>'+r.pair+'</b></td><td>'+r.time+'</td><td>'+r.tot+' ('+r.totA+')</td><td>'+r.dist+' NM</td><td>'+r.spd+arrow(r.spdD)+'</td><td>'+r.cargo+'</td><td>'+r.teu+'</td></tr>').join('');
+  const sumTot=rows.reduce((a,r)=>a+r.tot,0),sumDist=rows.reduce((a,r)=>a+r.dist,0),avgSpd=(rows.reduce((a,r)=>a+r.spd,0)/rows.length).toFixed(1),co2=sumTot*3;
+  $('#vKpis').innerHTML=[['Total fuel (T)',sumTot],['CO₂ emission (T)',co2],['Distance (NM)',sumDist],['Avg speed (kn)',avgSpd]].map(k=>'<div class="pc kpi"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>').join('');
+  CHARTS.forEach(drawChart);
+}
+function buildVoyageCharts(){
+  $('#vCharts').innerHTML=CHARTS.map(chartHTML).join('');
+  $('#vCharts').addEventListener('change',e=>{const s=e.target.closest('[data-ch]');if(!s)return;V.period[s.dataset.ch]=s.value;drawChart(CHARTS.find(c=>c.id===s.dataset.ch))});
+  $('#vCharts').addEventListener('click',e=>{
+    const b=e.target.closest('.legend button');if(!b)return;
+    const id=b.parentElement.dataset.leg,set=V.hidden[id]||(V.hidden[id]=new Set()),f=b.dataset.f;
+    if(set.has(f))set.delete(f);else{if(set.size>=FUELS.length-1){toast('Keep at least one fuel visible');return}set.add(f)}
+    drawChart(CHARTS.find(c=>c.id===id));
+  });
+}
+$$('input[name="vmode"]').forEach(r=>r.addEventListener('change',e=>{V.mode=e.target.value;syncVoyage()}));
+$('#vVessel').addEventListener('change',e=>{V.imo=e.target.value;renderVoyage()});
+$('#vVoyage').addEventListener('change',e=>{V.voyage=e.target.value;renderVoyage()});
+
+/* ----- callouts / highlight ----- */
+function pulse(sel){
+  const el=$(sel);if(!el)return;
+  el.classList.remove('pulse');void el.offsetWidth;el.classList.add('pulse');
+  el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});
+  setTimeout(()=>el.classList.remove('pulse'),2000);
+}
+function goProto(tab,sel){showTab(tab);$('#proto').scrollIntoView({behavior:'auto',block:'start'});setTimeout(()=>pulse(sel),150)}
+const ANN={
+  filters:['cluster','#cFilters'],table:['cluster','#cTable'],system:[null,'#dsPanel'],
+  dates:['voyage','#vDates'],kpis:['voyage','#ch-sea'],graphs:['voyage','#vCharts']
+};
+$$('.annot').forEach(b=>b.addEventListener('click',()=>{
+  const a=ANN[b.dataset.a];
+  if(a[0]){showTab(a[0]);setTimeout(()=>pulse(a[1]),50)}else pulse(a[1]);
+}));
+
+/* ----- init ----- */
+syncCluster();
+renderCluster();
+syncVoyage();
+buildVoyageCharts();
+})();
+</script>
+</body>
+</html>
