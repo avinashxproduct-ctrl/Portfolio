@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<!-- saved from url=(0083)file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IA Tracker — an AI-assisted tool for tracking information architecture and design-system migration | Case study</title>
+  <meta name="description" content="Product design case study: an AI-assisted information architecture tracker that makes design-system migration progress visible across themes, epics and releases. Demo uses synthetic data only.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23161616'/%3E%3Cpath d='M7 22V10h4v12zm7 0V10h4v12zm7 0V10h4v12z' fill='%2378a9ff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./IA Tracker — an AI-assisted tool for tracking information architecture and design-system migration _ Case study_files/case-study.css">
+<style id="__cl-styles">
+    .__cl-highlight {
+      outline: 2px solid #0f62fe !important;
+      outline-offset: 2px !important;
+      background-color: rgba(15, 98, 254, 0.08) !important;
+      transition: outline 0.2s, background-color 0.2s;
+    }
+    .__cl-highlight-scroll {
+      outline: 2px solid #f1c21b !important;
+      outline-offset: 2px !important;
+      background-color: rgba(241, 194, 27, 0.08) !important;
+    }
+  </style></head>
+<body>
+  <a class="skip-link" href="file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/index.html#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="site-title" href="file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/index.html#top">IA Tracker · Case study</a>
+      <nav class="site-nav" aria-label="Case study sections">
+        <ul>
+          <li><a href="file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/index.html#introduction" aria-current="true">Intro</a></li>
+          <li><a href="file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/index.html#problem">Problem</a></li>
+          <li><a href="file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/index.html#tracker">Tracker</a></li>
+          <li><a href="file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/index.html#demo">Live demo</a></li>
+          <li><a href="file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/index.html#built">How it was built</a></li>
+          <li><a href="file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/index.html#future">Future scope</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div id="top" class="hero">
+      <div class="wrap">
+        <p class="eyebrow">Product design · AI-assisted tooling</p>
+        <h1>An <strong>IA tracker</strong> that makes design-system migration visible</h1>
+        <p class="lede">A data-driven tool I designed and built with AI assistance to organise a large product's information architecture and show migration progress across themes, epics and releases.</p>
+        <dl class="hero-meta">
+          <div><dt>Role</dt><dd>Product designer — concept, structure, UX, direction of AI-assisted build</dd></div>
+          <div><dt>Type</dt><dd>Internal tracking tool (single-page, JSON-driven)</dd></div>
+          <div><dt>Design system</dt><dd>Carbon Design System</dd></div>
+          <div><dt>Data in this page</dt><dd>100% synthetic</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="wrap" style="padding-top:24px;padding-bottom:24px">
+      <p class="notice"><span><strong>About this case study.</strong> The original tracker was built for an internal product and contains confidential information, so it is not shown here. Everything on this page — the screenshots, the interactive demo and every number — comes from a separate, fully synthetic dataset. Product names, designer names, release identifiers and dates are fictional.</span></p>
+    </div>
+
+    <!-- 1 -->
+    <section class="section" id="introduction" aria-labelledby="h-intro">
+      <div class="wrap">
+        <div class="section-head"><span class="section-num">01</span><h2 id="h-intro">Project introduction</h2></div>
+        <div class="section-body">
+          <p>A single-page tool that holds a product's information architecture in one place and shows, at a glance, how far its screens have moved to the Carbon Design System.</p>
+          <ul>
+            <li><strong>GA Releases</strong> — one card per release, with a status breakdown and a detail panel.</li>
+            <li><strong>IA Progress</strong> — the architecture itself: <em>Theme → Epic → Feature</em>, with status on every feature and a before/after progress view.</li>
+          </ul>
+          <p>The hierarchy is the primary structure; all counts and percentages are derived from it — nothing is typed in separately.</p>
+
+          <div class="stats" role="group" aria-label="Size of the synthetic demo dataset">
+            <div class="stat"><span class="stat-num" data-stat="themes">5</span><span class="stat-label">Themes</span></div>
+            <div class="stat"><span class="stat-num" data-stat="epics">18</span><span class="stat-label">Epics</span></div>
+            <div class="stat"><span class="stat-num" data-stat="features">73</span><span class="stat-label">Features</span></div>
+            <div class="stat"><span class="stat-num" data-stat="releases">8</span><span class="stat-label">Releases</span></div>
+            <div class="stat"><span class="stat-num" data-stat="items">86</span><span class="stat-label">Release work items</span></div>
+          </div>
+          <p class="small muted"><strong>These numbers are synthetic.</strong> They describe the demo dataset, not any real product.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="section section--tint" id="problem" aria-labelledby="h-problem">
+      <div class="wrap">
+        <div class="section-head"><span class="section-num">02</span><h2 id="h-problem">Problem statement</h2></div>
+        <div class="section-body">
+          <p>A large enterprise product has many areas, many contributors and a migration to a design system that lands release by release. Three needs shaped the tracker. I have separated what I can evidence from the objectives I set.</p>
+
+          <div class="compare">
+            <div class="panel">
+              <h3><span class="tag tag--verified">Evidenced in the artifacts</span></h3>
+              <ul>
+                <li>The project's working rules name two reference sources for the same product: the architecture in design files, and release views on a project board. The tracker brings both into one page.</li>
+                <li>The first version of the tracker page carried a headline summary typed into the markup. When I audited it, that summary did not match the records underneath. The rebuilt version calculates every figure from the data.</li>
+                <li>Status and release information sat on each record, with no roll-up across themes or releases until the tracker provided one.</li>
+              </ul>
+            </div>
+            <div class="panel">
+              <h3><span class="tag tag--objective">Design objectives</span></h3>
+              <ul>
+                <li>Give the architecture <strong>one home</strong>, with a clear hierarchy that can be scanned and expanded.</li>
+                <li>Make <strong>status and progress</strong> readable without opening every record.</li>
+                <li>Show <strong>release-level</strong> work next to the architecture, so migration progress can be followed across releases.</li>
+                <li>Keep summary figures <strong>derived from records</strong>, so they cannot drift from the detail.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="section" id="tracker" aria-labelledby="h-tracker">
+      <div class="wrap">
+        <div class="section-head"><span class="section-num">03</span><h2 id="h-tracker">The tracker</h2></div>
+        <div class="section-body">
+          <p class="notice notice--amber"><span><strong>These screenshots are of the portfolio demo, not the original.</strong> The original interface contains confidential content and could not be safely redacted, so I captured the same interface rebuilt on synthetic data. The layout, hierarchy, status colours and interactions follow the original.</span></p>
+
+          <div class="shot-grid">
+            <figure>
+              <div class="shot"><img src="./IA Tracker — an AI-assisted tool for tracking information architecture and design-system migration _ Case study_files/tracker-releases.png" width="1440" height="900" alt="GA Releases view of the demo tracker: a search and filter bar above a grid of eight release cards, each showing item and subitem counts and a colour-coded status bar."></div>
+              <figcaption><strong>GA Releases.</strong> Portfolio demo, synthetic data. Each card summarises a release: counts, a stacked status bar and status chips. Selecting a card opens the detail panel.</figcaption>
+            </figure>
+            <figure>
+              <div class="shot"><img src="./IA Tracker — an AI-assisted tool for tracking information architecture and design-system migration _ Case study_files/tracker-ia.png" width="1440" height="900" alt="IA Progress view of the demo tracker: a before and after progress comparison, five theme cards, and an expanded theme listing epics and features with status badges."></div>
+              <figcaption><strong>IA Progress.</strong> Portfolio demo, synthetic data. A before/after progress block, theme cards, and expandable Theme → Epic → Feature tables.</figcaption>
+            </figure>
+          </div>
+
+          <h3>The information hierarchy</h3>
+          <div class="hier">
+            <div class="panel">
+              <h3>Architecture (IA Progress)</h3>
+              <ul class="tree">
+                <li><span class="lvl">Theme</span><span class="nm">Navigation &amp; Layout</span>
+                  <ul><li><span class="lvl">Epic</span><span class="nm">Primary navigation</span>
+                    <ul><li><span class="lvl">Feature</span><span class="nm">Primary menu</span> <span class="ex">· status, page type, release</span></li></ul>
+                  </li></ul>
+                </li>
+              </ul>
+            </div>
+            <div class="panel">
+              <h3>Delivery (GA Releases)</h3>
+              <ul class="tree">
+                <li><span class="lvl">Release</span><span class="nm">Release D</span> <span class="ex">· phase, date</span>
+                  <ul><li><span class="lvl">Work item</span><span class="nm">Access review migration</span> <span class="ex">· status, designer</span>
+                    <ul><li><span class="lvl">Subitems</span><span class="ex">a count per work item</span></li></ul>
+                  </li></ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <p class="small muted">The tracker's architecture has three levels (Theme, Epic, Feature); the release view adds work items that carry a subitem count. "Migration status" is the feature status — <em>Done</em>, <em>Need Changes</em> or <em>Not started</em> — rather than a separate field.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="section section--tint" id="demo" aria-labelledby="h-demo">
+      <div class="wrap">
+        <div class="section-head"><span class="section-num">04</span><h2 id="h-demo">Interactive demo</h2></div>
+        <div class="section-body">
+          <p><strong>This demo runs on synthetic data.</strong> Nothing here comes from a real product. Try it:</p>
+          <ol class="howto">
+            <li>Select a <strong>release card</strong> to open its breakdown. Press <kbd>Esc</kbd> to close.</li>
+            <li>Open <strong>IA Progress</strong>, then select a theme card or a theme header to expand its epics and features.</li>
+            <li>Use <strong>search, status and designer</strong> filters. Try a search with no results to see the empty state.</li>
+          </ol>
+
+          <div>
+            <div class="demo-bar">
+              <span><span class="tag">SYNTHETIC DATA</span>&nbsp; Embedded demo</span>
+              <a href="file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/demo/index.html" target="_blank" rel="noopener">Open the demo in a new tab ↗</a>
+            </div>
+            <div class="demo-frame">
+              <iframe src="./IA Tracker — an AI-assisted tool for tracking information architecture and design-system migration _ Case study_files/index.html" title="Interactive IA tracker demo using synthetic data" loading="lazy" referrerpolicy="no-referrer"></iframe>
+            </div>
+          </div>
+          <p class="small muted">Search and filters are additions I made for this portfolio version; the original tracker did not have them. See <a href="file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/index.html#built">how it was built</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="section" id="built" aria-labelledby="h-built">
+      <div class="wrap">
+        <div class="section-head"><span class="section-num">05</span><h2 id="h-built">How it was built</h2></div>
+        <div class="section-body">
+          <p>The tracker is a plain HTML, CSS and JavaScript page that reads one JSON file and renders everything from it. I directed the work as a designer and used an AI coding assistant for implementation. I have tried to say only what the project files show.</p>
+
+          <ol class="steps">
+            <li><div><h3>Understand the architecture and the data</h3><p>Start from the product's existing structure and release plan, and settle the hierarchy — five themes, each with epics and features — and the status vocabulary used across both views.</p></div></li>
+            <li><div><h3>Decide that data drives the page</h3><p>The page renders from <code>data.json</code>. Counts, percentages and bars are calculated from records rather than typed in. This rule is written into the project's AI-assistant instructions.</p></div></li>
+            <li><div><h3>Build and iterate with an AI assistant</h3><p>I worked with IBM Bob to generate and revise the page and the data. Bob's edit history is recorded against commits in the project's git notes.</p></div></li>
+            <li><div><h3>Audit, fix and prepare a public version</h3><p>For this portfolio I audited the original, fixed its defects, replaced all data with a synthetic dataset, and tested the result in a browser.</p></div></li>
+          </ol>
+
+          <h3>Who did what</h3>
+          <div class="table-wrap">
+            <table>
+              <caption>Contribution by tool and by person. "To confirm" marks places where the project files do not settle the detail.</caption>
+              <thead><tr><th scope="col">Source</th><th scope="col">What the artifacts show</th><th scope="col">Status</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Me (product designer)</th><td>Solely responsible for this tracker. I was the strategy maker: I decided what it should track and how, provided sketches of how I wanted it to look and work, defined the hierarchy, status vocabulary, views and the rule that figures are derived from data, reviewed and directed the AI-generated work, and set the confidentiality approach for this portfolio version.</td><td><span class="tag tag--verified">Author</span></td></tr>
+                <tr><th scope="row">IBM Bob (AI assistant)</th><td>The project's git notes attribute edits to Bob across the data file, the earlier report and the tracker page. A project skill file records the architecture and working rules Bob follows. Bob was also used to audit the original, fix defects, generate the synthetic dataset, and build this case study and demo.</td><td><span class="tag tag--verified">Evidenced</span></td></tr>
+                <tr><th scope="row">Figma MCP</th><td>The project skill names Figma as the source of truth for the architecture and specifies reading it through the Figma MCP server. The original data carries Figma node references. A log of individual Figma MCP calls was not found.</td><td><span class="tag tag--verified">Evidenced</span></td></tr>
+                <tr><th scope="row">Monday board MCP</th><td>The project contains screenshots of project-board views, and release data that mirrors them; the skill treats them as reference only. No log of Monday MCP calls was found, so I do not claim the integration created or changed any record.</td><td><span class="tag tag--verified">Evidenced</span></td></tr>
+                <tr><th scope="row">Browser automation (Chrome DevTools MCP)</th><td>Used while preparing this portfolio version to load the pages, check the console and network requests, test interactions, and capture the screenshots on this page.</td><td><span class="tag tag--verified">Evidenced</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Future scope -->
+    <section class="section" id="future" aria-labelledby="h-future">
+      <div class="wrap">
+        <div class="section-head"><span class="section-num">06</span><h2 id="h-future">Future scope</h2></div>
+        <div class="section-body">
+          <p><strong>This is a plan, not something delivered.</strong> The tracker is evolving: it changes with the scope of the product, and the next step is to make it a dynamic, interactive tool.</p>
+          <ul>
+            <li><strong>Edit in the tool.</strong> Add and update real values directly in the tracker (statuses, releases, work items) instead of re-analysing the source boards and design files through an MCP each time.</li>
+            <li><strong>Lower token usage.</strong> Reading everything through an MCP into an AI assistant uses a lot of tokens. Keeping the live values in the tool itself is intended to reduce that. I have not measured the saving.</li>
+            <li><strong>Keep the data-driven rule.</strong> Totals and percentages would continue to be calculated from the records, so edits update every summary automatically.</li>
+            <li><strong>Follow the product's scope.</strong> As themes, epics and features are added or reshaped, the hierarchy and views are meant to grow with them.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="thanks" aria-labelledby="h-thanks">
+    <div class="wrap">
+      <h2 id="h-thanks">Thank <span>you</span></h2>
+      <p class="thanks-sub">AI Project · Product Designer · Apr 2026 – Ongoing</p>
+      <a class="thanks-btn" href="file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/index.html#top">Back to top</a>
+    </div>
+  </footer>
+
+  <script src="./IA Tracker — an AI-assisted tool for tracking information architecture and design-system migration _ Case study_files/case-study.js"></script>
+
+
+</body></html>

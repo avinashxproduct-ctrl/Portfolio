@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<!-- saved from url=(0088)file:///Users/avinashsbhadrakali/Documents/GitHub/IA%20Analyer/portfolio/demo/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Sample Product IA Tracker — synthetic data demo</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23161616'/%3E%3Crect x='3' y='3' width='4' height='10' fill='%2378a9ff'/%3E%3Crect x='9' y='3' width='4' height='6' fill='%2324a148'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./plex.css">
+  <style>
+    :root {
+      --blue:        #0f62fe;
+      --blue-bg:     #d9eeff;
+      --green:       #198038;
+      --green-light: #24a148;
+      --green-bg:    #defbe6;
+      --orange:      #ff832b;
+      --orange-bg:   #fff1e6;
+      --purple:      #8a3ffc;
+      --red:         #da1e28;
+      --yellow:      #b28600;
+      --black:       #161616;
+      --grey-bg:     #f4f4f4;
+      --text:        #161616;
+      --text-sub:    #525252;
+      --border:      #e0e0e0;
+      --white:       #ffffff;
+      --bg:          #f4f4f4;
+      --focus:       #0f62fe;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'IBM Plex Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+    button { font: inherit; color: inherit; }
+    :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+    .site-header :focus-visible, .nav-tabs :focus-visible, .sp-header :focus-visible { outline-color: #fff; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+    /* HEADER */
+    .site-header { background: #161616; color: #fff; padding: 28px 48px; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .site-header h1 { font-size: 26px; font-weight: 300; }
+    .site-header h1 span { color: #78a9ff; font-weight: 500; }
+    .site-header .meta { font-size: 12px; color: #c6c6c6; font-family: 'IBM Plex Mono', monospace; }
+    .synthetic-pill { display: inline-block; margin-right: 10px; padding: 1px 8px; border: 1px solid #78a9ff; color: #78a9ff; border-radius: 20px; font-size: 11px; }
+
+    /* NAV TABS */
+    .nav-tabs { background: #1c1c1c; display: flex; padding: 0 48px; border-bottom: 1px solid #393939; overflow-x: auto; }
+    .nav-tab { background: none; border: none; border-bottom: 2px solid transparent; padding: 12px 20px; font-size: 13px; color: #c6c6c6; cursor: pointer; transition: color .15s, border-color .15s; white-space: nowrap; }
+    .nav-tab:hover { color: #fff; }
+    .nav-tab[aria-selected="true"] { color: #78a9ff; border-bottom-color: #78a9ff; }
+
+    /* MAIN */
+    .container { max-width: 1400px; margin: 0 auto; padding: 36px 48px 60px; display: flex; flex-direction: column; gap: 40px; }
+    .section-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-sub); margin-bottom: 16px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* FILTER BAR (added for the portfolio demo; the original tracker had no search or filters) */
+    .filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; }
+    .field { display: flex; flex-direction: column; gap: 4px; min-width: 150px; flex: 1 1 150px; }
+    .field.grow { flex: 2 1 240px; }
+    .field label { font-size: 11px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; color: var(--text-sub); }
+    .field input, .field select { font: inherit; font-size: 13px; height: 36px; padding: 0 10px; border: 1px solid #8d8d8d; border-radius: 4px; background: #fff; color: var(--text); }
+    .btn { height: 36px; padding: 0 14px; border: 1px solid #161616; background: #fff; border-radius: 4px; font-size: 13px; cursor: pointer; }
+    .btn:hover { background: #161616; color: #fff; }
+    .result-line { font-size: 12px; color: var(--text-sub); margin: -8px 0 16px; }
+    .empty-state { background: var(--white); border: 1px dashed #8d8d8d; border-radius: 8px; padding: 36px 20px; text-align: center; color: var(--text-sub); }
+    .empty-state strong { display: block; color: var(--text); font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+    .empty-state .btn { margin-top: 14px; }
+
+    /* BEFORE / AFTER */
+    .compare-block { background: var(--white); border: 1px solid var(--border); border-radius: 8px; display: grid; grid-template-columns: 1fr auto 1fr; overflow: hidden; }
+    .compare-panel { padding: 28px 32px; }
+    .compare-panel.before { border-right: 1px solid var(--border); }
+    .compare-panel.after  { border-left:  1px solid var(--border); }
+    .compare-label { font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-sub); margin-bottom: 14px; }
+    .compare-pct   { font-size: 52px; font-weight: 300; line-height: 1; margin-bottom: 8px; }
+    .compare-panel.before .compare-pct { color: var(--blue); }
+    .compare-panel.after  .compare-pct { color: var(--green); }
+    .compare-counts { font-size: 13px; color: var(--text-sub); margin-bottom: 14px; }
+    .compare-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .compare-bar-fill { height: 100%; border-radius: 3px; }
+    .compare-delta { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 28px; gap: 6px; background: #fafafa; }
+    .delta-arrow { font-size: 26px; }
+    .delta-pct { font-size: 22px; font-weight: 600; color: var(--green); }
+    .delta-sub { font-size: 12px; color: var(--text-sub); text-align: center; }
+
+    /* THEME CARDS */
+    .theme-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .theme-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 20px; cursor: pointer; transition: box-shadow .15s, transform .1s; }
+    .theme-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); transform: translateY(-1px); }
+    .theme-card-accent { height: 4px; border-radius: 2px; margin-bottom: 14px; }
+    .theme-card-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    .theme-card-epics { font-size: 12px; color: var(--text-sub); margin-bottom: 14px; }
+    .theme-card-pct { font-size: 24px; font-weight: 300; margin-bottom: 6px; }
+    .theme-card-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .theme-card-bar-fill { height: 100%; border-radius: 2px; }
+    .theme-card-counts { font-size: 11px; color: var(--text-sub); margin-top: 6px; }
+
+    /* RELEASE CARDS */
+    .release-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    @media (max-width: 1200px) { .release-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 860px)  { .release-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px)  { .release-grid { grid-template-columns: 1fr; } }
+    .release-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 20px; cursor: pointer; transition: box-shadow .15s, transform .12s; position: relative; overflow: hidden; }
+    .release-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.10); transform: translateY(-2px); }
+    .release-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; gap: 8px; }
+    .release-id { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 500; }
+    .release-phase { font-size: 11px; color: var(--text-sub); background: var(--grey-bg); padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+    .release-date { font-size: 12px; color: var(--text-sub); margin-bottom: 16px; }
+    .release-counts { display: flex; gap: 16px; margin-bottom: 14px; }
+    .release-count-item { text-align: center; }
+    .release-count-num { font-size: 22px; font-weight: 300; line-height: 1; }
+    .release-count-label { font-size: 11px; color: var(--text-sub); }
+    .mini-bar { border-radius: 4px; overflow: hidden; display: flex; margin-bottom: 10px; gap: 1px; }
+    .mini-bar-seg { height: 100%; min-width: 2px; }
+    .status-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+    .status-chip { font-size: 10px; padding: 2px 6px; border-radius: 20px; display: flex; align-items: center; gap: 4px; }
+    .status-chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .chip-complete   { background: #e6f4ea; color: #1a6630; }
+    .chip-defects    { background: #d9f0e2; color: #198038; }
+    .chip-audit      { background: #fdf6d9; color: #7a5c00; }
+    .chip-design     { background: #f3e8ff; color: #6929c4; }
+    .chip-dev        { background: #fff0f0; color: #a2191f; }
+    .chip-hold       { background: #e8e8e8; color: #161616; }
+    .chip-research   { background: #d9eeff; color: #0043a4; }
+    .chip-not-started{ background: #f4f4f4; color: #525252; }
+    .release-card-hint { font-size: 11px; color: var(--text-sub); margin-top: 12px; }
+    .release-match { font-size: 11px; color: var(--blue); margin-top: 8px; font-weight: 500; }
+
+    /* SLIDE-OVER */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; opacity: 0; pointer-events: none; transition: opacity .25s; }
+    .overlay.open { opacity: 1; pointer-events: all; }
+    .sidepanel { position: fixed; top: 0; right: 0; height: 100%; width: min(680px, 100vw); background: var(--white); box-shadow: -8px 0 32px rgba(0,0,0,.18); z-index: 101; transform: translateX(100%); visibility: hidden; transition: transform .28s cubic-bezier(.4,0,.2,1), visibility 0s .28s; display: flex; flex-direction: column; }
+    .sidepanel.open { transform: translateX(0); visibility: visible; transition-delay: 0s; }
+    .sp-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; background: var(--black); color: var(--white); flex-shrink: 0; }
+    .sp-release-id { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500; margin-bottom: 2px; }
+    .sp-release-sub { font-size: 12px; color: #c6c6c6; }
+    .sp-close { background: none; border: none; color: #c6c6c6; font-size: 20px; cursor: pointer; padding: 4px 10px; border-radius: 4px; line-height: 1; flex-shrink: 0; }
+    .sp-close:hover { background: #393939; color: #fff; }
+    .sp-body { flex: 1; overflow-y: auto; }
+    .sp-summary { padding: 20px 24px; border-bottom: 1px solid var(--border); background: #fafafa; }
+    .sp-summary-title { font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-sub); margin-bottom: 14px; }
+    .sp-kpi-row { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .sp-kpi { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; text-align: center; min-width: 80px; flex: 1; }
+    .sp-kpi-num { font-size: 26px; font-weight: 300; line-height: 1; margin-bottom: 4px; }
+    .sp-kpi-label { font-size: 11px; color: var(--text-sub); }
+    .sp-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .sp-chart-block { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+    .sp-chart-title { font-size: 12px; font-weight: 500; margin-bottom: 10px; }
+    .sp-stacked-bar { height: 14px; border-radius: 7px; overflow: hidden; display: flex; margin-bottom: 10px; gap: 1px; }
+    .sp-stacked-seg { height: 100%; min-width: 3px; }
+    .sp-legend { display: flex; flex-direction: column; gap: 5px; }
+    .sp-legend-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
+    .sp-legend-left { display: flex; align-items: center; gap: 6px; color: var(--text-sub); }
+    .sp-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .sp-legend-count { font-weight: 500; font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+    .sp-items-header { padding: 14px 24px 10px; font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-sub); border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--white); z-index: 2; }
+    .sp-item-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 24px; border-bottom: 1px solid #f0f0f0; }
+    .sp-item-row:hover { background: #f9fbff; }
+    .sp-item-status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .sp-item-content { flex: 1; }
+    .sp-item-name { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+    .sp-item-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .sp-item-designer { font-size: 11px; color: var(--text-sub); }
+    .sp-item-status-badge { font-size: 10px; padding: 1px 7px; border-radius: 20px; font-weight: 500; }
+    .sp-item-subitems { font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: var(--text-sub); background: var(--grey-bg); padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+    .sp-empty { padding: 28px 24px; color: var(--text-sub); font-size: 13px; }
+
+    /* THEME DETAIL */
+    .theme-section { background: var(--white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+    .theme-header { display: flex; align-items: center; gap: 14px; padding: 16px 22px; cursor: pointer; user-select: none; width: 100%; background: none; border: none; text-align: left; }
+    .theme-header:hover { background: #f8f8f8; }
+    .theme-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .theme-header-name { font-size: 15px; font-weight: 500; flex: 1; }
+    .theme-header-stats { font-size: 12px; color: var(--text-sub); font-family: 'IBM Plex Mono', monospace; }
+    .theme-chevron { font-size: 11px; color: var(--text-sub); transition: transform .2s; }
+    .theme-chevron.open { transform: rotate(180deg); }
+    .theme-body { display: none; border-top: 1px solid var(--border); }
+    .theme-body.open { display: block; }
+    .epic-block { border-bottom: 1px solid var(--border); }
+    .epic-block:last-child { border-bottom: none; }
+    .epic-title { padding: 11px 22px 9px; font-size: 11px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; color: var(--text-sub); background: #fafafa; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .epic-tag { font-size: 10px; padding: 2px 7px; border-radius: 20px; background: var(--grey-bg); color: var(--text-sub); font-weight: 400; letter-spacing: 0; text-transform: none; }
+    .table-wrap { overflow-x: auto; }
+    .feature-table { width: 100%; border-collapse: collapse; min-width: 480px; }
+    .feature-table th { padding: 7px 16px; font-size: 11px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; color: var(--text-sub); text-align: left; border-bottom: 1px solid var(--border); background: #f4f4f4; }
+    .feature-table td { padding: 9px 16px; font-size: 13px; border-bottom: 1px solid #ebebeb; vertical-align: middle; }
+    .feature-table tr:last-child td { border-bottom: none; }
+    .feature-table tr:hover td { background: #fafcff; }
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+    .badge-done     { background: var(--blue-bg);   color: #0043a4; }
+    .badge-changes  { background: var(--orange-bg); color: #a84400; }
+    .badge-na       { background: var(--grey-bg);   color: #525252; }
+    .badge-release  { background: #edf5ff; color: #0043a4; font-family: 'IBM Plex Mono', monospace; font-size: 10px; }
+    .empty-row td   { color: var(--text-sub); font-style: italic; font-size: 12px; padding: 14px 20px; }
+    .type-cell { font-size: 11px; color: var(--text-sub); font-family: 'IBM Plex Mono', monospace; }
+
+    .site-footer { background: #161616; color: #c6c6c6; font-size: 12px; padding: 18px 48px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .load-error { color: #a2191f; padding: 20px; background: #fff1f1; border: 1px solid #da1e28; border-radius: 8px; }
+
+    @media (max-width: 768px) {
+      .site-header, .nav-tabs, .container, .site-footer { padding-left: 16px; padding-right: 16px; }
+      .container { padding-top: 24px; }
+      .compare-block { grid-template-columns: 1fr; }
+      .compare-panel.before, .compare-panel.after { border: none; border-bottom: 1px solid var(--border); }
+      .sp-charts { grid-template-columns: 1fr; }
+      .theme-header { padding: 14px 16px; flex-wrap: wrap; }
+      .compare-pct { font-size: 40px; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Sample Product <span>IA Tracker</span></h1>
+  <span class="meta"><span class="synthetic-pill">Synthetic data</span><span id="lastUpdated">Last updated: Jan 15, 2025</span></span>
+</header>
+
+<div class="nav-tabs" role="tablist" aria-label="Tracker views">
+  <button class="nav-tab" role="tab" id="tabbtn-releases" aria-selected="true" aria-controls="tab-releases" data-tab="releases">GA Releases</button>
+  <button class="nav-tab" role="tab" id="tabbtn-ia" aria-selected="false" aria-controls="tab-ia" data-tab="ia" tabindex="-1">IA Progress</button>
+</div>
+
+<main class="container">
+
+  <!-- RELEASES -->
+  <div class="tab-panel active" id="tab-releases" role="tabpanel" aria-labelledby="tabbtn-releases">
+    <section>
+      <div class="section-label">All GA Releases — select a card to see full details</div>
+      <form class="filter-bar" id="relFilters" role="search" aria-label="Filter release items" onsubmit="return false">
+        <div class="field grow"><label for="relQ">Search work items</label><input id="relQ" type="search" placeholder="e.g. Policy, Dashboard…" autocomplete="off"></div>
+        <div class="field"><label for="relStatus">Status</label><select id="relStatus"><option value="">All statuses</option><option value="Complete">Complete</option><option value="Released with defects">Released w/ defects</option><option value="In audit">In audit</option><option value="In design">In design</option><option value="In dev + RTC story">In dev + RTC</option><option value="On hold">On hold</option><option value="In research">In research</option><option value="Not started">Not started</option></select></div>
+        <div class="field"><label for="relDesigner">Designer</label><select id="relDesigner"><option value="">All designers</option><option value="__none">Unassigned</option><option value="Designer 1">Designer 1</option><option value="Designer 2">Designer 2</option><option value="Designer 3">Designer 3</option><option value="Designer 4">Designer 4</option><option value="Designer 5">Designer 5</option><option value="Designer 6">Designer 6</option></select></div>
+        <button class="btn" type="button" id="relClear">Clear filters</button>
+      </form>
+      <p class="result-line" id="relResult" role="status" aria-live="polite">86 work items across 8 releases.</p>
+      <div class="release-grid" id="releaseGrid"><div class="release-card" tabindex="0" role="button" aria-label="Release A, Mar 15, 2024, 12 items. Open details.">
+      <div class="release-card-top"><div class="release-id">Release A</div><div class="release-phase">Released</div></div>
+      <div class="release-date">Mar 15, 2024</div>
+      <div class="release-counts">
+        <div class="release-count-item"><div class="release-count-num">12</div><div class="release-count-label">Items</div></div>
+        <div class="release-count-item"><div class="release-count-num">53</div><div class="release-count-label">Subitems</div></div>
+      </div>
+      <div class="mini-bar" style="height:8px" aria-hidden="true"><div class="mini-bar-seg" style="width:83.33333333333334%;background:#198038"></div><div class="mini-bar-seg" style="width:16.666666666666664%;background:#24a148"></div></div>
+      <div class="status-chips"><div class="status-chip chip-complete"><div class="status-chip-dot" style="background:#198038"></div>10 Complete</div><div class="status-chip chip-defects"><div class="status-chip-dot" style="background:#24a148"></div>2 Released w/ defects</div></div>
+      
+      <div class="release-card-hint">→ Select to see full breakdown</div></div><div class="release-card" tabindex="0" role="button" aria-label="Release B, Jun 28, 2024, 11 items. Open details.">
+      <div class="release-card-top"><div class="release-id">Release B</div><div class="release-phase">Released</div></div>
+      <div class="release-date">Jun 28, 2024</div>
+      <div class="release-counts">
+        <div class="release-count-item"><div class="release-count-num">11</div><div class="release-count-label">Items</div></div>
+        <div class="release-count-item"><div class="release-count-num">58</div><div class="release-count-label">Subitems</div></div>
+      </div>
+      <div class="mini-bar" style="height:8px" aria-hidden="true"><div class="mini-bar-seg" style="width:72.72727272727273%;background:#198038"></div><div class="mini-bar-seg" style="width:18.181818181818183%;background:#24a148"></div><div class="mini-bar-seg" style="width:9.090909090909092%;background:#161616"></div></div>
+      <div class="status-chips"><div class="status-chip chip-complete"><div class="status-chip-dot" style="background:#198038"></div>8 Complete</div><div class="status-chip chip-defects"><div class="status-chip-dot" style="background:#24a148"></div>2 Released w/ defects</div><div class="status-chip chip-hold"><div class="status-chip-dot" style="background:#161616"></div>1 On hold</div></div>
+      
+      <div class="release-card-hint">→ Select to see full breakdown</div></div><div class="release-card" tabindex="0" role="button" aria-label="Release C, Sep 20, 2024, 10 items. Open details.">
+      <div class="release-card-top"><div class="release-id">Release C</div><div class="release-phase">Released</div></div>
+      <div class="release-date">Sep 20, 2024</div>
+      <div class="release-counts">
+        <div class="release-count-item"><div class="release-count-num">10</div><div class="release-count-label">Items</div></div>
+        <div class="release-count-item"><div class="release-count-num">41</div><div class="release-count-label">Subitems</div></div>
+      </div>
+      <div class="mini-bar" style="height:8px" aria-hidden="true"><div class="mini-bar-seg" style="width:10%;background:#8a3ffc"></div><div class="mini-bar-seg" style="width:20%;background:#b28600"></div><div class="mini-bar-seg" style="width:60%;background:#198038"></div><div class="mini-bar-seg" style="width:10%;background:#24a148"></div></div>
+      <div class="status-chips"><div class="status-chip chip-complete"><div class="status-chip-dot" style="background:#198038"></div>6 Complete</div><div class="status-chip chip-audit"><div class="status-chip-dot" style="background:#b28600"></div>2 In audit</div><div class="status-chip chip-design"><div class="status-chip-dot" style="background:#8a3ffc"></div>1 In design</div><div class="status-chip chip-defects"><div class="status-chip-dot" style="background:#24a148"></div>1 Released w/ defects</div></div>
+      
+      <div class="release-card-hint">→ Select to see full breakdown</div></div><div class="release-card" tabindex="0" role="button" aria-label="Release D, Dec 6, 2024, 14 items. Open details.">
+      <div class="release-card-top"><div class="release-id">Release D</div><div class="release-phase">Released</div></div>
+      <div class="release-date">Dec 6, 2024</div>
+      <div class="release-counts">
+        <div class="release-count-item"><div class="release-count-num">14</div><div class="release-count-label">Items</div></div>
+        <div class="release-count-item"><div class="release-count-num">68</div><div class="release-count-label">Subitems</div></div>
+      </div>
+      <div class="mini-bar" style="height:8px" aria-hidden="true"><div class="mini-bar-seg" style="width:35.714285714285715%;background:#198038"></div><div class="mini-bar-seg" style="width:7.142857142857142%;background:#24a148"></div><div class="mini-bar-seg" style="width:7.142857142857142%;background:#161616"></div><div class="mini-bar-seg" style="width:14.285714285714285%;background:#da1e28"></div><div class="mini-bar-seg" style="width:14.285714285714285%;background:#8a3ffc"></div><div class="mini-bar-seg" style="width:21.428571428571427%;background:#b28600"></div></div>
+      <div class="status-chips"><div class="status-chip chip-complete"><div class="status-chip-dot" style="background:#198038"></div>5 Complete</div><div class="status-chip chip-audit"><div class="status-chip-dot" style="background:#b28600"></div>3 In audit</div><div class="status-chip chip-dev"><div class="status-chip-dot" style="background:#da1e28"></div>2 In dev + RTC</div><div class="status-chip chip-design"><div class="status-chip-dot" style="background:#8a3ffc"></div>2 In design</div></div>
+      
+      <div class="release-card-hint">→ Select to see full breakdown</div></div><div class="release-card" tabindex="0" role="button" aria-label="Release E, Mar 14, 2025, 12 items. Open details.">
+      <div class="release-card-top"><div class="release-id">Release E</div><div class="release-phase">In progress</div></div>
+      <div class="release-date">Mar 14, 2025</div>
+      <div class="release-counts">
+        <div class="release-count-item"><div class="release-count-num">12</div><div class="release-count-label">Items</div></div>
+        <div class="release-count-item"><div class="release-count-num">44</div><div class="release-count-label">Subitems</div></div>
+      </div>
+      <div class="mini-bar" style="height:8px" aria-hidden="true"><div class="mini-bar-seg" style="width:16.666666666666664%;background:#b28600"></div><div class="mini-bar-seg" style="width:8.333333333333332%;background:#161616"></div><div class="mini-bar-seg" style="width:33.33333333333333%;background:#da1e28"></div><div class="mini-bar-seg" style="width:25%;background:#8a3ffc"></div><div class="mini-bar-seg" style="width:8.333333333333332%;background:#198038"></div><div class="mini-bar-seg" style="width:8.333333333333332%;background:#0f62fe"></div></div>
+      <div class="status-chips"><div class="status-chip chip-dev"><div class="status-chip-dot" style="background:#da1e28"></div>4 In dev + RTC</div><div class="status-chip chip-design"><div class="status-chip-dot" style="background:#8a3ffc"></div>3 In design</div><div class="status-chip chip-audit"><div class="status-chip-dot" style="background:#b28600"></div>2 In audit</div><div class="status-chip chip-hold"><div class="status-chip-dot" style="background:#161616"></div>1 On hold</div></div>
+      
+      <div class="release-card-hint">→ Select to see full breakdown</div></div><div class="release-card" tabindex="0" role="button" aria-label="Release F, Jun 27, 2025, 10 items. Open details.">
+      <div class="release-card-top"><div class="release-id">Release F</div><div class="release-phase">Planned</div></div>
+      <div class="release-date">Jun 27, 2025</div>
+      <div class="release-counts">
+        <div class="release-count-item"><div class="release-count-num">10</div><div class="release-count-label">Items</div></div>
+        <div class="release-count-item"><div class="release-count-num">28</div><div class="release-count-label">Subitems</div></div>
+      </div>
+      <div class="mini-bar" style="height:8px" aria-hidden="true"><div class="mini-bar-seg" style="width:20%;background:#da1e28"></div><div class="mini-bar-seg" style="width:10%;background:#a8a8a8"></div><div class="mini-bar-seg" style="width:30%;background:#0f62fe"></div><div class="mini-bar-seg" style="width:30%;background:#8a3ffc"></div><div class="mini-bar-seg" style="width:10%;background:#161616"></div></div>
+      <div class="status-chips"><div class="status-chip chip-research"><div class="status-chip-dot" style="background:#0f62fe"></div>3 In research</div><div class="status-chip chip-design"><div class="status-chip-dot" style="background:#8a3ffc"></div>3 In design</div><div class="status-chip chip-dev"><div class="status-chip-dot" style="background:#da1e28"></div>2 In dev + RTC</div><div class="status-chip chip-not-started"><div class="status-chip-dot" style="background:#a8a8a8"></div>1 Not started</div></div>
+      
+      <div class="release-card-hint">→ Select to see full breakdown</div></div><div class="release-card" tabindex="0" role="button" aria-label="Release G, Sep 19, 2025, 9 items. Open details.">
+      <div class="release-card-top"><div class="release-id">Release G</div><div class="release-phase">Planned</div></div>
+      <div class="release-date">Sep 19, 2025</div>
+      <div class="release-counts">
+        <div class="release-count-item"><div class="release-count-num">9</div><div class="release-count-label">Items</div></div>
+        <div class="release-count-item"><div class="release-count-num">20</div><div class="release-count-label">Subitems</div></div>
+      </div>
+      <div class="mini-bar" style="height:8px" aria-hidden="true"><div class="mini-bar-seg" style="width:55.55555555555556%;background:#a8a8a8"></div><div class="mini-bar-seg" style="width:11.11111111111111%;background:#8a3ffc"></div><div class="mini-bar-seg" style="width:22.22222222222222%;background:#0f62fe"></div><div class="mini-bar-seg" style="width:11.11111111111111%;background:#da1e28"></div></div>
+      <div class="status-chips"><div class="status-chip chip-not-started"><div class="status-chip-dot" style="background:#a8a8a8"></div>5 Not started</div><div class="status-chip chip-research"><div class="status-chip-dot" style="background:#0f62fe"></div>2 In research</div><div class="status-chip chip-design"><div class="status-chip-dot" style="background:#8a3ffc"></div>1 In design</div><div class="status-chip chip-dev"><div class="status-chip-dot" style="background:#da1e28"></div>1 In dev + RTC</div></div>
+      
+      <div class="release-card-hint">→ Select to see full breakdown</div></div><div class="release-card" tabindex="0" role="button" aria-label="Release H, Dec 5, 2025, 8 items. Open details.">
+      <div class="release-card-top"><div class="release-id">Release H</div><div class="release-phase">Planned</div></div>
+      <div class="release-date">Dec 5, 2025</div>
+      <div class="release-counts">
+        <div class="release-count-item"><div class="release-count-num">8</div><div class="release-count-label">Items</div></div>
+        <div class="release-count-item"><div class="release-count-num">16</div><div class="release-count-label">Subitems</div></div>
+      </div>
+      <div class="mini-bar" style="height:8px" aria-hidden="true"><div class="mini-bar-seg" style="width:75%;background:#a8a8a8"></div><div class="mini-bar-seg" style="width:12.5%;background:#0f62fe"></div><div class="mini-bar-seg" style="width:12.5%;background:#161616"></div></div>
+      <div class="status-chips"><div class="status-chip chip-not-started"><div class="status-chip-dot" style="background:#a8a8a8"></div>6 Not started</div><div class="status-chip chip-research"><div class="status-chip-dot" style="background:#0f62fe"></div>1 In research</div><div class="status-chip chip-hold"><div class="status-chip-dot" style="background:#161616"></div>1 On hold</div></div>
+      
+      <div class="release-card-hint">→ Select to see full breakdown</div></div></div>
+    </section>
+  </div>
+
+  <!-- IA PROGRESS -->
+  <div class="tab-panel" id="tab-ia" role="tabpanel" aria-labelledby="tabbtn-ia">
+    <div style="display:flex;flex-direction:column;gap:40px">
+      <section>
+        <div class="section-label" id="compareHeading">Baseline snapshot vs Current snapshot — IA completion</div>
+        <div class="compare-block">
+          <div class="compare-panel before">
+            <div class="compare-label" id="beforeLabel">Baseline snapshot</div>
+            <div class="compare-pct" id="beforePct">62%</div>
+            <div class="compare-counts" id="beforeCounts"><strong>45</strong> Done &nbsp;·&nbsp; <strong style="color:#a84400">26</strong> Need Changes &nbsp;·&nbsp; <strong>2</strong> Not started &nbsp;·&nbsp; <strong>73</strong> Total</div>
+            <div class="compare-bar" aria-hidden="true"><div class="compare-bar-fill" id="beforeBar" style="background: var(--blue); width: 62%;"></div></div>
+          </div>
+          <div class="compare-delta">
+            <div class="delta-arrow" aria-hidden="true">↑</div>
+            <div class="delta-pct" id="deltaPct">+16 pts</div>
+            <div class="delta-sub" id="deltaSub">+12 Done<br>12 moved from Need Changes to Done</div>
+          </div>
+          <div class="compare-panel after">
+            <div class="compare-label" id="afterLabel">Current snapshot</div>
+            <div class="compare-pct" id="afterPct">78%</div>
+            <div class="compare-counts" id="afterCounts"><strong>57</strong> Done &nbsp;·&nbsp; <strong style="color:#a84400">14</strong> Need Changes &nbsp;·&nbsp; <strong>2</strong> Not started &nbsp;·&nbsp; <strong>73</strong> Total</div>
+            <div class="compare-bar" aria-hidden="true"><div class="compare-bar-fill" id="afterBar" style="background: var(--green); width: 78%;"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-label">Progress by theme</div>
+        <div class="theme-cards" id="themeCards"><div class="theme-card" tabindex="0" role="button" aria-label="Navigation &amp; Layout: 75% done. Show feature detail.">
+      <div class="theme-card-accent" style="background:#0f62fe"></div>
+      <div class="theme-card-name">Navigation &amp; Layout</div>
+      <div class="theme-card-epics">3 epics</div>
+      <div class="theme-card-pct" style="color:#0f62fe">75%</div>
+      <div class="theme-card-bar" aria-hidden="true"><div class="theme-card-bar-fill" style="width:75%;background:#0f62fe"></div></div>
+        <div class="theme-card-counts">12 Done · 3 Need Changes · 16 Features</div></div><div class="theme-card" tabindex="0" role="button" aria-label="Monitoring &amp; Notifications: 73% done. Show feature detail.">
+      <div class="theme-card-accent" style="background:#198038"></div>
+      <div class="theme-card-name">Monitoring &amp; Notifications</div>
+      <div class="theme-card-epics">2 epics</div>
+      <div class="theme-card-pct" style="color:#198038">73%</div>
+      <div class="theme-card-bar" aria-hidden="true"><div class="theme-card-bar-fill" style="width:73%;background:#198038"></div></div>
+        <div class="theme-card-counts">8 Done · 3 Need Changes · 11 Features</div></div><div class="theme-card" tabindex="0" role="button" aria-label="Resource Management: 83% done. Show feature detail.">
+      <div class="theme-card-accent" style="background:#8a3ffc"></div>
+      <div class="theme-card-name">Resource Management</div>
+      <div class="theme-card-epics">4 epics</div>
+      <div class="theme-card-pct" style="color:#8a3ffc">83%</div>
+      <div class="theme-card-bar" aria-hidden="true"><div class="theme-card-bar-fill" style="width:83%;background:#8a3ffc"></div></div>
+        <div class="theme-card-counts">20 Done · 4 Need Changes · 24 Features</div></div><div class="theme-card" tabindex="0" role="button" aria-label="System Configuration: 75% done. Show feature detail.">
+      <div class="theme-card-accent" style="background:#ff832b"></div>
+      <div class="theme-card-name">System Configuration</div>
+      <div class="theme-card-epics">3 epics</div>
+      <div class="theme-card-pct" style="color:#ff832b">75%</div>
+      <div class="theme-card-bar" aria-hidden="true"><div class="theme-card-bar-fill" style="width:75%;background:#ff832b"></div></div>
+        <div class="theme-card-counts">12 Done · 3 Need Changes · 16 Features</div></div><div class="theme-card" tabindex="0" role="button" aria-label="Others: 83% done. Show feature detail.">
+      <div class="theme-card-accent" style="background:#9f1853"></div>
+      <div class="theme-card-name">Others</div>
+      <div class="theme-card-epics">3 epics</div>
+      <div class="theme-card-pct" style="color:#9f1853">83%</div>
+      <div class="theme-card-bar" aria-hidden="true"><div class="theme-card-bar-fill" style="width:83%;background:#9f1853"></div></div>
+        <div class="theme-card-counts">5 Done · 1 Need Changes · 6 Features</div></div></div>
+      </section>
+
+      <section>
+        <div class="section-label">Full IA — feature detail by theme &amp; epic</div>
+        <form class="filter-bar" id="iaFilters" role="search" aria-label="Filter features" onsubmit="return false">
+          <div class="field grow"><label for="iaQ">Search features or epics</label><input id="iaQ" type="search" placeholder="e.g. wizard, policy…" autocomplete="off"></div>
+          <div class="field"><label for="iaStatus">Status</label><select id="iaStatus"><option value="">All statuses</option><option value="Done">Done</option><option value="Need Changes">Need Changes</option><option value="Not started">Not started</option></select></div>
+          <div class="field"><label for="iaRelease">GA release</label><select id="iaRelease"><option value="">All releases</option><option value="__none">No release</option><option value="Release A">Release A</option><option value="Release B">Release B</option><option value="Release C">Release C</option><option value="Release D">Release D</option><option value="Release E">Release E</option><option value="Release F">Release F</option><option value="Release G">Release G</option><option value="Release H">Release H</option></select></div>
+          <div class="field"><label for="iaType">Type</label><select id="iaType"><option value="">All types</option><option value="Modal">Modal</option><option value="Page">Page</option><option value="Panel">Panel</option><option value="Tab">Tab</option><option value="Tearsheet">Tearsheet</option><option value="Widget">Widget</option><option value="Wizard">Wizard</option></select></div>
+          <button class="btn" type="button" id="iaClear">Clear filters</button>
+        </form>
+        <p class="result-line" id="iaResult" role="status" aria-live="polite">73 features across 5 themes.</p>
+        <div id="themeDetails"><div class="theme-section" id="theme-sec-navigation-layout">
+      <button class="theme-header" id="hdr-navigation-layout" aria-expanded="false" aria-controls="body-navigation-layout">
+        <span class="theme-dot" style="background:#0f62fe"></span>
+        <span class="theme-header-name">Navigation &amp; Layout</span>
+        <span class="theme-header-stats">75% Done · 16 features</span>
+        <span class="theme-chevron " id="chev-navigation-layout" aria-hidden="true">▼</span>
+      </button>
+      <div class="theme-body " id="body-navigation-layout">
+        <div class="epic-block">
+            <div class="epic-title">Global navigation<span class="epic-tag">6 features</span><span class="epic-tag">⬡ SYN-NAV-1</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Primary menu</td>
+              <td class="type-cell">Tearsheet</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release B</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Breadcrumb trail</td>
+              <td class="type-cell">Tab</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release D</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Quick search</td>
+              <td class="type-cell">Tab</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release D</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">User menu</td>
+              <td class="type-cell">Page</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release F</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Help menu</td>
+              <td class="type-cell">Page</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release E</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Recent items</td>
+              <td class="type-cell">Wizard</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr></tbody>
+            </table></div>
+          </div><div class="epic-block">
+            <div class="epic-title">Page layout<span class="epic-tag">6 features</span><span class="epic-tag">⬡ SYN-NAV-2</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Dashboard shell</td>
+              <td class="type-cell">Wizard</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Split view</td>
+              <td class="type-cell">Page</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release C</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Side panel container</td>
+              <td class="type-cell">Tab</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release A</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Responsive grid</td>
+              <td class="type-cell">Tearsheet</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release F</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Empty page template</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release H</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Page header</td>
+              <td class="type-cell">Wizard</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release C</span></td>
+            </tr></tbody>
+            </table></div>
+          </div><div class="epic-block">
+            <div class="epic-title">Workspace switching<span class="epic-tag">4 features</span><span class="epic-tag">⬡ SYN-NAV-3</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Workspace picker</td>
+              <td class="type-cell">Panel</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release F</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Favorites</td>
+              <td class="type-cell">Modal</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release E</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Saved views</td>
+              <td class="type-cell">Modal</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release A</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Context banner</td>
+              <td class="type-cell">Page</td>
+              <td><span class="badge badge-na">Not started</span></td>
+              <td><span class="badge badge-release">—</span></td>
+            </tr></tbody>
+            </table></div>
+          </div>
+      </div></div><div class="theme-section" id="theme-sec-monitoring-notifications">
+      <button class="theme-header" id="hdr-monitoring-notifications" aria-expanded="false" aria-controls="body-monitoring-notifications">
+        <span class="theme-dot" style="background:#198038"></span>
+        <span class="theme-header-name">Monitoring &amp; Notifications</span>
+        <span class="theme-header-stats">73% Done · 11 features</span>
+        <span class="theme-chevron " id="chev-monitoring-notifications" aria-hidden="true">▼</span>
+      </button>
+      <div class="theme-body " id="body-monitoring-notifications">
+        <div class="epic-block">
+            <div class="epic-title">Health overview<span class="epic-tag">5 features</span><span class="epic-tag">⬡ SYN-MON-1</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Status summary</td>
+              <td class="type-cell">Wizard</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Health score tile</td>
+              <td class="type-cell">Tearsheet</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Trend chart</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release A</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Capacity widget</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release B</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Alert counts</td>
+              <td class="type-cell">Panel</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release H</span></td>
+            </tr></tbody>
+            </table></div>
+          </div><div class="epic-block">
+            <div class="epic-title">Notifications<span class="epic-tag">6 features</span><span class="epic-tag">⬡ SYN-MON-2</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Notification center</td>
+              <td class="type-cell">Tearsheet</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release B</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Toast messages</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release F</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Email preferences</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Alert rules</td>
+              <td class="type-cell">Modal</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release H</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Acknowledge flow</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release E</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Snooze dialog</td>
+              <td class="type-cell">Wizard</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release H</span></td>
+            </tr></tbody>
+            </table></div>
+          </div>
+      </div></div><div class="theme-section" id="theme-sec-resource-management">
+      <button class="theme-header" id="hdr-resource-management" aria-expanded="false" aria-controls="body-resource-management">
+        <span class="theme-dot" style="background:#8a3ffc"></span>
+        <span class="theme-header-name">Resource Management</span>
+        <span class="theme-header-stats">83% Done · 24 features</span>
+        <span class="theme-chevron " id="chev-resource-management" aria-hidden="true">▼</span>
+      </button>
+      <div class="theme-body " id="body-resource-management">
+        <div class="epic-block">
+            <div class="epic-title">Inventory<span class="epic-tag">8 features</span><span class="epic-tag">⬡ SYN-RES-1</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Resource list</td>
+              <td class="type-cell">Modal</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release E</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Resource detail</td>
+              <td class="type-cell">Modal</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release B</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Bulk actions</td>
+              <td class="type-cell">Wizard</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release C</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Tags and labels</td>
+              <td class="type-cell">Page</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release F</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Import wizard</td>
+              <td class="type-cell">Tearsheet</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Export dialog</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release A</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Compare view</td>
+              <td class="type-cell">Tearsheet</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Lifecycle timeline</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr></tbody>
+            </table></div>
+          </div><div class="epic-block">
+            <div class="epic-title">Allocation<span class="epic-tag">6 features</span><span class="epic-tag">⬡ SYN-RES-2</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Capacity planner</td>
+              <td class="type-cell">Page</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Allocation wizard</td>
+              <td class="type-cell">Tearsheet</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release D</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Quota editor</td>
+              <td class="type-cell">Tearsheet</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release A</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Reservation calendar</td>
+              <td class="type-cell">Wizard</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Conflict resolver</td>
+              <td class="type-cell">Page</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release C</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Utilization report</td>
+              <td class="type-cell">Panel</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release A</span></td>
+            </tr></tbody>
+            </table></div>
+          </div><div class="epic-block">
+            <div class="epic-title">Groups and policies<span class="epic-tag">5 features</span><span class="epic-tag">⬡ SYN-RES-3</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Group builder</td>
+              <td class="type-cell">Modal</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release H</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Policy editor</td>
+              <td class="type-cell">Tearsheet</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release D</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Policy assignment</td>
+              <td class="type-cell">Tab</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Inheritance view</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release E</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Audit trail</td>
+              <td class="type-cell">Tab</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release A</span></td>
+            </tr></tbody>
+            </table></div>
+          </div><div class="epic-block">
+            <div class="epic-title">Maintenance<span class="epic-tag">5 features</span><span class="epic-tag">⬡ SYN-RES-4</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Schedule window</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release A</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Maintenance wizard</td>
+              <td class="type-cell">Page</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release A</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Pre-check results</td>
+              <td class="type-cell">Page</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release B</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Rollback dialog</td>
+              <td class="type-cell">Wizard</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release H</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Maintenance history</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release B</span></td>
+            </tr></tbody>
+            </table></div>
+          </div>
+      </div></div><div class="theme-section" id="theme-sec-system-configuration">
+      <button class="theme-header" id="hdr-system-configuration" aria-expanded="false" aria-controls="body-system-configuration">
+        <span class="theme-dot" style="background:#ff832b"></span>
+        <span class="theme-header-name">System Configuration</span>
+        <span class="theme-header-stats">75% Done · 16 features</span>
+        <span class="theme-chevron " id="chev-system-configuration" aria-hidden="true">▼</span>
+      </button>
+      <div class="theme-body " id="body-system-configuration">
+        <div class="epic-block">
+            <div class="epic-title">Access control<span class="epic-tag">6 features</span><span class="epic-tag">⬡ SYN-SYS-1</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Role list</td>
+              <td class="type-cell">Page</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release B</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Role editor</td>
+              <td class="type-cell">Tearsheet</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">User invitation</td>
+              <td class="type-cell">Panel</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release D</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Permission matrix</td>
+              <td class="type-cell">Panel</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release D</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Session timeout</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release B</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Access review</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-na">Not started</span></td>
+              <td><span class="badge badge-release">—</span></td>
+            </tr></tbody>
+            </table></div>
+          </div><div class="epic-block">
+            <div class="epic-title">Connectivity<span class="epic-tag">5 features</span><span class="epic-tag">⬡ SYN-SYS-2</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Network settings</td>
+              <td class="type-cell">Panel</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release F</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Endpoint registration</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Certificate manager</td>
+              <td class="type-cell">Wizard</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release F</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Proxy settings</td>
+              <td class="type-cell">Wizard</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release H</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Connection test</td>
+              <td class="type-cell">Page</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release E</span></td>
+            </tr></tbody>
+            </table></div>
+          </div><div class="epic-block">
+            <div class="epic-title">Preferences<span class="epic-tag">5 features</span><span class="epic-tag">⬡ SYN-SYS-3</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Display preferences</td>
+              <td class="type-cell">Tearsheet</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release H</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Language and region</td>
+              <td class="type-cell">Tab</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release E</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Date format</td>
+              <td class="type-cell">Tab</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release B</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Accessibility settings</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release D</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Reset defaults</td>
+              <td class="type-cell">Tab</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release G</span></td>
+            </tr></tbody>
+            </table></div>
+          </div>
+      </div></div><div class="theme-section" id="theme-sec-others">
+      <button class="theme-header" id="hdr-others" aria-expanded="false" aria-controls="body-others">
+        <span class="theme-dot" style="background:#9f1853"></span>
+        <span class="theme-header-name">Others</span>
+        <span class="theme-header-stats">83% Done · 6 features</span>
+        <span class="theme-chevron " id="chev-others" aria-hidden="true">▼</span>
+      </button>
+      <div class="theme-body " id="body-others">
+        <div class="epic-block">
+            <div class="epic-title">Onboarding<span class="epic-tag">3 features</span><span class="epic-tag">⬡ SYN-OTH-1</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Welcome tour</td>
+              <td class="type-cell">Tearsheet</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release C</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Setup checklist</td>
+              <td class="type-cell">Tab</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release F</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Sample data loader</td>
+              <td class="type-cell">Page</td>
+              <td><span class="badge badge-changes">Need Changes</span></td>
+              <td><span class="badge badge-release">Release E</span></td>
+            </tr></tbody>
+            </table></div>
+          </div><div class="epic-block">
+            <div class="epic-title">Support<span class="epic-tag">3 features</span><span class="epic-tag">⬡ SYN-OTH-2</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>
+            <tr>
+              <td style="font-weight:500">Contact support</td>
+              <td class="type-cell">Modal</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release B</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Diagnostics bundle</td>
+              <td class="type-cell">Wizard</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release D</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">About dialog</td>
+              <td class="type-cell">Widget</td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td><span class="badge badge-release">Release H</span></td>
+            </tr></tbody>
+            </table></div>
+          </div><div class="epic-block">
+            <div class="epic-title">Future area (not yet assessed)<span class="epic-tag">0 features</span><span class="epic-tag">⬡ SYN-OTH-3</span></div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody><tr class="empty-row"><td colspan="4">No features recorded for this epic yet.</td></tr></tbody>
+            </table></div>
+          </div>
+      </div></div></div>
+      </section>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <span>Sample Product IA Tracker · portfolio demo · all records are synthetic</span>
+  <span id="footerDate">Last updated: Jan 15, 2025</span>
+</footer>
+
+<div class="overlay" id="overlay"></div>
+<div class="sidepanel" id="sidepanel" role="dialog" aria-modal="true" aria-labelledby="sp-release-id">
+  <div class="sp-header">
+    <div>
+      <div class="sp-release-id" id="sp-release-id">—</div>
+      <div class="sp-release-sub" id="sp-release-sub">—</div>
+    </div>
+    <button class="sp-close" id="spClose" aria-label="Close release details">✕</button>
+  </div>
+  <div class="sp-body" id="sp-body"></div>
+</div>
+
+<script>window.__DEMO_DATA__={"meta":{"title":"Sample Product IA Tracker","lastUpdated":"2025-01-15","beforeLabel":"Baseline snapshot","afterLabel":"Current snapshot","note":"SYNTHETIC DATA. Generated by tools/generate_synthetic_data.py. Contains no production records."},"releases":[{"id":"release-a","label":"Release A","date":"2024-03-15","phase":"Released","totalItems":12,"totalSubitems":53,"items":[{"name":"Bulk actions migration","subitems":5,"designer":"Designer 3","status":"Complete"},{"name":"Date format redesign","subitems":6,"designer":"Designer 2","status":"Complete"},{"name":"User menu redesign","subitems":7,"designer":"Designer 1","status":"Complete"},{"name":"Acknowledge flow content review","subitems":6,"designer":"Designer 3","status":"Complete"},{"name":"User invitation pattern alignment","subitems":1,"designer":"Designer 3","status":"Released with defects"},{"name":"Resource detail responsive update","subitems":2,"designer":"Designer 4","status":"Released with defects"},{"name":"Network settings pattern alignment","subitems":5,"designer":"Designer 1","status":"Complete"},{"name":"Capacity planner content review","subitems":6,"designer":"Designer 5","status":"Complete"},{"name":"Primary menu redesign","subitems":2,"designer":"Designer 2","status":"Complete"},{"name":"Alert counts accessibility pass","subitems":4,"designer":"Designer 6","status":"Complete"},{"name":"Inheritance view redesign","subitems":4,"designer":"Designer 1","status":"Complete"},{"name":"Resource list responsive update","subitems":5,"designer":"Designer 4","status":"Complete"}]},{"id":"release-b","label":"Release B","date":"2024-06-28","phase":"Released","totalItems":11,"totalSubitems":58,"items":[{"name":"Alert counts migration","subitems":2,"designer":"Designer 3","status":"Complete"},{"name":"Certificate manager migration","subitems":6,"designer":"Designer 5","status":"Complete"},{"name":"Pre-check results responsive update","subitems":8,"designer":"Designer 6","status":"Released with defects"},{"name":"Lifecycle timeline migration","subitems":8,"designer":"Designer 6","status":"Complete"},{"name":"Resource detail migration","subitems":3,"designer":"Designer 3","status":"Complete"},{"name":"Group builder pattern alignment","subitems":5,"designer":"Designer 6","status":"Complete"},{"name":"Split view content review","subitems":7,"designer":"Designer 5","status":"Complete"},{"name":"Bulk actions migration","subitems":6,"designer":"Designer 4","status":"Complete"},{"name":"Help menu redesign","subitems":8,"designer":"Designer 2","status":"Complete"},{"name":"Utilization report migration","subitems":2,"designer":"Designer 1","status":"On hold"},{"name":"Acknowledge flow pattern alignment","subitems":3,"designer":"Designer 6","status":"Released with defects"}]},{"id":"release-c","label":"Release C","date":"2024-09-20","phase":"Released","totalItems":10,"totalSubitems":41,"items":[{"name":"Saved views pattern alignment","subitems":5,"designer":"Designer 6","status":"In design"},{"name":"Quota editor migration","subitems":4,"designer":"Designer 5","status":"In audit"},{"name":"Session timeout content review","subitems":3,"designer":"Designer 3","status":"Complete"},{"name":"Alert counts content review","subitems":1,"designer":"Designer 5","status":"Complete"},{"name":"Endpoint registration redesign","subitems":8,"designer":"Designer 3","status":"Complete"},{"name":"Primary menu accessibility pass","subitems":6,"designer":"Designer 1","status":"Complete"},{"name":"Compare view migration","subitems":1,"designer":"Designer 2","status":"Released with defects"},{"name":"Date format redesign","subitems":2,"designer":"Designer 5","status":"Complete"},{"name":"Toast messages redesign","subitems":8,"designer":"Designer 6","status":"Complete"},{"name":"Favorites migration","subitems":3,"designer":"Designer 5","status":"In audit"}]},{"id":"release-d","label":"Release D","date":"2024-12-06","phase":"Released","totalItems":14,"totalSubitems":68,"items":[{"name":"Access review migration","subitems":1,"designer":"Designer 6","status":"Complete"},{"name":"Reset defaults accessibility pass","subitems":1,"designer":"Designer 1","status":"Complete"},{"name":"Network settings accessibility pass","subitems":4,"designer":"Designer 1","status":"Released with defects"},{"name":"Context banner migration","subitems":8,"designer":"Designer 2 / Designer 3","status":"On hold"},{"name":"Import wizard pattern alignment","subitems":3,"designer":"Designer 5","status":"In dev + RTC story"},{"name":"Resource detail migration","subitems":8,"designer":"Designer 5","status":"In design"},{"name":"Side panel container migration","subitems":7,"designer":"Designer 4","status":"Complete"},{"name":"Policy assignment pattern alignment","subitems":2,"designer":"Designer 1","status":"In audit"},{"name":"Quick search responsive update","subitems":6,"designer":"Designer 4","status":"In dev + RTC story"},{"name":"Bulk actions pattern alignment","subitems":8,"designer":"Designer 4","status":"Complete"},{"name":"Quota editor redesign","subitems":2,"designer":"Designer 1","status":"Complete"},{"name":"Saved views redesign","subitems":6,"designer":"Designer 4","status":"In audit"},{"name":"Primary menu migration","subitems":4,"designer":"Designer 2","status":"In audit"},{"name":"Help menu migration","subitems":8,"designer":"Designer 5","status":"In design"}]},{"id":"release-e","label":"Release E","date":"2025-03-14","phase":"In progress","totalItems":12,"totalSubitems":44,"items":[{"name":"Page header responsive update","subitems":5,"designer":"Designer 4","status":"In audit"},{"name":"Tags and labels pattern alignment","subitems":7,"designer":"Designer 3","status":"On hold"},{"name":"Notification center migration","subitems":8,"designer":"Designer 6","status":"In dev + RTC story"},{"name":"Role editor migration","subitems":5,"designer":"Designer 2","status":"In design"},{"name":"Display preferences pattern alignment","subitems":1,"designer":"Designer 1","status":"In dev + RTC story"},{"name":"Connection test redesign","subitems":1,"designer":"","status":"Complete"},{"name":"Resource list content review","subitems":0,"designer":"Designer 5","status":"In research"},{"name":"Role list content review","subitems":1,"designer":"Designer 2","status":"In design"},{"name":"Split view redesign","subitems":3,"designer":"Designer 1","status":"In dev + RTC story"},{"name":"Contact support pattern alignment","subitems":2,"designer":"Designer 5","status":"In design"},{"name":"Alert rules redesign","subitems":7,"designer":"Designer 2","status":"In audit"},{"name":"Primary menu content review","subitems":4,"designer":"Designer 5","status":"In dev + RTC story"}]},{"id":"release-f","label":"Release F","date":"2025-06-27","phase":"Planned","totalItems":10,"totalSubitems":28,"items":[{"name":"Utilization report redesign","subitems":2,"designer":"Designer 4","status":"In dev + RTC story"},{"name":"Tags and labels accessibility pass","subitems":0,"designer":"Designer 5","status":"Not started"},{"name":"Compare view migration","subitems":2,"designer":"Designer 2","status":"In research"},{"name":"Maintenance history migration","subitems":5,"designer":"Designer 3","status":"In design"},{"name":"Status summary content review","subitems":5,"designer":"Designer 4","status":"In research"},{"name":"Reservation calendar pattern alignment","subitems":1,"designer":"Designer 6","status":"In dev + RTC story"},{"name":"Endpoint registration pattern alignment","subitems":5,"designer":"Designer 5","status":"On hold"},{"name":"About dialog accessibility pass","subitems":3,"designer":"Designer 1","status":"In research"},{"name":"Responsive grid pattern alignment","subitems":2,"designer":"Designer 1","status":"In design"},{"name":"Breadcrumb trail accessibility pass","subitems":3,"designer":"Designer 5","status":"In design"}]},{"id":"release-g","label":"Release G","date":"2025-09-19","phase":"Planned","totalItems":9,"totalSubitems":20,"items":[{"name":"Page header pattern alignment","subitems":0,"designer":"Designer 6","status":"Not started"},{"name":"Permission matrix redesign","subitems":1,"designer":"Designer 4","status":"In design"},{"name":"Capacity planner content review","subitems":3,"designer":"Designer 1","status":"Not started"},{"name":"Recent items responsive update","subitems":3,"designer":"Designer 1","status":"Not started"},{"name":"Primary menu accessibility pass","subitems":0,"designer":"Designer 2","status":"In research"},{"name":"Policy editor pattern alignment","subitems":4,"designer":"Designer 1","status":"Not started"},{"name":"Status summary accessibility pass","subitems":2,"designer":"Designer 2","status":"In dev + RTC story"},{"name":"Compare view content review","subitems":7,"designer":"Designer 5","status":"Not started"},{"name":"Alert counts migration","subitems":0,"designer":"Designer 6","status":"In research"}]},{"id":"release-h","label":"Release H","date":"2025-12-05","phase":"Planned","totalItems":8,"totalSubitems":16,"items":[{"name":"Lifecycle timeline migration","subitems":0,"designer":"Designer 4","status":"Not started"},{"name":"Alert counts migration","subitems":0,"designer":"Designer 2","status":"Not started"},{"name":"Favorites redesign","subitems":0,"designer":"Designer 4","status":"Not started"},{"name":"Pre-check results content review","subitems":0,"designer":"Designer 3","status":"Not started"},{"name":"Help menu redesign","subitems":6,"designer":"Designer 4","status":"In research"},{"name":"Proxy settings migration","subitems":5,"designer":"Designer 1","status":"On hold"},{"name":"Resource detail redesign","subitems":5,"designer":"Designer 5","status":"Not started"},{"name":"Acknowledge flow accessibility pass","subitems":0,"designer":"Designer 1","status":"Not started"}]}],"themes":[{"id":"navigation-layout","name":"Navigation & Layout","color":"#0f62fe","epics":[{"name":"Global navigation","sourceRef":"SYN-NAV-1","features":[{"name":"Primary menu","status":"Done","previousStatus":"Done","release":"Release B","pageType":"Tearsheet"},{"name":"Breadcrumb trail","status":"Need Changes","previousStatus":"Need Changes","release":"Release D","pageType":"Tab"},{"name":"Quick search","status":"Done","previousStatus":"Done","release":"Release D","pageType":"Tab"},{"name":"User menu","status":"Done","previousStatus":"Need Changes","release":"Release F","pageType":"Page"},{"name":"Help menu","status":"Done","previousStatus":"Need Changes","release":"Release E","pageType":"Page"},{"name":"Recent items","status":"Done","previousStatus":"Done","release":"Release G","pageType":"Wizard"}]},{"name":"Page layout","sourceRef":"SYN-NAV-2","features":[{"name":"Dashboard shell","status":"Done","previousStatus":"Done","release":"Release G","pageType":"Wizard"},{"name":"Split view","status":"Need Changes","previousStatus":"Need Changes","release":"Release C","pageType":"Page"},{"name":"Side panel container","status":"Done","previousStatus":"Done","release":"Release A","pageType":"Tab"},{"name":"Responsive grid","status":"Done","previousStatus":"Done","release":"Release F","pageType":"Tearsheet"},{"name":"Empty page template","status":"Done","previousStatus":"Done","release":"Release H","pageType":"Widget"},{"name":"Page header","status":"Need Changes","previousStatus":"Need Changes","release":"Release C","pageType":"Wizard"}]},{"name":"Workspace switching","sourceRef":"SYN-NAV-3","features":[{"name":"Workspace picker","status":"Done","previousStatus":"Done","release":"Release F","pageType":"Panel"},{"name":"Favorites","status":"Done","previousStatus":"Done","release":"Release E","pageType":"Modal"},{"name":"Saved views","status":"Done","previousStatus":"Done","release":"Release A","pageType":"Modal"},{"name":"Context banner","status":"Not started","previousStatus":"Not started","release":"","pageType":"Page"}]}]},{"id":"monitoring-notifications","name":"Monitoring & Notifications","color":"#198038","epics":[{"name":"Health overview","sourceRef":"SYN-MON-1","features":[{"name":"Status summary","status":"Done","previousStatus":"Done","release":"Release G","pageType":"Wizard"},{"name":"Health score tile","status":"Done","previousStatus":"Done","release":"Release G","pageType":"Tearsheet"},{"name":"Trend chart","status":"Done","previousStatus":"Done","release":"Release A","pageType":"Widget"},{"name":"Capacity widget","status":"Need Changes","previousStatus":"Need Changes","release":"Release B","pageType":"Widget"},{"name":"Alert counts","status":"Done","previousStatus":"Done","release":"Release H","pageType":"Panel"}]},{"name":"Notifications","sourceRef":"SYN-MON-2","features":[{"name":"Notification center","status":"Done","previousStatus":"Need Changes","release":"Release B","pageType":"Tearsheet"},{"name":"Toast messages","status":"Done","previousStatus":"Done","release":"Release F","pageType":"Widget"},{"name":"Email preferences","status":"Need Changes","previousStatus":"Need Changes","release":"Release G","pageType":"Widget"},{"name":"Alert rules","status":"Need Changes","previousStatus":"Need Changes","release":"Release H","pageType":"Modal"},{"name":"Acknowledge flow","status":"Done","previousStatus":"Done","release":"Release E","pageType":"Widget"},{"name":"Snooze dialog","status":"Done","previousStatus":"Done","release":"Release H","pageType":"Wizard"}]}]},{"id":"resource-management","name":"Resource Management","color":"#8a3ffc","epics":[{"name":"Inventory","sourceRef":"SYN-RES-1","features":[{"name":"Resource list","status":"Done","previousStatus":"Done","release":"Release E","pageType":"Modal"},{"name":"Resource detail","status":"Done","previousStatus":"Done","release":"Release B","pageType":"Modal"},{"name":"Bulk actions","status":"Done","previousStatus":"Done","release":"Release C","pageType":"Wizard"},{"name":"Tags and labels","status":"Done","previousStatus":"Done","release":"Release F","pageType":"Page"},{"name":"Import wizard","status":"Done","previousStatus":"Done","release":"Release G","pageType":"Tearsheet"},{"name":"Export dialog","status":"Need Changes","previousStatus":"Need Changes","release":"Release A","pageType":"Widget"},{"name":"Compare view","status":"Need Changes","previousStatus":"Need Changes","release":"Release G","pageType":"Tearsheet"},{"name":"Lifecycle timeline","status":"Done","previousStatus":"Done","release":"Release G","pageType":"Widget"}]},{"name":"Allocation","sourceRef":"SYN-RES-2","features":[{"name":"Capacity planner","status":"Need Changes","previousStatus":"Need Changes","release":"Release G","pageType":"Page"},{"name":"Allocation wizard","status":"Done","previousStatus":"Done","release":"Release D","pageType":"Tearsheet"},{"name":"Quota editor","status":"Done","previousStatus":"Done","release":"Release A","pageType":"Tearsheet"},{"name":"Reservation calendar","status":"Done","previousStatus":"Done","release":"Release G","pageType":"Wizard"},{"name":"Conflict resolver","status":"Done","previousStatus":"Done","release":"Release C","pageType":"Page"},{"name":"Utilization report","status":"Done","previousStatus":"Need Changes","release":"Release A","pageType":"Panel"}]},{"name":"Groups and policies","sourceRef":"SYN-RES-3","features":[{"name":"Group builder","status":"Done","previousStatus":"Done","release":"Release H","pageType":"Modal"},{"name":"Policy editor","status":"Done","previousStatus":"Done","release":"Release D","pageType":"Tearsheet"},{"name":"Policy assignment","status":"Done","previousStatus":"Need Changes","release":"Release G","pageType":"Tab"},{"name":"Inheritance view","status":"Done","previousStatus":"Need Changes","release":"Release E","pageType":"Widget"},{"name":"Audit trail","status":"Done","previousStatus":"Done","release":"Release A","pageType":"Tab"}]},{"name":"Maintenance","sourceRef":"SYN-RES-4","features":[{"name":"Schedule window","status":"Done","previousStatus":"Done","release":"Release A","pageType":"Widget"},{"name":"Maintenance wizard","status":"Done","previousStatus":"Done","release":"Release A","pageType":"Page"},{"name":"Pre-check results","status":"Done","previousStatus":"Done","release":"Release B","pageType":"Page"},{"name":"Rollback dialog","status":"Need Changes","previousStatus":"Need Changes","release":"Release H","pageType":"Wizard"},{"name":"Maintenance history","status":"Done","previousStatus":"Done","release":"Release B","pageType":"Widget"}]}]},{"id":"system-configuration","name":"System Configuration","color":"#ff832b","epics":[{"name":"Access control","sourceRef":"SYN-SYS-1","features":[{"name":"Role list","status":"Done","previousStatus":"Need Changes","release":"Release B","pageType":"Page"},{"name":"Role editor","status":"Done","previousStatus":"Done","release":"Release G","pageType":"Tearsheet"},{"name":"User invitation","status":"Need Changes","previousStatus":"Need Changes","release":"Release D","pageType":"Panel"},{"name":"Permission matrix","status":"Done","previousStatus":"Need Changes","release":"Release D","pageType":"Panel"},{"name":"Session timeout","status":"Done","previousStatus":"Done","release":"Release B","pageType":"Widget"},{"name":"Access review","status":"Not started","previousStatus":"Not started","release":"","pageType":"Widget"}]},{"name":"Connectivity","sourceRef":"SYN-SYS-2","features":[{"name":"Network settings","status":"Done","previousStatus":"Done","release":"Release F","pageType":"Panel"},{"name":"Endpoint registration","status":"Done","previousStatus":"Done","release":"Release G","pageType":"Widget"},{"name":"Certificate manager","status":"Done","previousStatus":"Done","release":"Release F","pageType":"Wizard"},{"name":"Proxy settings","status":"Need Changes","previousStatus":"Need Changes","release":"Release H","pageType":"Wizard"},{"name":"Connection test","status":"Done","previousStatus":"Done","release":"Release E","pageType":"Page"}]},{"name":"Preferences","sourceRef":"SYN-SYS-3","features":[{"name":"Display preferences","status":"Done","previousStatus":"Done","release":"Release H","pageType":"Tearsheet"},{"name":"Language and region","status":"Done","previousStatus":"Done","release":"Release E","pageType":"Tab"},{"name":"Date format","status":"Done","previousStatus":"Need Changes","release":"Release B","pageType":"Tab"},{"name":"Accessibility settings","status":"Need Changes","previousStatus":"Need Changes","release":"Release D","pageType":"Widget"},{"name":"Reset defaults","status":"Done","previousStatus":"Done","release":"Release G","pageType":"Tab"}]}]},{"id":"others","name":"Others","color":"#9f1853","epics":[{"name":"Onboarding","sourceRef":"SYN-OTH-1","features":[{"name":"Welcome tour","status":"Done","previousStatus":"Need Changes","release":"Release C","pageType":"Tearsheet"},{"name":"Setup checklist","status":"Done","previousStatus":"Need Changes","release":"Release F","pageType":"Tab"},{"name":"Sample data loader","status":"Need Changes","previousStatus":"Need Changes","release":"Release E","pageType":"Page"}]},{"name":"Support","sourceRef":"SYN-OTH-2","features":[{"name":"Contact support","status":"Done","previousStatus":"Need Changes","release":"Release B","pageType":"Modal"},{"name":"Diagnostics bundle","status":"Done","previousStatus":"Done","release":"Release D","pageType":"Wizard"},{"name":"About dialog","status":"Done","previousStatus":"Done","release":"Release H","pageType":"Widget"}]},{"name":"Future area (not yet assessed)","sourceRef":"SYN-OTH-3","features":[]}]}],"designers":["Designer 1","Designer 2","Designer 3","Designer 4","Designer 5","Designer 6"]};</script>
+<script>
+/* ─── Status config (unchanged from the original tracker) ───────────── */
+const STATUS_CONFIG = {
+  'Complete':             { color: '#198038', chipClass: 'chip-complete',    label: 'Complete' },
+  'Released with defects':{ color: '#24a148', chipClass: 'chip-defects',     label: 'Released w/ defects' },
+  'In audit':             { color: '#b28600', chipClass: 'chip-audit',       label: 'In audit' },
+  'In design':            { color: '#8a3ffc', chipClass: 'chip-design',      label: 'In design' },
+  'In dev + RTC story':   { color: '#da1e28', chipClass: 'chip-dev',         label: 'In dev + RTC' },
+  'On hold':              { color: '#161616', chipClass: 'chip-hold',        label: 'On hold' },
+  'In research':          { color: '#0f62fe', chipClass: 'chip-research',    label: 'In research' },
+  'Not started':          { color: '#a8a8a8', chipClass: 'chip-not-started', label: 'Not started' },
+};
+const getStatus = s => STATUS_CONFIG[s] || STATUS_CONFIG['Not started'];
+
+/* ─── Helpers ───────────────────────────────────────────────────────── */
+const $ = id => document.getElementById(id);
+const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmtDate = iso => {
+  const d = new Date(iso + 'T00:00:00Z');
+  return isNaN(d) ? iso : d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric', timeZone:'UTC' });
+};
+
+function countByStatus(items) {
+  const c = {};
+  for (const it of items) { const s = it.status || 'Not started'; c[s] = (c[s] || 0) + 1; }
+  return c;
+}
+function subitemsByStatus(items) {
+  const c = {};
+  for (const it of items) { const s = it.status || 'Not started'; c[s] = (c[s] || 0) + (it.subitems || 0); }
+  return c;
+}
+function buildMiniBar(counts, total, height = '8px') {
+  if (!total) return '';
+  const segs = Object.entries(counts).map(([s, n]) =>
+    `<div class="mini-bar-seg" style="width:${Math.max(2, n/total*100)}%;background:${getStatus(s).color}"></div>`).join('');
+  return `<div class="mini-bar" style="height:${height}" aria-hidden="true">${segs}</div>`;
+}
+function buildStackedBar(counts, total) {
+  if (!total) return '<div style="height:14px;background:#e0e0e0;border-radius:7px"></div>';
+  const segs = Object.entries(counts).filter(([,n]) => n).map(([s, n]) =>
+    `<div class="sp-stacked-seg" style="width:${Math.max(1, n/total*100)}%;background:${getStatus(s).color}"></div>`).join('');
+  return `<div class="sp-stacked-bar" aria-hidden="true">${segs}</div>`;
+}
+function buildLegend(counts) {
+  return Object.entries(counts).filter(([,n]) => n > 0).map(([s, n]) => `
+    <div class="sp-legend-row">
+      <div class="sp-legend-left"><div class="sp-legend-dot" style="background:${getStatus(s).color}"></div><span>${esc(getStatus(s).label)}</span></div>
+      <span class="sp-legend-count">${n}</span>
+    </div>`).join('');
+}
+function statusBadge(s) {
+  if (!s) return `<span class="badge badge-na">—</span>`;
+  if (s === 'Done') return `<span class="badge badge-done">Done</span>`;
+  if (s === 'Need Changes') return `<span class="badge badge-changes">Need Changes</span>`;
+  return `<span class="badge badge-na">${esc(s)}</span>`;
+}
+const onActivate = (el, fn) => {
+  el.addEventListener('click', fn);
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } });
+};
+const fillSelect = (sel, options) => { sel.innerHTML = options.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join(''); };
+
+/* ─── Load data ─────────────────────────────────────────────────────── */
+let DATA;
+const relState = { q: '', status: '', designer: '' };
+const iaState  = { q: '', status: '', release: '', type: '' };
+const openThemes = new Set();
+let lastFocus = null;
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Data is inlined as window.__DEMO_DATA__ so the demo works via file://
+  DATA = window.__DEMO_DATA__;
+  const stamp = `Last updated: ${fmtDate(DATA.meta.lastUpdated)}`;
+  $('lastUpdated').textContent = stamp;
+  $('footerDate').textContent = stamp;
+  $('beforeLabel').textContent = DATA.meta.beforeLabel;
+  $('afterLabel').textContent = DATA.meta.afterLabel;
+  $('compareHeading').textContent = `${DATA.meta.beforeLabel} vs ${DATA.meta.afterLabel} — IA completion`;
+  initFilters();
+  buildReleaseGrid();
+  buildIATab();
+});
+
+/* ─── Filters ───────────────────────────────────────────────────────── */
+function initFilters() {
+  const allFeatures = DATA.themes.flatMap(t => t.epics.flatMap(e => e.features));
+  fillSelect($('relStatus'), [['', 'All statuses'], ...Object.keys(STATUS_CONFIG).map(s => [s, STATUS_CONFIG[s].label])]);
+  const designers = new Set();
+  DATA.releases.forEach(r => r.items.forEach(i => (i.designer || '').split('/').map(x => x.trim()).filter(Boolean).forEach(d => designers.add(d))));
+  fillSelect($('relDesigner'), [['', 'All designers'], ['__none', 'Unassigned'], ...[...designers].sort().map(d => [d, d])]);
+  fillSelect($('iaStatus'), [['', 'All statuses'], ['Done', 'Done'], ['Need Changes', 'Need Changes'], ['Not started', 'Not started']]);
+  fillSelect($('iaRelease'), [['', 'All releases'], ['__none', 'No release'], ...DATA.releases.map(r => [r.label, r.label])]);
+  fillSelect($('iaType'), [['', 'All types'], ...[...new Set(allFeatures.map(f => f.pageType).filter(Boolean))].sort().map(t => [t, t])]);
+
+  const bind = (id, state, key, fn) => $(id).addEventListener('input', e => { state[key] = e.target.value; fn(); });
+  bind('relQ', relState, 'q', buildReleaseGrid);
+  bind('relStatus', relState, 'status', buildReleaseGrid);
+  bind('relDesigner', relState, 'designer', buildReleaseGrid);
+  bind('iaQ', iaState, 'q', renderDetails);
+  bind('iaStatus', iaState, 'status', renderDetails);
+  bind('iaRelease', iaState, 'release', renderDetails);
+  bind('iaType', iaState, 'type', renderDetails);
+  $('relClear').addEventListener('click', clearRel);
+  $('iaClear').addEventListener('click', clearIA);
+}
+function clearRel() {
+  Object.assign(relState, { q:'', status:'', designer:'' });
+  ['relQ','relStatus','relDesigner'].forEach(id => $(id).value = '');
+  buildReleaseGrid();
+}
+function clearIA() {
+  Object.assign(iaState, { q:'', status:'', release:'', type:'' });
+  ['iaQ','iaStatus','iaRelease','iaType'].forEach(id => $(id).value = '');
+  renderDetails();
+}
+const relActive = () => !!(relState.q.trim() || relState.status || relState.designer);
+const iaActive  = () => !!(iaState.q.trim() || iaState.status || iaState.release || iaState.type);
+
+function itemMatches(it) {
+  const q = relState.q.trim().toLowerCase();
+  if (q && !it.name.toLowerCase().includes(q)) return false;
+  if (relState.status && (it.status || 'Not started') !== relState.status) return false;
+  if (relState.designer === '__none') return !it.designer;
+  if (relState.designer && !(it.designer || '').split('/').map(x => x.trim()).includes(relState.designer)) return false;
+  return true;
+}
+function featureMatches(f, epicName) {
+  const q = iaState.q.trim().toLowerCase();
+  if (q && !(f.name.toLowerCase().includes(q) || epicName.toLowerCase().includes(q))) return false;
+  if (iaState.status && f.status !== iaState.status) return false;
+  if (iaState.release === '__none' ? !!f.release : (iaState.release && f.release !== iaState.release)) return false;
+  if (iaState.type && f.pageType !== iaState.type) return false;
+  return true;
+}
+
+/* ─── Release grid ──────────────────────────────────────────────────── */
+function buildReleaseGrid() {
+  const grid = $('releaseGrid');
+  grid.innerHTML = '';
+  const active = relActive();
+  let shown = 0, matchedItems = 0;
+
+  DATA.releases.forEach(rel => {
+    const matches = active ? rel.items.filter(itemMatches) : rel.items;
+    if (active && !matches.length) return;
+    shown++; matchedItems += matches.length;
+
+    const counts = countByStatus(rel.items);
+    const total = rel.items.length;
+    const subs = rel.items.reduce((s, i) => s + (i.subitems || 0), 0);
+    const chips = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,4).map(([s, n]) => {
+      const cfg = getStatus(s);
+      return `<div class="status-chip ${cfg.chipClass}"><div class="status-chip-dot" style="background:${cfg.color}"></div>${n} ${esc(cfg.label)}</div>`;
+    }).join('');
+
+    const card = document.createElement('div');
+    card.className = 'release-card';
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `${rel.label}, ${fmtDate(rel.date)}, ${total} items. Open details.`);
+    card.innerHTML = `
+      <div class="release-card-top"><div class="release-id">${esc(rel.label)}</div><div class="release-phase">${esc(rel.phase)}</div></div>
+      <div class="release-date">${esc(fmtDate(rel.date))}</div>
+      <div class="release-counts">
+        <div class="release-count-item"><div class="release-count-num">${total}</div><div class="release-count-label">Items</div></div>
+        <div class="release-count-item"><div class="release-count-num">${subs || '—'}</div><div class="release-count-label">Subitems</div></div>
+      </div>
+      ${buildMiniBar(counts, total)}
+      <div class="status-chips">${chips}</div>
+      ${active ? `<div class="release-match">${matches.length} of ${total} items match</div>` : ''}
+      <div class="release-card-hint">→ Select to see full breakdown</div>`;
+    onActivate(card, () => openSidePanel(rel));
+    grid.appendChild(card);
+  });
+
+  if (!shown) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><strong>No work items match these filters</strong>Try a different search term or clear the filters.<br><button class="btn" type="button" id="relEmptyClear">Clear filters</button></div>`;
+    $('relEmptyClear').addEventListener('click', clearRel);
+  }
+  $('relResult').textContent = active
+    ? `${matchedItems} matching item${matchedItems !== 1 ? 's' : ''} in ${shown} of ${DATA.releases.length} releases.`
+    : `${DATA.releases.reduce((s, r) => s + r.items.length, 0)} work items across ${DATA.releases.length} releases.`;
+}
+
+/* ─── Side panel ────────────────────────────────────────────────────── */
+function openSidePanel(rel) {
+  lastFocus = document.activeElement;
+  const counts = countByStatus(rel.items);
+  const subCounts = subitemsByStatus(rel.items);
+  const total = rel.items.length;
+  const subs = rel.items.reduce((s, i) => s + (i.subitems || 0), 0);
+  const list = relActive() ? rel.items.filter(itemMatches) : rel.items;
+  const inProgress = (counts['In design']||0) + (counts['In dev + RTC story']||0) + (counts['In audit']||0);
+
+  $('sp-release-id').textContent = rel.label;
+  $('sp-release-sub').textContent = `${fmtDate(rel.date)} · ${rel.phase}`;
+
+  const rows = list.map(item => {
+    const cfg = getStatus(item.status);
+    return `<div class="sp-item-row">
+      <div class="sp-item-status-dot" style="background:${cfg.color}" title="${esc(item.status)}"></div>
+      <div class="sp-item-content">
+        <div class="sp-item-name">${esc(item.name)}</div>
+        <div class="sp-item-meta">
+          <span class="sp-item-status-badge" style="background:${cfg.color}18;color:${cfg.color === '#a8a8a8' ? '#525252' : cfg.color}">${esc(cfg.label)}</span>
+          ${item.subitems > 0 ? `<span class="sp-item-subitems">${item.subitems} subitems</span>` : ''}
+          <span class="sp-item-designer">${item.designer ? esc(item.designer) : 'Unassigned'}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  $('sp-body').innerHTML = `
+    <div class="sp-summary">
+      <div class="sp-summary-title">Summary</div>
+      <div class="sp-kpi-row">
+        <div class="sp-kpi"><div class="sp-kpi-num">${total}</div><div class="sp-kpi-label">Total Items</div></div>
+        <div class="sp-kpi"><div class="sp-kpi-num">${subs || '—'}</div><div class="sp-kpi-label">Total Subitems</div></div>
+        <div class="sp-kpi"><div class="sp-kpi-num" style="color:var(--green)">${counts['Complete'] || 0}</div><div class="sp-kpi-label">Complete</div></div>
+        <div class="sp-kpi"><div class="sp-kpi-num" style="color:var(--red)">${inProgress}</div><div class="sp-kpi-label">In Progress</div></div>
+      </div>
+      <div class="sp-charts">
+        <div class="sp-chart-block"><div class="sp-chart-title">Items (${total})</div>${buildStackedBar(counts, total)}<div class="sp-legend">${buildLegend(counts)}</div></div>
+        <div class="sp-chart-block"><div class="sp-chart-title">Subitems (${subs || '–'})</div>
+          ${subs ? buildStackedBar(subCounts, subs) + `<div class="sp-legend">${buildLegend(subCounts)}</div>` : '<div style="font-size:12px;color:var(--text-sub);padding:8px 0">No subitems recorded</div>'}
+        </div>
+      </div>
+    </div>
+    <div class="sp-items-header">Items (${relActive() ? `${list.length} of ${total} match filters` : total})</div>
+    ${rows || '<div class="sp-empty">No items in this release match the current filters.</div>'}`;
+
+  $('overlay').classList.add('open');
+  $('sidepanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  $('sp-body').scrollTop = 0;
+  $('spClose').focus();
+}
+function closeSidePanel() {
+  if (!$('sidepanel').classList.contains('open')) return;
+  $('overlay').classList.remove('open');
+  $('sidepanel').classList.remove('open');
+  document.body.style.overflow = '';
+  if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+}
+$('overlay').addEventListener('click', closeSidePanel);
+$('spClose').addEventListener('click', closeSidePanel);
+document.addEventListener('keydown', e => {
+  const open = $('sidepanel').classList.contains('open');
+  if (e.key === 'Escape') closeSidePanel();
+  if (open && e.key === 'Tab') {            /* simple focus trap */
+    const f = [...$('sidepanel').querySelectorAll('button, [href], input, select, [tabindex]:not([tabindex="-1"])')];
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+});
+
+/* ─── IA tab ────────────────────────────────────────────────────────── */
+const featureStats = () => {
+  const all = DATA.themes.flatMap(t => t.epics.flatMap(e => e.features));
+  const snap = key => ({
+    done: all.filter(f => f[key] === 'Done').length,
+    needChanges: all.filter(f => f[key] === 'Need Changes').length,
+    notStarted: all.filter(f => f[key] === 'Not started').length,
+    total: all.length,
+  });
+  /* `previousStatus` is a synthetic field standing in for the original's baseline snapshot */
+  const resolved = all.filter(f => f.previousStatus === 'Need Changes' && f.status === 'Done').length;
+  return { before: snap('previousStatus'), after: snap('status'), resolved };
+};
+const countsLine = s => `<strong>${s.done}</strong> Done &nbsp;·&nbsp; <strong style="color:#a84400">${s.needChanges}</strong> Need Changes &nbsp;·&nbsp; ` +
+  (s.notStarted ? `<strong>${s.notStarted}</strong> Not started &nbsp;·&nbsp; ` : '') + `<strong>${s.total}</strong> Total`;
+
+function buildIATab() {
+  const S = featureStats();
+  const bPct = pct(S.before.done, S.before.total), aPct = pct(S.after.done, S.after.total);
+  const dPct = aPct - bPct, dDone = S.after.done - S.before.done;
+  $('beforePct').textContent = `${bPct}%`;
+  $('afterPct').textContent = `${aPct}%`;
+  $('beforeBar').style.width = `${bPct}%`;
+  $('afterBar').style.width = `${aPct}%`;
+  $('beforeCounts').innerHTML = countsLine(S.before);
+  $('afterCounts').innerHTML = countsLine(S.after);
+  $('deltaPct').textContent = `${dPct >= 0 ? '+' : ''}${dPct} pts`;
+  $('deltaSub').innerHTML = `${dDone >= 0 ? '+' : ''}${dDone} Done<br>${S.resolved} moved from Need Changes to Done`;
+
+  const cardsEl = $('themeCards');
+  cardsEl.innerHTML = '';
+  DATA.themes.forEach(theme => {
+    const feats = theme.epics.flatMap(e => e.features);
+    const total = feats.length, done = feats.filter(f => f.status === 'Done').length, changes = feats.filter(f => f.status === 'Need Changes').length;
+    const p = total ? pct(done, total) : null;
+    const card = document.createElement('div');
+    card.className = 'theme-card';
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `${theme.name}: ${p === null ? 'no data yet' : p + '% done'}. Show feature detail.`);
+    card.innerHTML = `
+      <div class="theme-card-accent" style="background:${theme.color}"></div>
+      <div class="theme-card-name">${esc(theme.name)}</div>
+      <div class="theme-card-epics">${theme.epics.length} epics</div>
+      <div class="theme-card-pct" style="color:${theme.color}">${p !== null ? p + '%' : 'No data yet'}</div>
+      ${total ? `<div class="theme-card-bar" aria-hidden="true"><div class="theme-card-bar-fill" style="width:${p}%;background:${theme.color}"></div></div>
+        <div class="theme-card-counts">${done} Done · ${changes} Need Changes · ${total} Features</div>`
+        : `<div class="theme-card-counts" style="font-style:italic">No features recorded yet</div>`}`;
+    onActivate(card, () => {
+      openThemes.add(theme.id);
+      const sec = $(`theme-sec-${theme.id}`);
+      $(`body-${theme.id}`).classList.add('open');
+      $(`chev-${theme.id}`).classList.add('open');
+      $(`hdr-${theme.id}`).setAttribute('aria-expanded', 'true');
+      sec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+    cardsEl.appendChild(card);
+  });
+  renderDetails();
+}
+
+function renderDetails() {
+  const el = $('themeDetails');
+  el.innerHTML = '';
+  const active = iaActive();
+  const totalFeatures = DATA.themes.reduce((s, t) => s + t.epics.reduce((a, e) => a + e.features.length, 0), 0);
+  let shownFeatures = 0;
+
+  DATA.themes.forEach(theme => {
+    const all = theme.epics.flatMap(e => e.features);
+    const done = all.filter(f => f.status === 'Done').length;
+    const epicsView = theme.epics.map(epic => ({
+      epic,
+      rows: active ? epic.features.filter(f => featureMatches(f, epic.name)) : epic.features,
+    }));
+    const matchCount = epicsView.reduce((s, v) => s + v.rows.length, 0);
+    shownFeatures += matchCount;
+    if (active && !matchCount) return;
+    const isOpen = active ? true : openThemes.has(theme.id);
+
+    const sec = document.createElement('div');
+    sec.className = 'theme-section';
+    sec.id = `theme-sec-${theme.id}`;
+    sec.innerHTML = `
+      <button class="theme-header" id="hdr-${theme.id}" aria-expanded="${isOpen}" aria-controls="body-${theme.id}">
+        <span class="theme-dot" style="background:${theme.color}"></span>
+        <span class="theme-header-name">${esc(theme.name)}</span>
+        <span class="theme-header-stats">${all.length ? `${pct(done, all.length)}% Done · ${active ? `${matchCount} of ${all.length}` : all.length} features` : `${theme.epics.length} epics`}</span>
+        <span class="theme-chevron ${isOpen ? 'open' : ''}" id="chev-${theme.id}" aria-hidden="true">▼</span>
+      </button>
+      <div class="theme-body ${isOpen ? 'open' : ''}" id="body-${theme.id}">
+        ${epicsView.filter(v => !active || v.rows.length).map(({ epic, rows }) => {
+          const fc = epic.features.length;
+          const body = rows.length ? rows.map(f => `
+            <tr>
+              <td style="font-weight:500">${esc(f.name)}</td>
+              <td class="type-cell">${esc(f.pageType || '—')}</td>
+              <td>${statusBadge(f.status)}</td>
+              <td><span class="badge badge-release">${esc(f.release || '—')}</span></td>
+            </tr>`).join('')
+            : `<tr class="empty-row"><td colspan="4">No features recorded for this epic yet.</td></tr>`;
+          return `<div class="epic-block">
+            <div class="epic-title">${esc(epic.name)}<span class="epic-tag">${fc} feature${fc !== 1 ? 's' : ''}</span>${epic.sourceRef ? `<span class="epic-tag">⬡ ${esc(epic.sourceRef)}</span>` : ''}</div>
+            <div class="table-wrap"><table class="feature-table">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">GA Release</th></tr></thead>
+              <tbody>${body}</tbody>
+            </table></div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    el.appendChild(sec);
+    $(`hdr-${theme.id}`).addEventListener('click', () => toggleTheme(theme.id));
+  });
+
+  if (active && !shownFeatures) {
+    el.innerHTML = `<div class="empty-state"><strong>No features match these filters</strong>Try a different search term or clear the filters.<br><button class="btn" type="button" id="iaEmptyClear">Clear filters</button></div>`;
+    $('iaEmptyClear').addEventListener('click', clearIA);
+  }
+  $('iaResult').textContent = active
+    ? `Showing ${shownFeatures} of ${totalFeatures} features.`
+    : `${totalFeatures} features across ${DATA.themes.length} themes.`;
+}
+
+function toggleTheme(id) {
+  const body = $(`body-${id}`), open = !body.classList.contains('open');
+  body.classList.toggle('open', open);
+  $(`chev-${id}`).classList.toggle('open', open);
+  $(`hdr-${id}`).setAttribute('aria-expanded', String(open));
+  if (open) openThemes.add(id); else openThemes.delete(id);
+}
+
+/* ─── Tabs (arrow-key navigation) ───────────────────────────────────── */
+const tabs = [...document.querySelectorAll('.nav-tab')];
+function selectTab(tab, focus) {
+  tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; });
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  $(`tab-${tab.dataset.tab}`).classList.add('active');
+  if (focus) tab.focus();
+}
+tabs.forEach((tab, i) => {
+  tab.addEventListener('click', () => selectTab(tab, false));
+  tab.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') selectTab(tabs[(i + 1) % tabs.length], true);
+    if (e.key === 'ArrowLeft')  selectTab(tabs[(i - 1 + tabs.length) % tabs.length], true);
+    if (e.key === 'Home') { e.preventDefault(); selectTab(tabs[0], true); }
+    if (e.key === 'End')  { e.preventDefault(); selectTab(tabs[tabs.length - 1], true); }
+  });
+});
+</script>
+
+
+</body></html>
