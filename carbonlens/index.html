@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<!-- saved from url=(0042)http://localhost:8181/portfolio/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarbonLens — Figma Plugin Case Study</title>
+  <meta name="description" content="CarbonLens: a Figma plugin that catches Carbon Design System violations, generates AI copy, and annotates spacing tokens. Built in 3 days with IBM BOB.">
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+  <link href="./CarbonLens — Figma Plugin Case Study_files/css2" rel="stylesheet">
+  <style>
+    /* ── Reset ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+    /* ── Design tokens ──────────────────────────────────────── */
+    :root {
+      --bg:        #fafaf8;
+      --bg-2:      #f2f2ef;
+      --bg-3:      #e8e8e4;
+      --surface:   #ffffff;
+      --border:    #e2e2de;
+      --border-2:  #d0d0cb;
+
+      --text:      #111110;
+      --text-2:    #3c3c38;
+      --text-3:    #6c6c67;
+      --text-4:    #a8a8a2;
+
+      --accent:    #2563eb;
+      --accent-bg: #eff6ff;
+      --accent-dk: #1d4ed8;
+
+      --hero-bg:   #0c0e14;
+      --hero-s1:   #151820;
+      --hero-s2:   #1e2230;
+
+      --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mono: 'JetBrains Mono', 'IBM Plex Mono', 'Courier New', monospace;
+
+      --r-sm:  6px;
+      --r-md:  10px;
+      --r-lg:  16px;
+      --r-xl:  24px;
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.05);
+      --shadow-md: 0 4px 16px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.05);
+      --shadow-lg: 0 20px 60px rgba(0,0,0,.14), 0 6px 20px rgba(0,0,0,.07);
+    }
+
+    /* ── Base ───────────────────────────────────────────────── */
+    body {
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+    }
+    img { display: block; max-width: 100%; height: auto; }
+
+    /* ── Nav ────────────────────────────────────────────────── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      height: 52px;
+      display: flex; align-items: center;
+      background: rgba(12,14,20,0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto; width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo {
+      width: 26px; height: 26px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .nav-logo svg { width: 13px; height: 13px; fill: #fff; }
+    .nav-wordmark {
+      font-size: 14px; font-weight: 600;
+      color: #fff; letter-spacing: -0.01em;
+    }
+    .nav-links { display: flex; gap: 2px; list-style: none; }
+    .nav-links a {
+      font-size: 12px; font-weight: 500;
+      color: rgba(255,255,255,0.42);
+      text-decoration: none;
+      padding: 5px 11px;
+      border-radius: 20px;
+      transition: color 0.15s, background 0.15s;
+      letter-spacing: 0.01em;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: rgba(255,255,255,0.92);
+      background: rgba(255,255,255,0.08);
+    }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    /* ── Hero ───────────────────────────────────────────────── */
+    .hero {
+      background: var(--hero-bg);
+      padding-top: 52px;
+      min-height: 100vh;
+      display: flex; align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,99,235,0.11) 0%, transparent 68%);
+      top: -140px; right: 60px;
+      pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 1100px; margin: 0 auto; width: 100%;
+      padding: 80px 32px 96px;
+      display: grid;
+      grid-template-columns: 1fr 460px;
+      align-items: center;
+      gap: 56px;
+      position: relative; z-index: 1;
+    }
+
+    /* Left column */
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(37,99,235,0.14);
+      border: 1px solid rgba(37,99,235,0.28);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 11.5px; font-weight: 500;
+      color: #93bbfc;
+      letter-spacing: 0.02em;
+      margin-bottom: 28px;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #60a5fa;
+      animation: pulse 2.2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.85); }
+    }
+    .hero-title {
+      font-size: clamp(40px, 4.8vw, 62px);
+      font-weight: 700;
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+    .hero-title .accent-word { color: #60a5fa; }
+    .hero-sub {
+      font-size: 17px;
+      line-height: 1.68;
+      color: rgba(255,255,255,0.48);
+      max-width: 460px;
+      margin-bottom: 36px;
+      font-weight: 400;
+    }
+    .hero-meta {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 36px;
+    }
+    .hero-pill {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 6px;
+      padding: 6px 13px;
+      font-size: 12px; color: rgba(255,255,255,0.48);
+    }
+    .hero-pill strong { color: rgba(255,255,255,0.82); font-weight: 500; }
+    .hero-stat-row {
+      display: flex; gap: 28px; flex-wrap: wrap;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .hero-stat-n {
+      font-size: 26px; font-weight: 700;
+      color: #fff; letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .hero-stat-l {
+      font-size: 12px; color: rgba(255,255,255,0.36);
+      margin-top: 4px; line-height: 1.4;
+    }
+
+    /* Right column */
+    .hero-right {
+      display: flex; justify-content: center; align-items: flex-start;
+    }
+    .hero-frames {
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .plugin-frame {
+      width: 210px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow:
+        0 0 0 1px rgba(37,99,235,0.18),
+        0 28px 72px rgba(0,0,0,0.65),
+        0 6px 20px rgba(37,99,235,0.12);
+      flex-shrink: 0;
+    }
+    .plugin-frame.offset { margin-top: 36px; }
+    .plugin-frame-bar {
+      height: 34px;
+      background: #1a1d26;
+      display: flex; align-items: center;
+      padding: 0 13px;
+      gap: 7px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      flex-shrink: 0;
+    }
+    .dot-r { width: 9px; height: 9px; border-radius: 50%; background: #ff5f57; flex-shrink: 0; }
+    .dot-y { width: 9px; height: 9px; border-radius: 50%; background: #febc2e; flex-shrink: 0; }
+    .dot-g { width: 9px; height: 9px; border-radius: 50%; background: #28c840; flex-shrink: 0; }
+    .plugin-frame-title {
+      font-family: var(--mono); font-size: 10.5px;
+      color: rgba(255,255,255,0.28);
+      margin-left: 8px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .plugin-frame img { width: 100%; display: block; height: auto; }
+
+    /* ── Body layout ────────────────────────────────────────── */
+    .container {
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 32px;
+    }
+    .container-narrow {
+      max-width: 760px; margin: 0 auto;
+      padding: 0 32px;
+      text-align: left;
+    }
+
+    /* ── Sections ───────────────────────────────────────────── */
+    .section { padding: 96px 0; }
+    .section + .section { border-top: 1px solid var(--border); }
+
+    /* ── Eyebrow ────────────────────────────────────────────── */
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .eyebrow::before {
+      content: '';
+      width: 20px; height: 2px;
+      background: var(--accent);
+      border-radius: 1px;
+      flex-shrink: 0;
+    }
+
+    /* ── Headings ───────────────────────────────────────────── */
+    .h2 {
+      font-size: clamp(28px, 3.5vw, 40px);
+      font-weight: 700; line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .h3 {
+      font-size: 21px; font-weight: 600;
+      line-height: 1.3; letter-spacing: -0.015em;
+      color: var(--text); margin-bottom: 12px;
+    }
+
+    /* ── Body text ──────────────────────────────────────────── */
+    .lead {
+      font-size: 18px; line-height: 1.7;
+      color: var(--text-2);
+      margin-bottom: 48px;
+    }
+    p.body { font-size: 15.5px; line-height: 1.77; color: var(--text-2); margin-bottom: 16px; }
+    p.body:last-child { margin-bottom: 0; }
+    code {
+      font-family: var(--mono); font-size: 0.82em;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      padding: 1px 6px; border-radius: 4px;
+      color: var(--text-2);
+    }
+    a { color: var(--accent); }
+
+    /* ── Problem grid ───────────────────────────────────────── */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border-radius: var(--r-md);
+      overflow: hidden;
+      margin-top: 48px;
+      border: 1px solid var(--border);
+    }
+    .problem-cell {
+      background: var(--surface);
+      padding: 32px;
+      transition: background 0.15s;
+    }
+    .problem-cell:hover { background: var(--bg); }
+    .problem-num {
+      font-family: var(--mono);
+      font-size: 11px; font-weight: 500;
+      color: var(--text-4); letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    .problem-cell h4 {
+      font-size: 15.5px; font-weight: 600;
+      color: var(--text); margin-bottom: 8px; letter-spacing: -0.01em;
+    }
+    .problem-cell p { font-size: 14px; line-height: 1.65; color: var(--text-3); }
+
+    .callout {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      padding: 20px 24px;
+      margin: 40px 0;
+    }
+    .callout p { font-size: 15px; line-height: 1.7; color: var(--text-2); font-style: italic; }
+    .callout cite { display: block; font-style: normal; font-size: 11px; color: var(--text-4); margin-top: 8px; letter-spacing: 0.04em; }
+
+    /* ── Solution ───────────────────────────────────────────── */
+    .mode-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 48px 0;
+    }
+    .mode-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 28px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .mode-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.07);
+    }
+    .mode-card-icon {
+      width: 40px; height: 40px;
+      background: var(--accent-bg);
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px; font-size: 20px;
+    }
+    .mode-card h4 { font-size: 15.5px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); margin-bottom: 8px; }
+    .mode-card p { font-size: 13px; line-height: 1.65; color: var(--text-3); margin-bottom: 16px; }
+    .chip {
+      display: inline-block;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 20px;
+      background: var(--bg-2); color: var(--text-3); border: 1px solid var(--border);
+    }
+
+    /* ── Screenshot figures ─────────────────────────────────── */
+    .fig { margin: 40px 0; }
+    .fig-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    .fig-plugin {
+      display: flex; justify-content: center;
+      background: var(--bg-2);
+      padding: 28px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .fig-plugin img {
+      width: 300px; max-width: 100%;
+      border-radius: var(--r-md);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .fig-caption {
+      padding: 14px 20px;
+      font-size: 13px; color: var(--text-3); line-height: 1.6;
+    }
+    .fig-caption strong { color: var(--text); font-weight: 600; }
+    /* Wide figure — breaks out of narrow column, fills container width */
+    .fig-wide {
+      width: min(900px, calc(100vw - 48px));
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .fig-pair {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 40px 0;
+    }
+    .fig-pair .fig { margin: 0; }
+    .fig-pair .fig-plugin {
+      min-height: 280px;
+      align-items: center;
+    }
+
+    /* ── AI split row (text left, screenshot right) ─────────── */
+    .ai-split {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 48px;
+      align-items: center;
+      margin: 56px 0 64px;
+      padding: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+    }
+    .ai-split-text {}
+    .ai-split-text h3 {
+      font-size: 20px; font-weight: 600; letter-spacing: -0.015em;
+      color: var(--text); margin-bottom: 14px;
+    }
+    .ai-split-text p {
+      font-size: 14.5px; line-height: 1.75; color: var(--text-2); margin-bottom: 14px;
+    }
+    .ai-split-text p:last-of-type { margin-bottom: 20px; }
+    .ai-provider-row {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px;
+    }
+    .ai-provider-tag {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 14px; border-radius: var(--r-sm);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 13px; font-weight: 500; color: var(--text-2);
+    }
+    .ai-provider-tag .dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .ai-provider-tag .dot.local  { background: #22c55e; }
+    .ai-provider-tag .dot.cloud  { background: #3b82f6; }
+    .ai-split-img {
+      display: flex; justify-content: center;
+    }
+    .ai-split-img img {
+      width: 100%; max-width: 280px;
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(0,0,0,0.07);
+    }
+    @media (max-width: 860px) {
+      .ai-split { grid-template-columns: 1fr; gap: 28px; }
+      .ai-split-img { justify-content: flex-start; }
+      .ai-split-img img { max-width: 260px; }
+    }
+
+    /* ── Decision cards (always visible, no accordion) ──────── */
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 48px;
+    }
+    .decision-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 28px;
+    }
+    .decision-n {
+      font-family: var(--mono);
+      font-size: 11px; font-weight: 500;
+      color: var(--text-4); letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    .decision-card h4 {
+      font-size: 15px; font-weight: 600;
+      color: var(--text); letter-spacing: -0.01em;
+      margin-bottom: 10px; line-height: 1.35;
+    }
+    .decision-card p {
+      font-size: 13px; line-height: 1.7;
+      color: var(--text-3); margin-bottom: 10px;
+    }
+    .decision-card p:last-child { margin-bottom: 0; }
+    .decision-tradeoff {
+      font-size: 12px; color: var(--text-4);
+      line-height: 1.6;
+      padding-top: 10px;
+      border-top: 1px solid var(--bg-3);
+      margin-top: 10px;
+    }
+    .decision-tradeoff strong { color: var(--text-3); font-weight: 600; }
+    @media (max-width: 960px) {
+      .decision-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .decision-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Rule table ─────────────────────────────────────────── */
+    .rule-table {
+      width: 100%; border-collapse: collapse;
+      margin: 24px 0 40px; font-size: 14px;
+    }
+    .rule-table th {
+      text-align: left; font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-4); padding: 0 0 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .rule-table td {
+      padding: 12px 0; border-bottom: 1px solid var(--bg-3);
+      vertical-align: top; color: var(--text-2); line-height: 1.6;
+    }
+    .rule-table td:first-child {
+      width: 155px; font-family: var(--mono); font-size: 12px;
+      color: var(--accent); padding-right: 24px; white-space: nowrap;
+    }
+    .rule-table tr:last-child td { border-bottom: none; }
+
+    /* ── Architecture block ─────────────────────────────────── */
+    .arch-block {
+      background: var(--hero-bg);
+      border-radius: var(--r-lg); padding: 48px; margin: 48px 0;
+      border: 1px solid rgba(255,255,255,0.10);
+      position: relative; overflow: hidden;
+    }
+    .arch-block::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 32px 32px; pointer-events: none;
+    }
+    .arch-label {
+      font-family: var(--mono); font-size: 11px; color: rgba(255,255,255,0.45);
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 32px;
+    }
+    .arch-section {
+      margin-bottom: 24px;
+    }
+    .arch-section-label {
+      font-family: var(--mono); font-size: 10px;
+      color: rgba(255,255,255,0.45); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 14px;
+    }
+    .arch-row {
+      display: flex; align-items: center; gap: 0; flex-wrap: wrap; row-gap: 10px;
+    }
+    .arch-tag {
+      font-family: var(--mono); font-size: 13px; padding: 9px 18px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 6px; color: rgba(255,255,255,0.88); white-space: nowrap;
+    }
+    .arch-tag.hi { border-color: rgba(37,99,235,0.7); color: #bdd3fe; background: rgba(37,99,235,0.18); }
+    .arch-tag.dim { color: rgba(255,255,255,0.55); border-color: rgba(255,255,255,0.12); }
+    .arch-tag.green { border-color: rgba(34,197,94,0.6); color: #a7f3c0; background: rgba(34,197,94,0.12); }
+    .arch-arrow { font-size: 15px; color: rgba(255,255,255,0.40); padding: 0 10px; font-family: var(--mono); }
+    .arch-or { font-size: 11px; color: rgba(255,255,255,0.45); padding: 0 8px; font-family: var(--mono); letter-spacing: 0.06em; }
+    .arch-divider { border: none; border-top: 1px dashed rgba(255,255,255,0.12); margin: 28px 0; }
+    .arch-note {
+      font-size: 13.5px; color: rgba(255,255,255,0.55); line-height: 1.75; font-family: var(--sans);
+      margin-top: 24px;
+    }
+
+    /* ── Tool cards ─────────────────────────────────────────── */
+    .tool-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 48px;
+    }
+    .tool-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 24px; }
+    .tool-badge {
+      font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--accent);
+      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: block;
+    }
+    .tool-card h4 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; letter-spacing: -0.01em; }
+    .tool-card p { font-size: 13px; line-height: 1.65; color: var(--text-3); }
+
+    /* ── Metrics ────────────────────────────────────────────── */
+    .metrics-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 2px; background: var(--border);
+      border-radius: var(--r-md); overflow: hidden;
+      border: 1px solid var(--border); margin: 48px 0 24px;
+    }
+    .metric { background: var(--surface); padding: 28px 22px; }
+    .metric-n {
+      font-size: 36px; font-weight: 700; letter-spacing: -0.04em; line-height: 1;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .metric-n .accent-n { color: var(--accent); }
+    .metric-l { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+    .metric-note { font-size: 10.5px; color: var(--text-4); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    .disclaimer {
+      background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r-sm);
+      padding: 14px 20px; font-size: 13px; color: var(--text-3); line-height: 1.6; margin-bottom: 40px;
+    }
+
+    /* ── Capability list ────────────────────────────────────── */
+    /* ── Status / learnings grid ────────────────────────────── */
+    .status-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 48px;
+    }
+    .status-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 28px; }
+    .status-card-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-4); margin-bottom: 14px; }
+    .status-card p { font-size: 14px; color: var(--text-2); line-height: 1.7; margin: 0; }
+    .status-card          { border-top: 2px solid #a855f7; }
+    .status-card.shipped  { border-top: 2px solid #22c55e; }
+    .status-card.next     { border-top: 2px solid var(--accent); }
+
+    /* ── Closing quote ──────────────────────────────────────── */
+    .closing-quote {
+      background: var(--hero-bg); border-radius: var(--r-xl);
+      padding: 48px 56px; margin-top: 64px;
+      position: relative; overflow: hidden;
+    }
+    .closing-quote::before {
+      content: '"'; position: absolute; top: -16px; left: 32px;
+      font-size: 180px; font-weight: 700; color: rgba(255,255,255,0.028);
+      line-height: 1;
+    }
+    .closing-quote p {
+      font-size: 17.5px; line-height: 1.78; color: rgba(255,255,255,0.62);
+      position: relative; z-index: 1;
+    }
+    .closing-quote cite {
+      display: block; font-style: normal; font-size: 12px;
+      color: rgba(255,255,255,0.25); margin-top: 16px; letter-spacing: 0.04em;
+      position: relative; z-index: 1;
+    }
+
+    /* ── Footer ─────────────────────────────────────────────── */
+    .footer { background: var(--hero-bg); padding: 48px 0 36px; }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 32px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      flex-wrap: wrap; gap: 20px;
+    }
+    .footer-brand { font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.68); letter-spacing: -0.01em; }
+    .footer-meta { font-size: 12px; color: rgba(255,255,255,0.24); margin-top: 6px; line-height: 1.6; }
+    .footer-links { display: flex; gap: 24px; list-style: none; flex-wrap: wrap; }
+    .footer-links a { font-size: 12px; color: rgba(255,255,255,0.28); text-decoration: none; transition: color 0.15s; }
+    .footer-links a:hover { color: rgba(255,255,255,0.68); }
+    .footer-rule { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 32px auto 20px; max-width: 1100px; padding: 0 32px; display: block; }
+    .footer-copy { max-width: 1100px; margin: 0 auto; padding: 0 32px; font-size: 11px; color: rgba(255,255,255,0.18); }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 1060px) {
+      .hero-inner { grid-template-columns: 1fr 400px; gap: 40px; }
+      .plugin-frame { width: 190px; }
+    }
+    @media (max-width: 960px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; padding: 64px 32px 80px; }
+      .hero-right { justify-content: flex-start; }
+      .plugin-frame { width: 200px; }
+      .metrics-grid { grid-template-columns: repeat(3, 1fr); }
+      .tool-grid { grid-template-columns: repeat(2, 1fr); }
+      .status-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 720px) {
+      .nav-links { display: none; }
+      .hero-inner { padding: 48px 20px 64px; }
+      .container, .container-narrow { padding: 0 20px; }
+      .section { padding: 64px 0; }
+      .mode-cards { grid-template-columns: 1fr; }
+      .problem-grid { grid-template-columns: 1fr; }
+      .fig-pair { grid-template-columns: 1fr; }
+      .tool-grid { grid-template-columns: 1fr; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .status-grid { grid-template-columns: 1fr; }
+      .closing-quote { padding: 32px 28px; }
+      .closing-quote p { font-size: 15.5px; }
+      .footer-inner { flex-direction: column; }
+      .arch-row { flex-wrap: wrap; row-gap: 8px; }
+      /* Hero: stack frames vertically on small screens */
+      .hero-frames { flex-direction: column; }
+      .plugin-frame.offset { margin-top: 0; }
+    }
+    @media (max-width: 480px) {
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .hero-title { font-size: 34px; }
+    }
+  </style>
+<style id="__cl-styles">
+    .__cl-highlight {
+      outline: 2px solid #0f62fe !important;
+      outline-offset: 2px !important;
+      background-color: rgba(15, 98, 254, 0.08) !important;
+      transition: outline 0.2s, background-color 0.2s;
+    }
+    .__cl-highlight-scroll {
+      outline: 2px solid #f1c21b !important;
+      outline-offset: 2px !important;
+      background-color: rgba(241, 194, 27, 0.08) !important;
+    }
+  </style></head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────── -->
+<nav class="nav" aria-label="Page navigation">
+  <div class="nav-inner">
+    <a class="nav-brand" href="http://localhost:8181/portfolio/index.html#hero">
+      <div class="nav-logo" aria-hidden="true">
+        <svg viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="4" cy="4" r="2.4"></circle>
+          <circle cx="10" cy="4" r="2.4"></circle>
+          <circle cx="4" cy="10" r="2.4"></circle>
+          <circle cx="10" cy="10" r="2.4"></circle>
+        </svg>
+      </div>
+      <span class="nav-wordmark">CarbonLens</span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="http://localhost:8181/portfolio/index.html#problem">Problem</a></li>
+      <li><a href="http://localhost:8181/portfolio/index.html#solution">Solution</a></li>
+      <li><a href="http://localhost:8181/portfolio/index.html#build">Process</a></li>
+      <li><a href="http://localhost:8181/portfolio/index.html#decisions">Decisions</a></li>
+      <li><a href="http://localhost:8181/portfolio/index.html#outcomes">Outcomes</a></li>
+      <li><a href="http://localhost:8181/portfolio/index.html#learnings">Learnings</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-inner">
+
+    <!-- Left: text -->
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="hero-badge-dot" aria-hidden="true"></span>
+        Figma Plugin · IBM Carbon Design System
+      </div>
+
+      <h1 class="hero-title">
+        Design review,<br>
+        <span class="accent-word">re-imagined.</span>
+      </h1>
+
+      <p class="hero-sub">
+        CarbonLens is a Figma plugin that catches Carbon guideline violations,
+        generates context-aware copy, and draws spacing token annotations on the
+        canvas — in seconds, not days.
+      </p>
+
+      <div class="hero-meta" role="list" aria-label="Project details">
+        <div class="hero-pill" role="listitem"><strong>Role</strong>&nbsp; Designer &amp; builder</div>
+        <div class="hero-pill" role="listitem"><strong>Stack</strong>&nbsp; TypeScript · Webpack</div>
+        <div class="hero-pill" role="listitem"><strong>AI</strong>&nbsp; Ollama · watsonx.ai</div>
+        <div class="hero-pill" role="listitem"><strong>Tools</strong>&nbsp; IBM BOB · Carbon MCP · Figma MCP</div>
+      </div>
+
+      <div class="hero-stat-row" role="list" aria-label="Key statistics">
+        <div class="hero-stat" role="listitem">
+          <div class="hero-stat-n">3 days</div>
+          <div class="hero-stat-l">Brief to v1.0</div>
+        </div>
+        <div class="hero-stat" role="listitem">
+          <div class="hero-stat-n">~80%</div>
+          <div class="hero-stat-l">Review effort reduced</div>
+        </div>
+        <div class="hero-stat" role="listitem">
+          <div class="hero-stat-n">10×</div>
+          <div class="hero-stat-l">Faster handoff specs</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: two plugin screenshots side by side -->
+    <div class="hero-right">
+      <div class="hero-frames" aria-label="Plugin screenshots">
+        <div class="plugin-frame" aria-label="Mode selector screen">
+          <div class="plugin-frame-bar" aria-hidden="true">
+            <span class="dot-r"></span>
+            <span class="dot-y"></span>
+            <span class="dot-g"></span>
+            <span class="plugin-frame-title">Mode select</span>
+          </div>
+          <img src="./CarbonLens — Figma Plugin Case Study_files/plugin-1.png" alt="CarbonLens plugin – mode selector showing Reviewer, Writer, and Handoff Partner tabs" loading="eager">
+        </div>
+        <div class="plugin-frame offset" aria-label="AI configuration screen">
+          <div class="plugin-frame-bar" aria-hidden="true">
+            <span class="dot-r"></span>
+            <span class="dot-y"></span>
+            <span class="dot-g"></span>
+            <span class="plugin-frame-title">AI config</span>
+          </div>
+          <img src="./CarbonLens — Figma Plugin Case Study_files/ss-reviewer.png" alt="CarbonLens plugin – Ollama connected, model selector and context fields visible" loading="eager">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     PROBLEM
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="problem">
+  <div class="container">
+    <span class="eyebrow">The problem</span>
+    <h2 class="h2">Content review was the last thing still entirely manual</h2>
+    <p class="lead">
+      IBM Power HMC is a complex enterprise interface with hundreds of screens and
+      strict Carbon Design System content guidelines. Unlike layout — which Figma makes
+      inspectable — content quality had no tooling inside the design environment.
+    </p>
+  </div>
+
+  <div class="container" style="margin-top:0; padding-top:0;">
+    <div class="problem-grid">
+      <div class="problem-cell">
+        <div class="problem-num">01</div>
+        <h4>Title case throughout</h4>
+        <p>Carbon requires sentence case. Designs regularly shipped "Flow CONTROL", "View Feedback", "Physical Port" — caught only during code review, if at all.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="problem-num">02</div>
+        <h4>Placeholder copy at handoff</h4>
+        <p>Error messages, empty states, and tooltips were left as "Error message goes here" because writing correct copy in the moment took time designers didn't have.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="problem-num">03</div>
+        <h4>Verb-less button labels</h4>
+        <p>Buttons reading "Click to take actions" or "Submit" violated Carbon's verb-first guideline — a consistent pattern that no automated check surfaced.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="problem-num">04</div>
+        <h4>Manual spacing documentation</h4>
+        <p>Translating pixel values into <code>$spacing-XX</code> tokens for every handoff required a manual cross-reference against the Carbon scale. Hours per screen.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>"Review cycles took 2–3 days. Spacing documentation alone could take an afternoon per screen.
+      Content issues still slipped through at handoff because nothing automated caught them while
+      designers were working."</p>
+      <cite>— Project context from the CarbonLens product brief (paraphrased, not a direct quote)</cite>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SOLUTION
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="solution">
+  <div class="container">
+    <span class="eyebrow">The solution</span>
+    <h2 class="h2">Three focused modes. One shared frame selection.</h2>
+    <p class="lead">
+      CarbonLens lives in the Figma plugin panel. A designer selects a frame, picks a mode,
+      and clicks Scan. Each mode is narrow enough to be fast, deep enough to be useful.
+    </p>
+  </div>
+
+  <div class="container" style="margin-top:0; padding-top:0;">
+
+    <div class="mode-cards" role="list">
+      <div class="mode-card" role="listitem">
+        <div class="mode-card-icon" aria-hidden="true">🔍</div>
+        <h4>Reviewer</h4>
+        <p>Scans every text node against ten Carbon rules. Groups violations by rule. Each issue shows original text, a suggested fix, the Carbon guideline, and a Locate button.</p>
+        <span class="chip">Content linter</span>
+      </div>
+      <div class="mode-card" role="listitem">
+        <div class="mode-card-icon" aria-hidden="true">✍️</div>
+        <h4>Writer</h4>
+        <p>Reads the frame's content signals and sends them to an AI model. Returns structured spec cards across five categories: field errors, notifications, actions, and more.</p>
+        <span class="chip">AI copy generation</span>
+      </div>
+      <div class="mode-card" role="listitem">
+        <div class="mode-card-icon" aria-hidden="true">📐</div>
+        <h4>Handoff Partner</h4>
+        <p>Maps every auto-layout spacing value to the nearest Carbon <code>$spacing-XX</code> token, then draws zone-fill annotation overlays directly on the Figma canvas.</p>
+        <span class="chip">Canvas annotations</span>
+      </div>
+    </div>
+
+    <!-- AI stack split -->
+    <div class="ai-split">
+      <div class="ai-split-text">
+        <h3>Two AI providers. One toggle.</h3>
+        <p>
+          Writer and Reviewer both route through a configurable AI provider. The choice was intentional —
+          corporate design environments have strict data-residency requirements.
+          <strong>Ollama</strong> runs completely offline: content never leaves the machine.
+          <strong>watsonx.ai</strong> provides IBM Granite models for teams who need
+          enterprise-grade output and IBM Cloud compliance.
+        </p>
+        <p>
+          Settings persist via <code>figma.clientStorage</code>. The manifest's
+          <code>networkAccess</code> allowlist names every permitted domain — no
+          accidental exfiltration is possible. Context fields (screen intent, focus
+          constraints) are fed directly into the AI prompt before each scan.
+        </p>
+        <div class="ai-provider-row">
+          <div class="ai-provider-tag">
+            <span class="dot local"></span>
+            Ollama · local · offline-first
+          </div>
+          <div class="ai-provider-tag">
+            <span class="dot cloud"></span>
+            watsonx.ai · IBM Granite · 5 regions
+          </div>
+        </div>
+      </div>
+      <div class="ai-split-img">
+        <img src="./CarbonLens — Figma Plugin Case Study_files/ss-reviewer.png" alt="AI configuration panel – Ollama connected, qwen2.5:1.5b model selected, context fields visible">
+      </div>
+    </div>
+
+    <!-- Reviewer -->
+    <h3 class="h3">Reviewer — ten rules, zero server calls</h3>
+    <p class="body">
+      The rule engine runs entirely client-side. Results appear without any network request.
+      Rules are deterministic — they fire when the text matches the pattern. AI enhancement
+      is layered on top only for violations requiring contextual judgment.
+    </p>
+
+    <table class="rule-table" role="table" aria-label="Carbon content rules checked by Reviewer">
+      <thead>
+        <tr>
+          <th scope="col">Rule</th>
+          <th scope="col">What it catches</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>title-case</td><td>Multi-word capitalisation and long ALL-CAPS strings not matching a known acronym list (IBM, I/O, VLAN preserved)</td></tr>
+        <tr><td>missing-verb</td><td>Button labels that do not open with one of ~30 recognised action verbs</td></tr>
+        <tr><td>vague-label</td><td>Generic labels: "Submit", "Click here", "OK", "Proceed"</td></tr>
+        <tr><td>filler-words</td><td>Phrases stripped on sight: "Please ", "In order to", "Simply", "Click here to"</td></tr>
+        <tr><td>spelling</td><td>200+ UI-copy misspellings plus repeated-character detection</td></tr>
+        <tr><td>ellipsis-misuse</td><td>Ellipsis on buttons, labels, or headings — only valid in body text per Carbon</td></tr>
+      </tbody>
+    </table>
+
+    <div class="fig fig-wide" style="margin-top:0;">
+      <div class="fig-card">
+        <div class="fig-plugin" style="padding: 32px 40px;">
+          <img src="./CarbonLens — Figma Plugin Case Study_files/ss-violations.png" style="width: 100%; max-width: 760px; display: block; margin: 0 auto;" alt="Reviewer results – 6 violations in 56 nodes, Title case group expanded showing 4 flagged strings">
+        </div>
+        <div class="fig-caption">
+          <strong>Reviewer results.</strong> 6 violations across 56 text nodes.
+          Summary bar shows issues / clean / total. Each violation group is expandable with original text,
+          suggested fix, and a canvas Locate button.
+        </div>
+      </div>
+    </div>
+
+    <!-- Writer -->
+    <h3 class="h3" style="margin-top:52px;">Writer — screen-aware AI copy</h3>
+    <p class="body">
+      Writer builds a structured prompt from the frame's existing text. An optional
+      "What is this screen?" field adds intent context — user role, access level, purpose.
+      A "Focus / constraints" field narrows the scan to specific node types. The AI returns
+      typed spec cards that can be edited and copied individually.
+    </p>
+
+    <div class="fig">
+      <div class="fig-card">
+        <img src="./CarbonLens — Figma Plugin Case Study_files/ss-writer.png" alt="Writer results – 9 items across screen description, field errors, helper text, and notifications on VIOS properties screen" style="width:100%; max-width:560px; display:block; height:auto; margin:0 auto;">
+        <div class="fig-caption">
+          <strong>Writer results.</strong> 9 items generated for the VIOS properties screen:
+          screen description, field errors with cause and resolution, helper text, and 2 notifications.
+          Each card has Edit and Copy actions.
+        </div>
+      </div>
+    </div>
+
+    <!-- Handoff Partner -->
+    <h3 class="h3" style="margin-top:52px;">Handoff Partner — token annotations on canvas</h3>
+    <p class="body">
+      For each auto-layout frame the plugin reads padding and gap values, maps each pixel
+      to the nearest Carbon token (2px = <code>$spacing-01</code> through 96px = <code>$spacing-12</code>),
+      then draws two artefacts: a zone-fill overlay at exact frame coordinates, and a spec
+      panel 48px to the right. Both persist without the plugin open — developers see them in Figma.
+    </p>
+
+    <div class="fig">
+      <div class="fig-card">
+        <img src="./CarbonLens — Figma Plugin Case Study_files/ss-handoff.png" alt="Handoff Partner – zone-fill annotations overlaid on Create Ethernet modal, spacing token spec panel to the right" style="width:100%; display:block; height:auto;">
+        <div class="fig-caption">
+          <strong>Handoff Partner.</strong> Zone-fill annotations drawn over the "Create Ethernet logical port" modal.
+          Spec panel lists typography and spacing tokens. Plugin confirms 54 nodes · 4 sections annotated.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     PROCESS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="build">
+  <div class="container">
+    <span class="eyebrow">Process</span>
+    <h2 class="h2">How it was built</h2>
+    <p class="lead">
+      CarbonLens was built with IBM BOB as the primary development partner.
+      Carbon MCP and Figma MCP provided design-system authority and canvas context
+      during the build — not at runtime. The plugin itself runs entirely inside
+      Figma's sandboxed environment.
+    </p>
+  </div>
+
+  <div class="container" style="margin-top:0; padding-top:0;">
+
+    <!-- Architecture diagram -->
+    <div class="arch-block" role="img" aria-label="Architecture diagram showing development tools versus plugin runtime dependencies">
+      <p class="arch-label">architecture — dev time vs. runtime</p>
+
+      <div class="arch-section">
+        <div class="arch-section-label">Development time</div>
+        <div class="arch-row">
+          <span class="arch-tag hi">IBM BOB</span>
+          <span class="arch-arrow">→</span>
+          <span class="arch-tag hi">Carbon MCP</span>
+          <span class="arch-arrow">→</span>
+          <span class="arch-tag hi">Figma MCP</span>
+          <span class="arch-arrow">→</span>
+          <span class="arch-tag">code.ts</span>
+          <span class="arch-arrow">+</span>
+          <span class="arch-tag">ui.html</span>
+          <span class="arch-arrow">→</span>
+          <span class="arch-tag">npm run build</span>
+          <span class="arch-arrow">→</span>
+          <span class="arch-tag">dist/</span>
+        </div>
+      </div>
+
+      <hr class="arch-divider">
+
+      <div class="arch-section">
+        <div class="arch-section-label">Plugin runtime</div>
+        <div class="arch-row">
+          <span class="arch-tag">Figma canvas</span>
+          <span class="arch-arrow">→</span>
+          <span class="arch-tag hi">manifest.json</span>
+          <span class="arch-arrow">→</span>
+          <span class="arch-tag">dist/code.js</span>
+          <span class="arch-arrow">+</span>
+          <span class="arch-tag">dist/ui.html</span>
+          <span class="arch-arrow">→</span>
+          <span class="arch-tag green">Ollama</span>
+          <span class="arch-or">or</span>
+          <span class="arch-tag green">watsonx.ai</span>
+        </div>
+      </div>
+
+      <p class="arch-note">
+        IBM BOB, Carbon MCP, and Figma MCP are <em>development-time tools only</em>.
+        At runtime the plugin communicates directly with the Figma API and with Ollama
+        (<code>localhost:11434</code>) or watsonx.ai — no proxy, no middleware in the critical path.
+      </p>
+    </div>
+
+    <!-- Tool cards -->
+    <div class="tool-grid">
+      <div class="tool-card">
+        <span class="tool-badge">dev partner</span>
+        <h4>IBM BOB</h4>
+        <p>Primary development partner for the full build. Generated the initial architecture, iterated on the Carbon rule engine, wrote the Handoff Partner canvas-drawing code, and debugged TypeScript errors. Brief to working v1.0 in ~3 days.</p>
+      </div>
+      <div class="tool-card">
+        <span class="tool-badge">design system</span>
+        <h4>Carbon MCP</h4>
+        <p>Provided authoritative Carbon Design System documentation — the correct <code>$spacing-XX</code> token scale, type tokens, and content writing rules (sentence case, verb-first buttons, error-message structure).</p>
+      </div>
+      <div class="tool-card">
+        <span class="tool-badge">canvas context</span>
+        <h4>Figma MCP</h4>
+        <p>Allowed inspection of actual IBM Power HMC design files during development — layer names, component hierarchies, text-node structures — which informed the <code>inferComponentType()</code> logic.</p>
+      </div>
+      <div class="tool-card">
+        <span class="tool-badge">plugin config</span>
+        <h4>Figma Manifest</h4>
+        <p>Defined via <code>manifest.json</code> with <code>main: dist/code.js</code> and <code>ui: dist/ui.html</code>. Network allowlist explicitly names IBM IAM, watsonx.ai, and <code>localhost:11434</code>. Only <code>currentuser</code> scope requested.</p>
+      </div>
+      <div class="tool-card">
+        <span class="tool-badge">runtime AI</span>
+        <h4>Ollama + watsonx.ai</h4>
+        <p>Two providers, one toggle. Ollama runs locally — <code>llama3.2</code> recommended, <code>qwen2.5:1.5b</code> for 2-second responses. watsonx.ai provides IBM Granite 3.3 8B or Llama 3.3 70B with 5 region options.</p>
+      </div>
+      <div class="tool-card">
+        <span class="tool-badge">build</span>
+        <h4>TypeScript + Webpack</h4>
+        <p>Two entry points: <code>code.ts</code> (Figma sandbox thread) and <code>ui.html</code> (iframe, inline JS). Webpack bundles to <code>dist/</code>. <code>npm run build</code> for production, <code>npm run watch</code> for development.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     DECISIONS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="decisions">
+  <div class="container">
+    <span class="eyebrow">Design decisions</span>
+    <h2 class="h2">Thinking behind the product</h2>
+    <p class="lead" style="margin-bottom:0;">
+      Five decisions shaped how CarbonLens works — each driven by a real constraint:
+      speed, security, developer reuse, or the limits of Figma's sandbox.
+    </p>
+  </div>
+
+  <div class="container" style="margin-top:0; padding-top:0;">
+    <div class="decision-grid">
+
+      <div class="decision-card">
+        <div class="decision-n">01</div>
+        <h4>Rules run first, AI second</h4>
+        <p>The Reviewer checks content instantly using a built-in rule set — no internet needed. AI only kicks in for the trickier issues that rules can't catch reliably.</p>
+        <div class="decision-tradeoff"><strong>Trade-off:</strong> Some button names get flagged incorrectly. It's a known edge case.</div>
+      </div>
+
+      <div class="decision-card">
+        <div class="decision-n">02</div>
+        <h4>Screen context is optional but powerful</h4>
+        <p>Designers can describe what the screen does and who uses it. The AI uses that to write more relevant copy — skip it and you still get a useful result.</p>
+        <div class="decision-tradeoff"><strong>Challenge:</strong> Making it feel optional without hiding its value. Example placeholder text does the job.</div>
+      </div>
+
+      <div class="decision-card">
+        <div class="decision-n">03</div>
+        <h4>Works offline or in the cloud</h4>
+        <p>Some teams can't send data outside their network. Ollama runs the AI entirely on your machine. watsonx.ai is there when you need the cloud. One setting, no code changes.</p>
+      </div>
+
+      <div class="decision-card">
+        <div class="decision-n">04</div>
+        <h4>Annotations live in the file</h4>
+        <p>Spacing notes are drawn directly onto the Figma canvas — not just shown in the plugin. Developers see them without needing to open CarbonLens at all.</p>
+      </div>
+
+      <div class="decision-card">
+        <div class="decision-n">05</div>
+        <h4>Scan many frames at once</h4>
+        <p>Select multiple screens and run one scan. Issues that appear across many screens are grouped together — making it easy to spot copy problems that are systemic, not one-off.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     OUTCOMES
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="outcomes">
+  <div class="container">
+    <span class="eyebrow">Outcomes</span>
+    <h2 class="h2">What changed</h2>
+  </div>
+
+  <div class="container" style="margin-top:0; padding-top:0;">
+
+    <div class="disclaimer">
+      The figures below come from the CarbonLens v1.0 project brief. They represent workflow
+      estimates and targets at launch — not independently measured results from a controlled study.
+    </div>
+
+    <div class="metrics-grid" role="list" aria-label="Key outcome metrics">
+      <div class="metric" role="listitem">
+        <div class="metric-n">~<span class="accent-n">80</span>%</div>
+        <div class="metric-l">Reduction in manual review effort</div>
+        <div class="metric-note">Estimated</div>
+      </div>
+      <div class="metric" role="listitem">
+        <div class="metric-n">&lt;<span class="accent-n">30</span>m</div>
+        <div class="metric-l">Review cycle, down from 2–3 days</div>
+        <div class="metric-note">Estimated target</div>
+      </div>
+      <div class="metric" role="listitem">
+        <div class="metric-n"><span class="accent-n">10</span>×</div>
+        <div class="metric-l">Faster handoff specification</div>
+        <div class="metric-note">Estimated</div>
+      </div>
+      <div class="metric" role="listitem">
+        <div class="metric-n">~<span class="accent-n">40</span>h</div>
+        <div class="metric-l">Hours saved per designer / month</div>
+        <div class="metric-note">Estimated</div>
+      </div>
+      <div class="metric" role="listitem">
+        <div class="metric-n"><span class="accent-n">3</span> days</div>
+        <div class="metric-l">Brief to production-ready v1.0</div>
+        <div class="metric-note">Verified</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     LEARNINGS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="learnings">
+  <div class="container">
+    <span class="eyebrow">Learnings</span>
+    <h2 class="h2">What I take from this</h2>
+  </div>
+
+  <div class="container" style="margin-top:0; padding-top:0;">
+    <div class="status-grid">
+
+      <div class="status-card shipped">
+        <div class="status-card-label">I had never built a plugin before</div>
+        <p>I had zero experience with Figma plugin development when I started. No TypeScript background, no idea how the Figma sandbox worked. I just knew the problem was real and worth solving. That was enough to start.</p>
+      </div>
+
+      <div class="status-card">
+        <div class="status-card-label">The tools made it possible</div>
+        <p>Learning how Figma MCP and Carbon MCP worked changed everything. Suddenly I could ask questions about the design system and get answers grounded in the actual spec — not guesses. IBM BOB helped me write and debug code I had never written before.</p>
+      </div>
+
+      <div class="status-card next">
+        <div class="status-card-label">The problem was mine first</div>
+        <p>I built this because I was frustrated with my own workflow. Once I shipped it, the rest of the design team started using it too. That was the moment I realised the problem wasn't just mine — it was everyone's.</p>
+      </div>
+
+      <div class="status-card shipped">
+        <div class="status-card-label">Now talking to the Carbon team</div>
+        <p>The work has caught the attention of the Carbon Design System team. We're now in early conversations about how parts of CarbonLens — particularly the rule engine — could be contributed back to Carbon for broader use.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ── FOOTER ────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">CarbonLens</div>
+      <div class="footer-meta">
+        Figma plugin for Carbon Design System content quality<br>
+        Case study · Avinash Bhadrakali · Product designer &amp; builder
+      </div>
+    </div>
+    <ul class="footer-links" role="list">
+      <li><a href="http://localhost:8181/portfolio/index.html#hero">Top</a></li>
+      <li><a href="http://localhost:8181/portfolio/index.html#problem">Problem</a></li>
+      <li><a href="http://localhost:8181/portfolio/index.html#solution">Solution</a></li>
+      <li><a href="http://localhost:8181/portfolio/index.html#build">Process</a></li>
+      <li><a href="http://localhost:8181/portfolio/index.html#outcomes">Outcomes</a></li>
+      <li><a href="http://localhost:8181/portfolio/index.html#learnings">Learnings</a></li>
+    </ul>
+  </div>
+</footer>
+
+
+<script>
+  /* ── Active nav link highlight on scroll ───────────────── */
+  const sections = document.querySelectorAll('section[id], footer');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.25, rootMargin: '-52px 0px 0px 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+
+
+</body></html>
