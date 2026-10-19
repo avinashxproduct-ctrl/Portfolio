@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<!-- saved from url=(0081)file:///Users/avinashsbhadrakali/Documents/GitHub/Portfolio%20Hardware/index.html -->
+<html lang="en" class="js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modernizing Hardware Virtualized I/O in PowerHMC</title>
+<meta name="description" content="Enterprise UX case study: re-examining SR-IOV workflows in IBM PowerHMC as it moves to a React and Carbon Design System experience.">
+<script>document.documentElement.classList.add('js');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./Modernizing Hardware Virtualized I_O in PowerHMC_files/css2" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b1a3c; --navy2:#13264f; --blue:#0f62fe; --band:#e8f1ff; --band2:#eef4ff;
+  --teal:#007d79; --red:#da1e28; --green:#198038; --evid:#adf5a8;
+  --ink:#161616; --mute:#6f6f6f; --line:#e0e0e0; --g1:#f4f4f4; --g2:#e8e8e8;
+  --sans:'IBM Plex Sans',-apple-system,'Segoe UI',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--sans);color:var(--ink);background:#fff;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+section[id]{scroll-margin-top:56px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 32px}
+
+/* ---------- top nav ---------- */
+.topnav{position:sticky;top:0;z-index:50;background:var(--navy);color:#fff;height:48px;display:flex;align-items:center}
+.topnav .wrap{display:flex;align-items:center;justify-content:space-between;width:100%}
+.topnav b{font-weight:500;font-size:13px;letter-spacing:.2px}
+.topnav nav{display:flex;gap:4px;flex-wrap:wrap}
+.topnav nav a{font-size:12px;text-decoration:none;padding:6px 10px;border-radius:4px;color:#c6d4f0;transition:.15s}
+.topnav nav a:hover{background:rgba(255,255,255,.1);color:#fff}
+.topnav nav a.on{background:rgba(255,255,255,.16);color:#fff}
+.progress{position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--blue)}
+
+/* ---------- hero ---------- */
+.hero{background:var(--navy);color:#fff;position:relative;overflow:hidden;padding:72px 0 84px}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.06);pointer-events:none}
+.hero::before{width:560px;height:560px;left:-140px;top:-120px;background:rgba(255,255,255,.03)}
+.hero::after{width:900px;height:900px;left:-300px;top:-260px}
+.hero .wrap{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center;position:relative;z-index:1}
+.eyebrow{font-size:14px;letter-spacing:.5px;text-transform:uppercase;font-weight:400;margin:0 0 22px}
+.hero h1{font-size:clamp(34px,4.2vw,52px);line-height:1.2;font-weight:600;margin:0 0 26px;letter-spacing:-.5px}
+.hero p.lead{font-size:18px;line-height:1.55;font-weight:300;color:#e6ecf9;margin:0 0 30px;max-width:520px}
+.chips{display:flex;gap:12px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:10px 14px;transition:.2s}
+.chip:hover{background:rgba(255,255,255,.12);transform:translateY(-2px)}
+.chip small{display:block;font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:#a9bde6}
+.chip span{font-size:12px;font-weight:500}
+
+/* ---------- generic section heads ---------- */
+.sec{padding:84px 0 0}
+.kicker{font-size:15px;letter-spacing:.4px;text-transform:uppercase;color:var(--mute);margin:0 0 4px;font-weight:400}
+.h2{display:inline-block;font-size:28px;font-weight:600;margin:0;padding-bottom:10px;position:relative;letter-spacing:-.2px}
+.h2::after{content:"";position:absolute;left:0;bottom:0;width:100%;max-width:116px;height:1px;background:var(--ink)}
+.h2.wide::after{max-width:100%}
+.intro-title{font-size:22px;font-weight:400;margin:0 0 20px}
+.intro-title b{font-weight:600}
+.band{background:var(--band);margin-top:36px;padding:56px 0}
+.band.light{background:var(--band2)}
+
+/* ---------- cards ---------- */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.cards3.two{grid-template-columns:repeat(2,1fr)}
+.card{background:#fff;border:1px solid #e6eaf2;border-radius:16px;padding:26px 24px;box-shadow:0 6px 20px rgba(20,40,90,.07);transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(20,40,90,.12)}
+.card .lab{font-family:var(--mono);font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--blue);font-weight:500;margin:0 0 8px}
+.card h3{font-size:18px;font-weight:600;margin:0 0 12px}
+.card p{margin:0;font-size:16px;font-weight:400;color:#262626;line-height:1.65}
+.impact .arr{display:block;color:var(--green);font-size:26px;font-weight:700;line-height:1;margin:0 0 14px}
+.impact .card .big{font-size:34px;font-weight:700;color:var(--green);line-height:1.1;margin:0 0 10px;letter-spacing:-.4px}
+.impact .fn{margin:22px 0 0;font-size:14px;color:var(--mute)}
+
+.problem h3{font-size:clamp(26px,3.2vw,36px);font-weight:600;margin:48px 0 8px;letter-spacing:-.5px}
+.problem .sub{font-size:17px;font-weight:400;color:#525252;max-width:none;margin:0 0 28px}
+.problem .card h3{font-size:18px;margin:0 0 12px;letter-spacing:0}
+.problem .cards3 + .sub{margin-top:36px}
+.problem .sub + h3{margin-top:64px}
+.pcards{counter-reset:pc;max-width:none;border-bottom:1px solid var(--line)}
+.pcard{counter-increment:pc;display:grid;grid-template-columns:64px 240px minmax(0,1fr);gap:0 24px;align-items:baseline;padding:24px 8px;border-top:1px solid var(--line);transition:background .2s}
+.pcard:hover{background:var(--g1)}
+.pcard::before{content:"0" counter(pc);font-family:var(--mono);font-size:28px;font-weight:300;color:var(--blue);line-height:1}
+.pcard b{display:block;font-size:18px;font-weight:600}
+.pcard p{margin:0;font-size:16px;line-height:1.65;color:#262626}
+
+/* ---------- item rows ---------- */
+.item{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr);gap:48px;align-items:center;padding:36px 0}
+.item.flip{grid-template-columns:minmax(0,1.35fr) minmax(0,.9fr)}
+.item.flip .copy{order:2}
+.item.flip .vis{order:1}
+.item.top{align-items:start}
+.copy .n{font-size:34px;font-weight:300;color:var(--teal);line-height:1;margin-bottom:10px}
+.copy h4{font-size:19px;font-weight:400;margin:0 0 30px;line-height:1.4;max-width:380px}
+.copy .lbl{font-size:16px;font-weight:400;margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.copy .lbl.issue{color:var(--red)}
+.copy .lbl.sol{color:var(--green)}
+.copy p{font-size:13.5px;color:#393939;margin:0 0 14px;line-height:1.7}
+.ev{background:var(--evid);border-left:3px solid #24a148;padding:9px 12px;font-size:12px;line-height:1.55;margin-top:18px;color:#0e3d1c}
+.ev b{display:block;font-size:11.5px}
+.more{text-align:center;padding:10px 0 4px;color:var(--red)}
+.more svg{display:block;margin:0 auto 6px}
+.more b{font-size:21px;font-weight:500}
+
+/* ---------- investigate ---------- */
+.lede{font-size:16px;color:#262626;max-width:820px;margin:20px 0 28px}
+.sessions{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.sbox{border-radius:6px;padding:22px 20px;font-size:15px;line-height:1.7;border:1px solid}
+.sbox h3{font-size:18px;font-weight:600;margin:0 0 16px}
+.sbox p{margin:0 0 16px;font-weight:400;color:#161616}
+.sbox p:last-child{margin:0}
+.sbox.o{background:#fff5ee;border-color:#ff9a62}
+.sbox.p{background:#f2eeff;border-color:#6f4bd1}
+.quotes{background:#f4f4f4;padding:12px;margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.q{background:#fff;border:1px solid var(--line);padding:22px 20px;display:flex;flex-direction:column;transition:.2s}
+.q:hover{box-shadow:0 8px 20px rgba(0,0,0,.1);transform:translateY(-3px)}
+.q blockquote{margin:0 0 12px;font-size:22px;font-weight:300;line-height:1.38;color:#262626}
+.q cite{font-family:var(--mono);font-style:normal;font-size:13px;color:#393939;margin-bottom:auto;padding-bottom:22px;line-height:1.7}
+.q .wh{border-top:1px solid var(--line);padding-top:10px;margin-top:14px}
+.q .wh small{display:block;font-family:var(--mono);font-size:12px;letter-spacing:1.3px;color:#0043ce;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.q .wh span{font-size:15px;color:#161616}
+.tagm{display:inline-block;font-family:var(--mono);font-size:12px;background:#a7f0ba;color:#0e3d1c;padding:2px 8px;margin-left:4px;border-radius:2px;white-space:nowrap}
+
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);background:var(--g1);margin-top:80px}
+.stat{padding:26px 28px;border-right:1px solid var(--line);background:#fff;margin:6px 0 6px 6px}
+.stat:last-child{border-right:0;margin-right:6px}
+.stat b{display:block;font-size:34px;font-weight:600;color:var(--blue);line-height:1.1}
+.stat span{font-size:12px;color:var(--mute)}
+
+footer.site{margin-top:90px;background:var(--navy);color:#a9bde6;padding:56px 0;font-size:13px}
+footer.site .wrap{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
+footer.site .ty{font-size:32px;font-weight:600;color:#fff;margin:0}
+footer.site .ty-name{font-size:16px;color:#fff;margin:0}
+footer.site .ty-date{font-size:14px;color:#a9bde6;margin:0 0 14px}
+footer.site .ty-top{display:inline-block;background:#fff;color:var(--navy);font-size:14px;font-weight:600;padding:12px 24px;text-decoration:none}
+footer.site .ty-top:hover{background:#dde7ff}
+
+/* ---------- reveal ---------- */
+.js .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.js .reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js .reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}*{animation:none!important}}
+
+/* ======================================================
+   HMC mockup
+   ====================================================== */
+.vis{min-width:0}
+.hmc{border:3px solid #161616;border-radius:10px;overflow:hidden;background:#fff;font-size:10.5px;color:#161616;box-shadow:0 18px 40px rgba(10,20,50,.25);line-height:1.4}
+.hero .hmc{box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.hmc-top{background:#161616;color:#fff;display:flex;align-items:center;gap:10px;padding:0 10px;height:26px}
+.hmc-top b{font-size:9.5px;font-weight:600;white-space:nowrap}
+.burger{width:10px;height:7px;border-top:1.5px solid #fff;border-bottom:1.5px solid #fff;position:relative;flex:none}
+.burger::after{content:"";position:absolute;left:0;right:0;top:2px;border-top:1.5px solid #fff}
+.srch{flex:1;background:#262626;color:#8d8d8d;font-size:8.5px;padding:4px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.fbk{border:1px solid #fff;font-size:8.5px;padding:2px 12px;white-space:nowrap}
+.dots{display:flex;gap:7px}
+.dots i{width:7px;height:7px;border:1.5px solid #c6c6c6;border-radius:50%}
+.hmc-head{padding:8px 12px 8px;border-bottom:1px solid var(--line);background:#fff}
+.hmc-head .bc{font-size:8.5px;color:var(--blue)}
+.hmc-head .bc span{color:#161616}
+.hmc-head .ttl{display:flex;justify-content:space-between;align-items:center;margin:1px 0 4px}
+.hmc-head h4{font-size:14px;font-weight:400;margin:0}
+.act{border:1px solid var(--blue);color:var(--blue);font-size:8.5px;padding:3px 22px 3px 8px;position:relative;white-space:nowrap}
+.act::after{content:"";position:absolute;right:7px;top:5px;width:4px;height:4px;border-right:1.2px solid var(--blue);border-bottom:1.2px solid var(--blue);transform:rotate(45deg)}
+.legacy .act{background:var(--blue);color:#fff}
+.legacy .act::after{border-color:#fff}
+.st{font-size:8.5px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.st a{color:var(--blue)}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dot.g{background:#24a148}
+.tri{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:7px solid #f1c21b;display:inline-block}
+.tg{width:16px;height:8px;background:#24a148;border-radius:8px;position:relative;display:inline-block}
+.tg::after{content:"";position:absolute;right:1px;top:1px;width:6px;height:6px;background:#fff;border-radius:50%}
+.hmc-body{display:flex;height:var(--h,380px)}
+.hmc-side{width:27%;min-width:112px;max-width:170px;background:#f4f4f4;border-right:1px solid var(--line);overflow:auto;padding:6px 0;flex:none}
+.hmc-side ul{list-style:none;margin:0;padding:0}
+.hmc-side li{display:flex;align-items:center;gap:4px;padding:3.5px 8px;font-size:8.5px;color:#393939;white-space:nowrap}
+.hmc-side li.sep{border-top:1px solid #d0d0d0;margin:4px 8px;padding:0}
+.hmc-side li.act-i{background:#e0e0e0;font-weight:600;border-left:3px solid var(--blue);padding-left:5px;color:#161616}
+.hmc-side .ext{margin-left:auto;font-size:8px;color:#525252}
+.tagx{font-size:7px;border-radius:8px;padding:0 5px;line-height:1.5;white-space:nowrap}
+.tagx.n{background:#d0d0d0}
+.tagx.new{background:#d4bbff;color:#491d8b}
+.tagx.upd{background:#d4bbff;color:#491d8b}
+.hmc-main{flex:1;min-width:0;overflow:auto;background:#f4f4f4;padding:0}
+.hmc-main.flush{position:relative;overflow:hidden;background:#fff}
+
+.cardtop{background:#fff;padding:9px 12px 0}
+.cardtop .r{display:flex;justify-content:space-between;font-size:8.5px;color:var(--blue)}
+.cardtop .r span a{margin-left:12px}
+.cardtop h5{font-size:10.5px;font-weight:400;margin:6px 0 10px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;padding:0 0 10px;font-size:8.5px}
+.kv dl{margin:0;display:grid;grid-template-columns:auto auto;gap:5px 14px;justify-content:start;align-content:start}
+.kv dt{color:#525252}
+.kv dd{margin:0;display:flex;align-items:center;gap:4px}
+.acc{background:#fff;margin-top:6px}
+.acc-h{width:100%;display:flex;align-items:center;gap:8px;border:0;background:#fff;padding:9px 12px;font-size:10px;font-weight:600;text-align:left;color:#161616}
+.acc-h:hover{background:#f0f0f0}
+.chev{width:5px;height:5px;border-right:1.5px solid #161616;border-bottom:1.5px solid #161616;transform:rotate(45deg) translate(-1px,-1px);transition:.2s;flex:none}
+.acc.open .chev{transform:rotate(-135deg) translate(-1px,-1px)}
+.acc-b{display:none}
+.acc.open .acc-b{display:block;animation:fadeIn .25s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.acc-in{padding:0 0 4px;background:#f4f4f4}
+.sb{display:flex;align-items:center;gap:6px;background:#f4f4f4;border-bottom:1px solid #8d8d8d;margin:0;padding:0 8px}
+.sb input{flex:1;border:0;background:transparent;font:inherit;font-size:9px;padding:8px 2px;min-width:0;color:#161616}
+.sb input:focus{outline:2px solid var(--blue);outline-offset:-2px}
+.sb::before{content:"";width:6px;height:6px;border:1.3px solid #525252;border-radius:50%;flex:none}
+.tw{overflow-x:auto;background:#fff}
+.t{width:100%;border-collapse:collapse;font-size:8.5px;white-space:nowrap}
+.t th{background:#e0e0e0;text-align:left;padding:8px 10px;font-weight:600;line-height:1.25;white-space:normal;min-width:62px}
+.t td{padding:9px 10px;border-bottom:1px solid #e0e0e0;vertical-align:middle}
+.t td a{color:var(--blue);display:inline-block;word-break:break-all;min-width:78px;white-space:normal}
+.t tbody tr:hover td{background:#f4f4f4}
+.t tr.selected td{background:#d0e2ff}
+.t.sel tbody tr{cursor:pointer}
+.pill{background:#e0e0e0;border-radius:8px;padding:1px 8px;font-size:8px}
+.cb{display:inline-block;width:9px;height:9px;border:1.2px solid #161616;position:relative;vertical-align:middle}
+tr.selected .cb{background:#161616}
+tr.selected .cb::after{content:"";position:absolute;left:2.5px;top:0;width:2.5px;height:5.5px;border-right:1.3px solid #fff;border-bottom:1.3px solid #fff;transform:rotate(40deg)}
+.lp{padding:10px 12px 0;background:#fff}
+.lp .r{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.lp h5{font-size:12px;font-weight:400;margin:0}
+.lp .r a{font-size:8.5px;color:var(--blue)}
+.selbar{display:flex;align-items:center;justify-content:space-between;background:var(--blue);color:#fff;padding:6px 12px;font-size:9px}
+.selbar[hidden]{display:none}
+.selbar button{background:#fff;color:var(--blue);border:0;font-size:9px;font-weight:500;padding:4px 10px}
+.nores td{text-align:center;color:#6f6f6f;padding:16px}
+
+/* ---- side panel ---- */
+.pm-wrap{position:relative;height:100%}
+.pm-page{height:100%;overflow:auto}
+.pm-scrim{position:absolute;inset:0;background:rgba(22,22,22,.55);opacity:0;pointer-events:none;transition:opacity .25s}
+.pm-wrap.open .pm-scrim{opacity:1;pointer-events:auto}
+.pm-panel{position:absolute;top:0;right:0;bottom:0;width:min(330px,64%);background:#fff;transform:translateX(102%);transition:transform .3s cubic-bezier(.2,0,.38,.9);display:flex;flex-direction:column;box-shadow:-6px 0 20px rgba(0,0,0,.2)}
+.pm-wrap.open .pm-panel{transform:none}
+.pm-panel header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px 6px}
+.pm-panel header h5{font-size:11px;font-weight:600;margin:0}
+.pm-panel .x{border:0;background:none;font-size:11px;padding:4px 6px;color:#161616}
+.pm-panel .x:hover{background:#e8e8e8}
+.pm-body{flex:1;overflow:auto;padding:4px 12px 12px;font-size:8.5px}
+.pm-f{display:grid;grid-template-columns:1fr 1.25fr;gap:6px 8px;margin:0 0 14px}
+.pm-f dt{color:#525252}
+.pm-f dd{margin:0;word-break:break-word}
+.pm-f.dis dd{color:#a8a8a8}
+.lbl2{display:block;color:#525252;margin-bottom:4px;font-size:8.5px}
+.sel2{width:100%;appearance:none;-webkit-appearance:none;border:0;border-bottom:1px solid #8d8d8d;background:#f4f4f4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23161616' stroke-width='1.3'/%3E%3C/svg%3E") no-repeat right 8px center;font:inherit;font-size:9px;padding:9px 24px 9px 8px;color:#161616}
+.sel2:disabled{color:#a8a8a8;background-color:#f4f4f4;cursor:not-allowed}
+.prog{margin-top:14px}
+.prog p{margin:0 0 6px;font-size:9px}
+.bar{height:3px;background:#e0e0e0;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--blue);width:0;transition:width .12s linear}
+.prog small{display:block;color:#6f6f6f;margin-top:5px;font-size:8px}
+.note{display:flex;gap:8px;padding:8px 10px;margin-bottom:12px;border-left:3px solid;font-size:8.5px;line-height:1.5}
+.note b{display:block;font-size:9px}
+.note.warn{background:#fcf4d6;border-color:#f1c21b}
+.note.err{background:#fff1f1;border-color:var(--red)}
+.note.ok{background:#defbe6;border-color:#24a148}
+.sk{height:8px;border-radius:2px;background:linear-gradient(90deg,#e8e8e8 25%,#f6f6f6 50%,#e8e8e8 75%);background-size:200% 100%;animation:shimmer 1.2s infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+.pm-panel footer{display:flex;flex:none}
+.pm-panel footer button{flex:1;border:0;padding:13px 12px;font-size:10px;text-align:left;color:#fff}
+.btn-s{background:#393939}.btn-s:hover{background:#4c4c4c}
+.btn-p{background:var(--blue)}.btn-p:hover{background:#0050e6}
+.pm-panel footer button:disabled{background:#c6c6c6;color:#8d8d8d;cursor:not-allowed}
+
+.ctrls{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px;font-size:12px}
+.ctrls>span{color:var(--mute);margin-right:4px}
+.ctrls button{border:1px solid #b6c6e6;background:#fff;color:#0043ce;font-size:12px;padding:5px 11px;border-radius:14px;transition:.15s}
+.ctrls button:hover{background:#dbe8ff}
+.ctrls button[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.ctrls label{display:flex;align-items:center;gap:5px;margin-left:6px;color:#393939}
+.hint{font-size:12px;color:var(--mute);margin:12px 0 0;font-style:italic}
+.hint.note2{color:#161616;font-style:normal;background:#fff;border-left:3px solid var(--red);padding:8px 12px;display:none}
+.hint.note2.show{display:block}
+.hint.note2 button{margin-left:8px;border:1px solid var(--blue);background:#fff;color:var(--blue);padding:2px 10px;font-size:12px}
+
+/* ---- legacy ---- */
+.legacy .hmc-main{background:#fff;padding:10px 12px;position:relative}
+.legacy .hmc-side{background:#fff}
+.legacy .hmc-side li.act-i{background:#d0d0d0;border-left:0;padding-left:8px}
+.lg-h{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.lg-ico{width:18px;height:22px;background:linear-gradient(#9aa4b3,#6b7685);border-radius:2px;flex:none;margin-top:2px}
+.lg-h h5{font-size:11px;font-weight:400;margin:0 0 4px;border-bottom:1px solid #8d8d8d;padding-bottom:4px}
+.lg-h p{font-size:7.5px;margin:0;color:#393939;line-height:1.5}
+.lg-sel{display:flex;gap:8px;align-items:center;font-size:8.5px;margin:10px 0}
+.lg-sel label{font-weight:600}
+.lg-sel select{flex:1;min-width:0;font:inherit;font-size:8.5px;border:1px solid #8d8d8d;padding:3px 4px;background:#fff}
+.gbtn{border:1px solid #8d8d8d;background:#e0e0e0;font-size:8.5px;padding:3px 14px;color:#161616;border-radius:0}
+.gbtn:hover:not(:disabled){background:#d0d0d0}
+.gbtn:disabled{color:#a8a8a8;background:#f4f4f4;cursor:not-allowed}
+.lg-det{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;font-size:8.5px;margin:12px 0;animation:fadeIn .25s}
+.lg-det div b{display:inline-block;min-width:76px}
+.lg-empty{height:70px}
+.lg-ov{position:absolute;inset:0;background:rgba(40,40,40,.55);display:flex;align-items:center;justify-content:center;padding:10px;z-index:3}
+.lg-ov[hidden]{display:none}
+.lg-modal{background:#fff;border:1px solid #8d8d8d;width:100%;max-width:300px;max-height:96%;overflow:auto;padding:10px 12px;font-size:8px;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:fadeIn .2s}
+.lg-modal h6{font-size:10px;font-weight:600;margin:0 0 6px}
+.lg-modal p{margin:0 0 8px;line-height:1.5}
+.lg-modal table{width:100%;border-collapse:collapse;margin-bottom:8px}
+.lg-modal th,.lg-modal td{border:1px solid #d0d0d0;padding:3px 5px;text-align:left;font-size:7.5px}
+.lg-modal th{background:#e8e8e8}
+.lg-modal .row{display:flex;gap:10px;align-items:center;margin:6px 0}
+.lg-modal .row label{display:flex;gap:3px;align-items:center}
+.lg-modal input[type=text]{font:inherit;font-size:7.5px;border:1px solid #8d8d8d;padding:2px 4px;width:90px}
+.lg-btns{display:flex;justify-content:flex-end;gap:6px;margin-top:8px}
+.lg-btns .gbtn{padding:3px 16px}
+.lg-menu{position:absolute;background:#fff;border:1px solid #8d8d8d;box-shadow:0 4px 10px rgba(0,0,0,.25);z-index:2}
+.lg-menu button{display:block;border:0;background:#fff;font-size:8.5px;padding:5px 10px;width:100%;text-align:left;white-space:nowrap}
+.lg-menu button:hover{background:#d0e2ff}
+.lg-menu[hidden]{display:none}
+.stepc{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.stepc span{font-size:11px;border:1px solid #c6c6c6;background:#fff;color:#6f6f6f;padding:3px 10px;border-radius:12px;transition:.2s}
+.stepc span.on{background:var(--red);border-color:var(--red);color:#fff}
+.lg-tabs{display:flex;gap:6px;margin-bottom:12px}
+.lg-tabs button{border:1px solid #b6c6e6;background:#fff;color:#0043ce;font-size:12px;padding:5px 12px;border-radius:14px}
+.lg-tabs button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.lg-tabs button:hover:not([aria-pressed="true"]){background:#dbe8ff}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .hero .wrap,.item,.sessions,.quotes{grid-template-columns:1fr}
+  .item.flip{grid-template-columns:1fr}
+  .item.flip .copy,.item.flip .vis{order:0}
+  .copy h4{max-width:none}
+  .cards3,.cards3.two{grid-template-columns:1fr}
+  .pcard{grid-template-columns:48px minmax(0,1fr);gap:8px 16px}
+  .pcard p{grid-column:2}
+  .stats{grid-template-columns:1fr 1fr}
+  .topnav nav a{padding:6px 7px}
+  .topnav b{display:none}
+}
+@media (max-width:620px){
+  .wrap{padding:0 18px}
+  .stats{grid-template-columns:1fr}
+  .hmc-side{display:none}
+  .topnav nav{display:none}
+  .stat{border-right:0}
+}
+</style>
+<style id="__cl-styles">
+    .__cl-highlight {
+      outline: 2px solid #0f62fe !important;
+      outline-offset: 2px !important;
+      background-color: rgba(15, 98, 254, 0.08) !important;
+      transition: outline 0.2s, background-color 0.2s;
+    }
+    .__cl-highlight-scroll {
+      outline: 2px solid #f1c21b !important;
+      outline-offset: 2px !important;
+      background-color: rgba(241, 194, 27, 0.08) !important;
+    }
+  </style></head>
+<body>
+
+<header class="topnav">
+  <div class="wrap">
+    <b>Hardware Virtualized I/O · PowerHMC</b>
+    <nav aria-label="Sections">
+      <a href="#context" class="">Context</a>
+      <a href="#problem" class="">Problem</a>
+      <a href="#understand" class="">Understand</a>
+      <a href="#investigate" class="">Investigate</a>
+      <a href="#design" class="">Design</a>
+      <a href="#impact" class="">Impact</a>
+      <a href="#reflection" class="">Reflection</a>
+    </nav>
+  </div>
+  <div class="progress" id="progress" style="width: 17.3918%;"></div>
+</header>
+
+<main>
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="reveal in">
+      <p class="eyebrow">Enterprise UX · Product modernization</p>
+      <h1>Modernizing Hardware Virtualized I/O in PowerHMC</h1>
+      <p class="lead">Re-examining complex infrastructure-management workflows across System, Partition, and VIOS as PowerHMC evolves from legacy interfaces toward a modern React and Carbon Design System experience.</p>
+      <div class="chips">
+        <div class="chip"><small>My role</small><span>Product Designer</span></div>
+        <div class="chip"><small>Contribution</small><span>Design ownership + collaboration</span></div>
+      </div>
+    </div>
+    <div class="vis reveal in" id="m-hero" style="--h:330px"><div class="hmc"><div class="hmc-top"><span class="burger"></span><b>IBM Power HMC</b><span class="srch">Search for a system, partition, VIOS or cluster</span><span class="fbk">Feedback</span><span class="dots"><i></i><i></i><i></i><i></i></span></div><div class="hmc-head"><div class="bc">Systems <span>/</span></div><div class="ttl"><h4>[System/Partition/VIOS_name]</h4><span class="act">Actions</span></div><div class="st"><span class="dot g"></span>Running <span class="tri"></span>Normal <span class="tg"></span> Reference code : <a>C004091</a></div></div><div class="hmc-body"><nav class="hmc-side" aria-hidden="true"><ul><li>System settings</li><li>Partitions<span class="tagx n">213</span></li><li>Processor, memory, I/O</li><li>Persistent memory</li><li class="sep"></li><li>Virtual I/O servers<span class="tagx n">4</span></li><li>Virtual Networks</li><li>Virtual NICs<span class="tagx new">new</span></li><li>Virtual storage<span class="tagx upd">updated</span></li><li class="act-i">Hardware virtualized I/O<span class="tagx upd">updated</span></li><li>Reserved storage pools<span class="ext">↗</span></li><li>Shared processor pools<span class="ext">↗</span></li><li>Shared memory pools<span class="ext">↗</span></li><li>Power modes</li><li class="sep"></li><li>CoD functions<span class="ext">↗</span></li><li>Licensed capabilities</li><li class="sep"></li><li>Tasks log</li><li>Serviceability<span class="ext">↗</span></li><li>Reference code log</li><li>RIO configuration<span class="ext">↗</span></li><li>PCI configuration<span class="ext">↗</span></li><li class="sep"></li><li>Virtual networking diagram</li><li>Virtual storage diagram</li><li>SR-IOV vNIC diagram</li></ul></nav><div class="hmc-main"><div class="cardtop"><div class="r"><a>Hardware Virtualized IO</a><span><a>Refresh ↻</a><a>Learn more ⧉</a></span></div><h5>SR-IOV adapter: U73D8.ND3.FD0022-P0-C3</h5><div class="kv"><dl><dt>Adapter ID</dt><dd>1</dd><dt>Status</dt><dd><span class="dot g"></span>Running</dd><dt>Maximum logical ports</dt><dd>80</dd><dt>Available logical ports</dt><dd>0</dd></dl><dl><dt>Configured logical ports</dt><dd>80</dd><dt>Owner</dt><dd>Hypervisor</dd><dt>Adapter configuration option</dt><dd>Not supported</dd><dt>Mode</dt><dd>Shared</dd></dl></div></div><section class="acc open"><button type="button" class="acc-h" aria-expanded="true"><i class="chev"></i>Physical ports</button><div class="acc-b"><div class="acc-in filterable"><div class="sb"><input type="search" data-filter="" placeholder="Search input text" aria-label="Search table"></div><div class="tw"><table class="t "><thead><tr><th>Location code</th><th>ID</th><th>Type</th><th>Link Status</th><th>MAC Address</th><th>Label</th><th>Sub-label</th><th>Configured Speed</th><th>Negotiated Speed</th><th>Available logical ports</th><th>Configured logical ports</th></tr></thead><tbody><tr><td><a>U78D8.ND3.FD0022-P0-C0-T0</a></td><td>0</td><td>RoCE</td><td>Down</td><td>B8:59:9F:EC:8D:F4</td><td><span class="pill">Label</span></td><td><span class="pill">Sub-label</span></td><td>Auto</td><td>25 Gbps</td><td>40</td><td>0</td></tr><tr><td><a>U78D8.ND3.FD0022-P0-C0-T1</a></td><td>1</td><td>RoCE</td><td>Down</td><td>B8:59:9F:EC:8D:F4</td><td><span class="pill">Label</span></td><td><span class="pill">Sub-label</span></td><td>Auto</td><td>25 Gbps</td><td>40</td><td>0</td></tr></tbody></table></div></div></div></section><section class="acc"><button type="button" class="acc-h" aria-expanded="false"><i class="chev"></i>Logical ports</button><div class="acc-b"><div class="acc-in filterable"><div class="sb"><input type="search" data-filter="" placeholder="Search input text" aria-label="Search table"></div><div class="tw"><table class="t "><thead><tr><th>(Device Name) Location code</th><th>Adapter ID</th><th>Physical Port ID</th><th>Capacity (%)</th><th>Type</th><th>Partition</th><th>VNIC Backed</th><th>Connected Partition</th><th>Permissions</th><th>Migratable</th></tr></thead><tbody><tr><td>(unavailable) U78DA.ND0.WZS09FV</td><td>2</td><td>0</td><td>2</td><td>Ethernet</td><td>Content</td><td>Yes</td><td>VIOS1</td><td>Diagnostic +1</td><td>—</td></tr><tr><td>(unavailable) U78DA.ND0.WZS09FV</td><td>2</td><td>0</td><td>2</td><td>Ethernet</td><td>Content</td><td>Yes</td><td>VIOS2</td><td>Diagnostic +1</td><td>—</td></tr></tbody></table></div></div></div></section></div></div></div></div>
+  </div>
+</section>
+
+<!-- ============ CONTEXT ============ -->
+<section class="sec" id="context" style="padding-top:56px">
+  <div class="wrap reveal in">
+    <h2 class="intro-title">IBM <b>Power HMC</b> - A complex product, evolving experience</h2>
+    <p style="font-size:16px;max-width:560px;margin:0">IBM Power servers run banks, airlines, and telcos. The people who manage them spend their days inside PowerHMC — a dense, enterprise-grade console.</p>
+  </div>
+  <div class="band">
+    <div class="wrap reveal in">
+      <div class="cards3">
+        <article class="card">
+          <p class="lab">The context</p>
+          <h3>A mature enterprise product</h3>
+          <p>PowerHMC supports administration of IBM Power systems. The experience includes legacy UI patterns and established infrastructure-management workflows.</p>
+        </article>
+        <article class="card">
+          <p class="lab">The design challenge</p>
+          <h3>Modernize without losing the workflow</h3>
+          <p>Translate existing tasks and information structures into a more consistent experience aligned with React and Carbon Design System—while validating what should change and what must remain.</p>
+        </article>
+        <article class="card">
+          <p class="lab">My contribution</p>
+          <h3>From audit to implementation</h3>
+          <p>Legacy UI analysis, workflow and IA mapping, sketches and wireframes, Carbon-aligned design, sponsor-user feedback, cross-functional decisions and implementation review.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROBLEM ============ -->
+<section class="sec problem" id="problem" style="padding-top:64px">
+  <div class="wrap reveal in">
+    <h2 class="h2">Problem Identification</h2>
+    <h3>Why is the HMC interface changing?</h3>
+    <p class="sub">The problem is bigger than one feature. Hardware virtualized I/O is one of many screens moving to a new platform.</p>
+    <div class="cards3">
+      <div class="card"><p class="lab">Before</p><h3>A patchwork built over 30 years</h3><p>It started with a custom-built language, then moved through upgrades to Vaadin and Dojo. Over time these became outdated, hard to maintain and inconsistent for users.</p></div>
+      <div class="card"><p class="lab">Now</p><h3>React + Carbon</h3><p>Everything is being rebuilt with React for the frontend and the Carbon Design System for components. The result is clean, consistent and scalable.</p></div>
+      <div class="card"><p class="lab">How</p><h3>Micro-frontends</h3><p>Instead of one giant application, the UI is split into smaller pieces, each owned by a different team and plugged into one central dashboard. This makes updates faster and easier to test.</p></div>
+    </div>
+    <p class="sub" style="margin-top:36px">For design, this means one consistent, responsive experience for enterprise users, built on Carbon, flexible enough to plug into a modular structure and ready for incremental rollout.</p>
+    <h3>Everything happened inside a modal</h3>
+    <p class="sub">Hardware virtualized I/O shows what the legacy patchwork felt like. Managing SR-IOV in the legacy PowerHMC meant picking an adapter from a dropdown, then navigating through a chain of centered pop-up dialogs — each covering the table you came from.</p>
+    <div class="pcards">
+      <div class="pcard"><b>Hidden information</b><p>The page was empty until you chose an adapter from a dropdown. No overview, no status, no comparison.</p></div>
+      <div class="pcard"><b>Modal on modal</b><p>Every edit — adapter mode, port settings, logical port details — opened a centered dialog that obscured the context behind it.</p></div>
+      <div class="pcard"><b>No system feedback</b><p>No loading states. No progress during mode changes. No error or success outcomes. Users couldn't tell waiting from failing.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ UNDERSTAND ============ -->
+<section class="sec" id="understand" style="padding-top:88px">
+  <div class="band light" style="margin-top:0">
+    <div class="wrap reveal in" style="margin-bottom:36px">
+      <p class="kicker">Understand</p>
+      <h2 class="h2 wide" style="max-width:690px">The legacy flow made people ask before they could see</h2>
+    </div>
+    <div class="wrap">
+      <article class="item reveal in">
+        <div class="copy">
+          <div class="n">01</div>
+          <h4>The page starts empty</h4>
+          <p class="lbl issue">The issue</p>
+          <p>When an admin opens SR-IOV, they see a dropdown and a button. Nothing else. The entire page's instruction is: "Select the required SR-IOV adapter and click Modify." There is no overview, no status, no way to see all adapters at once without opening the list one by one.</p>
+        </div>
+        <div class="vis"><div id="m-l1" style="--h:330px"><div class="hmc legacy"><div class="hmc-top"><span class="burger"></span><b>Power HMC</b><span class="srch">Search for a system, partition, VIOS or cluster</span><span class="fbk">Feedback</span><span class="dots"><i></i><i></i><i></i><i></i></span></div><div class="hmc-head"><div class="bc">Systems <span>/</span> hmc-denali10-fsp</div><div class="ttl"><h4>hmc-denali10-fsp</h4><span class="act">System actions</span></div><div class="st"><span class="dot g"></span>Operating <span class="tri"></span>Physical attention LED on <span class="tg"></span></div></div><div class="hmc-body"><nav class="hmc-side" aria-hidden="true"><ul><li>System settings</li><li>Partitions<span class="tagx n">213</span></li><li>Processor, memory, I/O</li><li>Persistent memory</li><li class="sep"></li><li>Virtual I/O servers<span class="tagx n">4</span></li><li>Virtual Networks</li><li>Virtual NICs<span class="tagx new">new</span></li><li>Virtual storage<span class="tagx upd">updated</span></li><li class="act-i">Hardware virtualized I/O<span class="tagx upd">updated</span></li><li>Reserved storage pools<span class="ext">↗</span></li><li>Shared processor pools<span class="ext">↗</span></li><li>Shared memory pools<span class="ext">↗</span></li><li>Power modes</li><li class="sep"></li><li>CoD functions<span class="ext">↗</span></li><li>Licensed capabilities</li><li class="sep"></li><li>Tasks log</li><li>Serviceability<span class="ext">↗</span></li><li>Reference code log</li><li>RIO configuration<span class="ext">↗</span></li><li>PCI configuration<span class="ext">↗</span></li><li class="sep"></li><li>Virtual networking diagram</li><li>Virtual storage diagram</li><li>SR-IOV vNIC diagram</li></ul></nav><div class="hmc-main"><div class="lg-h"><span class="lg-ico"></span><div><h5>Hardware Virtualized I/O : SR-IOV</h5><p>Select the required SR-IOV adapter and click Modify to modify the properties of the SR-IOV adapter. The operating mode of the SR-IOV adapter and its owning partition name are also displayed.</p></div></div><div class="lg-sel"><label for="l1sel">SR-IOV Adapter:</label><select id="l1sel"><option value="">Select an SR-IOV adapter</option><option value="0">U78D8.ND3.FD0022-P0-C3-C0  PCIe3 2 PORT 10 GB NIC&amp;ROCE ADAPTER</option><option value="1">U78D8.ND3.FD0022-P0-C3-C1  PCIe3 2 PORT 10 GB NIC&amp;ROCE ADAPTER</option></select><button type="button" class="gbtn" id="l1mod" disabled="">Modify</button></div><div id="l1det" class="lg-empty"></div></div></div></div></div><p class="hint">Try it — pick an adapter. Until you do, the page tells you nothing.</p></div>
+      </article>
+
+      <article class="item flip reveal in">
+        <div class="copy">
+          <div class="n">02</div>
+          <h4>Every edit happens in a centered modal &amp; Nothing tells you what the system is doing</h4>
+          <p class="lbl issue">The issue</p>
+          <p>Want to change an adapter from Shared mode to Dedicated? A modal appears over the page. It shows two radio buttons and grey OK / Cancel buttons. The modal covers the very port table you were just looking at. There's no visual weight to the primary action — OK looks the same as Cancel.</p>
+          <p>Mode changes — switching an adapter from Shared to Dedicated — are slow operations on the server. They can take time. But none of the legacy screens showed a loading state, a progress indicator, a success confirmation, or an error message. Users clicked OK and waited. They had no way to distinguish "it's running" from "it failed silently."</p>
+        </div>
+        <div class="vis"><div id="m-l2" style="--h:350px"><div class="hmc legacy"><div class="hmc-top"><span class="burger"></span><b>Power HMC</b><span class="srch">Search for a system, partition, VIOS or cluster</span><span class="fbk">Feedback</span><span class="dots"><i></i><i></i><i></i><i></i></span></div><div class="hmc-head"><div class="bc">Systems <span>/</span> hmc-denali10-fsp</div><div class="ttl"><h4>hmc-denali10-fsp</h4><span class="act">System actions</span></div><div class="st"><span class="dot g"></span>Operating <span class="tri"></span>Physical attention LED on <span class="tg"></span></div></div><div class="hmc-body"><nav class="hmc-side" aria-hidden="true"><ul><li>System settings</li><li>Partitions<span class="tagx n">213</span></li><li>Processor, memory, I/O</li><li>Persistent memory</li><li class="sep"></li><li>Virtual I/O servers<span class="tagx n">4</span></li><li>Virtual Networks</li><li>Virtual NICs<span class="tagx new">new</span></li><li>Virtual storage<span class="tagx upd">updated</span></li><li class="act-i">Hardware virtualized I/O<span class="tagx upd">updated</span></li><li>Reserved storage pools<span class="ext">↗</span></li><li>Shared processor pools<span class="ext">↗</span></li><li>Shared memory pools<span class="ext">↗</span></li><li>Power modes</li><li class="sep"></li><li>CoD functions<span class="ext">↗</span></li><li>Licensed capabilities</li><li class="sep"></li><li>Tasks log</li><li>Serviceability<span class="ext">↗</span></li><li>Reference code log</li><li>RIO configuration<span class="ext">↗</span></li><li>PCI configuration<span class="ext">↗</span></li><li class="sep"></li><li>Virtual networking diagram</li><li>Virtual storage diagram</li><li>SR-IOV vNIC diagram</li></ul></nav><div class="hmc-main"><div class="lg-h"><span class="lg-ico"></span><div><h5>Hardware Virtualized I/O : SR-IOV</h5><p>Select the required SR-IOV adapter and click Modify to modify the properties of the SR-IOV adapter. The operating mode of the SR-IOV adapter and its owning partition name are also displayed.</p></div></div><div class="lg-sel"><label>SR-IOV Adapter:</label><select disabled=""><option>U78D8.ND3.FD0022-P0-C3-C0  PCIe3 2 PORT 10 GB NIC&amp;ROCE ADAPTER</option></select><button type="button" class="gbtn" disabled="">Modify</button></div><div class="lg-det"><div><b>Status :</b>Running</div><div><b>Adapter ID :</b>1</div><div><b>Mode :</b>Shared</div><div><b>Maximum Logical Ports :</b>80</div><div><b>Owner :</b>Hypervisor</div><div><b>Adapter Configuration Option :</b>Not Supported</div></div><div id="l2tbl" style="font-size:8px;color:#6f6f6f;margin-top:8px">Physical ports · Logical ports …</div><div class="lg-ov" id="l2ov"><div class="lg-modal" role="dialog" aria-label="Modify SR-IOV Adapter"><h6>Modify SR-IOV Adapter</h6><p>The table lists the properties of the SR-IOV adapter. You can change the mode of the SR-IOV adapter to either Dedicated or Shared.</p><table><tbody><tr><th>Location Code</th><th>ID</th><th>Description</th><th>Owner</th></tr><tr><td>U78D8.ND3.FD0022-P0-C3-C0</td><td>1</td><td>PCIe3 2 PORT 10 GB NIC&amp;ROCE</td><td>Hypervisor</td></tr></tbody></table><div class="row"><b>Mode :</b><label><input type="radio" name="l2m"> Dedicated</label><label><input type="radio" name="l2m" checked=""> Shared</label></div><p>Configured Logical Ports : 0<br>Maximum Logical Ports : 80</p><div class="lg-btns"><button type="button" class="gbtn" data-l2="ok">OK</button><button type="button" class="gbtn" data-l2="cancel">Cancel</button></div></div></div></div></div></div></div>
+          <p class="hint note2" id="l2note"><span id="l2txt"></span><button type="button" id="l2replay">Replay</button></p>
+          <p class="hint" id="l2hint">Try it — press OK or Cancel in the dialog.</p></div>
+      </article>
+
+      <article class="item reveal in">
+        <div class="copy">
+          <div class="n">03</div>
+          <h4>Editing a port takes three steps through a menu with one item</h4>
+          <p class="lbl issue">The issue</p>
+          <p>To modify a physical port: select a radio button → open an "Action" dropdown → click the only item inside it: "Modify Physical Port" → edit in yet another modal. There is also a separate "View" modal and a "Modify" modal for the same port — near-identical content, two different paths, easy to open the wrong one.</p>
+        </div>
+        <div class="vis"><div id="m-l3" style="--h:350px"><div class="hmc legacy"><div class="hmc-top"><span class="burger"></span><b>Power HMC</b><span class="srch">Search for a system, partition, VIOS or cluster</span><span class="fbk">Feedback</span><span class="dots"><i></i><i></i><i></i><i></i></span></div><div class="hmc-head"><div class="bc">Systems <span>/</span> hmc-denali10-fsp</div><div class="ttl"><h4>hmc-denali10-fsp</h4><span class="act">System actions</span></div><div class="st"><span class="dot g"></span>Operating <span class="tri"></span>Physical attention LED on <span class="tg"></span></div></div><div class="hmc-body"><nav class="hmc-side" aria-hidden="true"><ul><li>System settings</li><li>Partitions<span class="tagx n">213</span></li><li>Processor, memory, I/O</li><li>Persistent memory</li><li class="sep"></li><li>Virtual I/O servers<span class="tagx n">4</span></li><li>Virtual Networks</li><li>Virtual NICs<span class="tagx new">new</span></li><li>Virtual storage<span class="tagx upd">updated</span></li><li class="act-i">Hardware virtualized I/O<span class="tagx upd">updated</span></li><li>Reserved storage pools<span class="ext">↗</span></li><li>Shared processor pools<span class="ext">↗</span></li><li>Shared memory pools<span class="ext">↗</span></li><li>Power modes</li><li class="sep"></li><li>CoD functions<span class="ext">↗</span></li><li>Licensed capabilities</li><li class="sep"></li><li>Tasks log</li><li>Serviceability<span class="ext">↗</span></li><li>Reference code log</li><li>RIO configuration<span class="ext">↗</span></li><li>PCI configuration<span class="ext">↗</span></li><li class="sep"></li><li>Virtual networking diagram</li><li>Virtual storage diagram</li><li>SR-IOV vNIC diagram</li></ul></nav><div class="hmc-main"><div class="lg-h"><span class="lg-ico"></span><div><h5>Hardware Virtualized I/O : SR-IOV</h5><p>Select the required SR-IOV adapter and click Modify to modify the properties of the SR-IOV adapter. The operating mode of the SR-IOV adapter and its owning partition name are also displayed.</p></div></div><div class="lg-sel"><label>SR-IOV Adapter:</label><select disabled=""><option>U78D8.ND3.FD0022-P0-C3-C0  PCIe3 2 PORT 10 GB NIC&amp;ROCE ADAPTER</option></select><button type="button" class="gbtn" disabled="">Modify</button></div><div style="position:relative;margin-top:10px"><button type="button" class="gbtn" id="l3act" disabled="" style="margin-bottom:4px">Action ▾</button><div class="lg-menu" id="l3menu" hidden=""><button type="button" id="l3item">Modify Physical Port</button></div><table class="t" style="font-size:8px"><thead><tr><th></th><th>ID</th><th>Location Code</th><th>Type</th><th>Link Status</th><th>MAC Address</th></tr></thead><tbody><tr><td><input type="radio" name="l3r" aria-label="Select port 0"></td><td>0</td><td><a>U78D8.ND3.FD0022-P0-C3-T0</a></td><td>RoCE</td><td>Down</td><td>B8:59:9F:EC:8D:F4</td></tr><tr><td><input type="radio" name="l3r" aria-label="Select port 1"></td><td>1</td><td><a>U78D8.ND3.FD0022-P0-C3-T1</a></td><td>RoCE</td><td>Down</td><td>B8:59:9F:EC:8D:F4</td></tr></tbody></table></div><div class="lg-ov" id="l3ov" hidden=""></div></div></div></div></div>
+          <div class="stepc" id="l3steps"><span>1 Select a radio button</span><span>2 Open “Action”</span><span>3 Click the only item</span><span>4 Edit in another modal</span></div></div>
+      </article>
+
+      <article class="item flip reveal in">
+        <div class="copy">
+          <div class="n">04</div>
+          <h4>The same port has separate View and Modify modals</h4>
+          <p class="lbl issue">The issue</p>
+          <p>Near-identical content in two dialogs; users must learn two paths to one object and may open the wrong one.</p>
+        </div>
+        <div class="vis">
+          <div class="lg-tabs" role="group" aria-label="Legacy dialogs"><button type="button" data-l4="view" aria-pressed="true">View dialog</button><button type="button" data-l4="modify" aria-pressed="false">Modify dialog</button></div>
+          <div id="m-l4" style="--h:350px"><div class="hmc legacy"><div class="hmc-top"><span class="burger"></span><b>Power HMC</b><span class="srch">Search for a system, partition, VIOS or cluster</span><span class="fbk">Feedback</span><span class="dots"><i></i><i></i><i></i><i></i></span></div><div class="hmc-head"><div class="bc">Systems <span>/</span> hmc-denali10-fsp</div><div class="ttl"><h4>hmc-denali10-fsp</h4><span class="act">System actions</span></div><div class="st"><span class="dot g"></span>Operating <span class="tri"></span>Physical attention LED on <span class="tg"></span></div></div><div class="hmc-body"><nav class="hmc-side" aria-hidden="true"><ul><li>System settings</li><li>Partitions<span class="tagx n">213</span></li><li>Processor, memory, I/O</li><li>Persistent memory</li><li class="sep"></li><li>Virtual I/O servers<span class="tagx n">4</span></li><li>Virtual Networks</li><li>Virtual NICs<span class="tagx new">new</span></li><li>Virtual storage<span class="tagx upd">updated</span></li><li class="act-i">Hardware virtualized I/O<span class="tagx upd">updated</span></li><li>Reserved storage pools<span class="ext">↗</span></li><li>Shared processor pools<span class="ext">↗</span></li><li>Shared memory pools<span class="ext">↗</span></li><li>Power modes</li><li class="sep"></li><li>CoD functions<span class="ext">↗</span></li><li>Licensed capabilities</li><li class="sep"></li><li>Tasks log</li><li>Serviceability<span class="ext">↗</span></li><li>Reference code log</li><li>RIO configuration<span class="ext">↗</span></li><li>PCI configuration<span class="ext">↗</span></li><li class="sep"></li><li>Virtual networking diagram</li><li>Virtual storage diagram</li><li>SR-IOV vNIC diagram</li></ul></nav><div class="hmc-main"><div class="lg-h"><span class="lg-ico"></span><div><h5>Hardware Virtualized I/O : SR-IOV</h5><p>Select the required SR-IOV adapter and click Modify to modify the properties of the SR-IOV adapter. The operating mode of the SR-IOV adapter and its owning partition name are also displayed.</p></div></div><div class="lg-sel"><label>SR-IOV Adapter:</label><select disabled=""><option>U78D8.ND3.FD0022-P0-C3-C0  PCIe3 2 PORT 10 GB NIC&amp;ROCE ADAPTER</option></select><button type="button" class="gbtn" disabled="">Modify</button></div><table class="t" style="font-size:8px"><thead><tr><th></th><th>ID</th><th>Location Code</th><th>Type</th><th>Link Status</th><th>MAC Address</th></tr></thead><tbody><tr><td><input type="radio" name="l3r" aria-label="Select port 0"></td><td>0</td><td><a>U78D8.ND3.FD0022-P0-C3-T0</a></td><td>RoCE</td><td>Down</td><td>B8:59:9F:EC:8D:F4</td></tr><tr><td><input type="radio" name="l3r" aria-label="Select port 1"></td><td>1</td><td><a>U78D8.ND3.FD0022-P0-C3-T1</a></td><td>RoCE</td><td>Down</td><td>B8:59:9F:EC:8D:F4</td></tr></tbody></table><div class="lg-ov" id="l4ov"><div class="lg-modal" role="dialog" aria-label="View SR-IOV Physical Port"><h6>View SR-IOV Physical Port</h6><p>You can view the properties of a physical port that is on a Single Root I/O Virtualization (SR-IOV) capable adapter. The table lists the details of the physical port that you want to view.</p><table><tbody><tr><th>ID</th><th>Location Code</th><th>Type</th><th>Link Status</th><th>Available Logical Ports</th><th>Configured Logical Ports</th></tr><tr><td>0</td><td>U78D8.ND3.FD0022-P0-C3-T0</td><td>RoCE</td><td>Down</td><td>40 Ethernet</td><td>0 Ethernet</td></tr></tbody></table><div class="row"><b>Label :</b>Not Configured</div><div class="row"><b>Sub-label :</b>Not Configured</div><div class="row"><b>Configured Speed :</b>Auto</div><div class="row"><b>MAC Address :</b>B8:59:9F:EC:8D:F4</div><div class="lg-btns"><button type="button" class="gbtn" data-close="">Close</button></div></div></div></div></div></div></div>
+          <p class="hint">Same port, two dialogs. Switch between them and spot the difference.</p></div>
+      </article>
+
+      <div class="more reveal in">
+        <svg width="14" height="70" viewBox="0 0 14 70" fill="none" stroke="#161616" stroke-width="1.4" stroke-dasharray="10 8" aria-hidden="true"><path d="M7 0v58"></path><path d="M2 58l5 8 5-8" stroke-dasharray="0"></path></svg>
+        <b>Many more..</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INVESTIGATE ============ -->
+<section class="sec" id="investigate" style="padding-top:96px">
+  <div class="wrap reveal in">
+    <p class="kicker">Investigate &amp; prioritize</p>
+    <h2 class="h2">Seven sessions. Real admins.</h2>
+    <p class="lede">The project included four discovery sessions and three design-feedback sessions. These weren't exclusively about SR-IOV — they covered the broader feature context. But several signals landed directly on what I was designing.</p>
+    <div class="sessions">
+      <div class="sbox o">
+        <h3>4 discovery research sessions</h3>
+        <p>We started by listening. We wanted to learn what users do, how they operate key features, how they experience the legacy panels today, and whether they need anything new in their workflow.</p>
+        <p>From their answers, we mapped an as-is story for each user. We then pulled out the insights that were unique to each person, instead of repeating what everyone said. Those insights became need statements, pain points and actionable items.</p>
+        <p>Finally, we took these findings to the product managers and the engineering team. Together we decided what was in scope and what was not. For anything left out, we agreed on the reason and on when it could be considered, or whether it would not be considered at all.</p>
+      </div>
+      <div class="sbox p">
+        <h3>3 evaluative research (feedback) sessions</h3>
+        <p>The designs were shaped by the discovery sessions and the legacy audits.</p>
+        <p>Once they reached high-fidelity screens, we went back to the same users to see whether the designs worked for them.</p>
+        <p>We gave them tasks to complete and asked what they would do to finish each one. We observed, mapped their steps, and asked specific questions along the way to gather their feedback.</p>
+        <p>As before, we captured each user's individual insights along with the unique ones, and used them to move the design forward.</p>
+      </div>
+    </div>
+    <div class="quotes">
+      <figure class="q" style="margin:0">
+        <blockquote>“Rarely modify after initial setup. VLAN tagging and bandwidth allocation are the key settings.”</blockquote>
+        <cite>Discovery user 2</cite>
+        <div class="wh"><small>What it meant</small><span>Configuration is mostly done once, so the interface has to reduce cognitive load for rare changes and make status obvious.</span><br><span class="tagm" style="margin:6px 0 0">Research-backed</span></div>
+      </figure>
+      <figure class="q" style="margin:0">
+        <blockquote>“This is definitely better.”</blockquote>
+        <cite>Feedback user 2, comparing the adapter table with the old dropdown</cite>
+        <div class="wh"><small>What we did</small><span>Kept the adapter-first table; no major changes needed. <span class="tagm">Marked ✅</span></span></div>
+      </figure>
+      <figure class="q" style="margin:0">
+        <blockquote>“…would be nice to have a link status / negotiated speed shown, e.g., 10G or 25G, so we know if there is an issue or degradation.”</blockquote>
+        <cite>Feedback user 2, on the physical port view</cite>
+        <div class="wh"><small>What we did</small><span>Added a negotiated link speed column. <span class="tagm">Marked ✅</span></span></div>
+      </figure>
+      <figure class="q" style="margin:0">
+        <blockquote>“I’m not very happy with the responsiveness… it’s complex to see which step the transfer is in.”</blockquote>
+        <cite>Feedback user 1, on changing shared to dedicated</cite>
+        <div class="wh"><small>What we did</small><span>Designed clearer progress indicators. <span class="tagm">Marked ✅</span></span></div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DESIGN ============ -->
+<section class="sec" id="design" style="padding-top:96px">
+  <div class="wrap reveal in">
+    <p class="kicker">Design &amp; deliver</p>
+    <h2 class="h2 wide" style="max-width:520px">Decisions, each traced to its evidence</h2>
+  </div>
+  <div class="band" style="margin-top:36px">
+    <div class="wrap">
+      <article class="item reveal in" id="d1">
+        <div class="copy">
+          <div class="n">01</div>
+          <h4>Show all adapters upfront - not behind a dropdown</h4>
+          <p class="lbl sol">The solution</p>
+          <p>The old page was blank until you chose. You couldn't compare adapters, see their status, or understand which one needed attention without working through the dropdown one entry at a time.</p>
+          <p>The redesign lands directly on a table. All adapters, with their mode, status and location code visible at once.</p>
+          <div class="ev"><b>Evidence</b>Feedback user 2: "This is definitely better." Users prefer the new view because it surfaces adapter information upfront and makes selection easier.</div>
+        </div>
+        <div class="vis"><div id="m-d1" style="--h:300px"><div class="hmc"><div class="hmc-top"><span class="burger"></span><b>IBM Power HMC</b><span class="srch">Search for a system, partition, VIOS or cluster</span><span class="fbk">Feedback</span><span class="dots"><i></i><i></i><i></i><i></i></span></div><div class="hmc-head"><div class="bc">Systems <span>/</span></div><div class="ttl"><h4>[System/Partition/VIOS_name]</h4><span class="act">Actions</span></div><div class="st"><span class="dot g"></span>Running <span class="tri"></span>Normal <span class="tg"></span> Reference code : <a>C004091</a></div></div><div class="hmc-body"><nav class="hmc-side" aria-hidden="true"><ul><li>System settings</li><li>Partitions<span class="tagx n">213</span></li><li>Processor, memory, I/O</li><li>Persistent memory</li><li class="sep"></li><li>Virtual I/O servers<span class="tagx n">4</span></li><li>Virtual Networks</li><li>Virtual NICs<span class="tagx new">new</span></li><li>Virtual storage<span class="tagx upd">updated</span></li><li class="act-i">Hardware virtualized I/O<span class="tagx upd">updated</span></li><li>Reserved storage pools<span class="ext">↗</span></li><li>Shared processor pools<span class="ext">↗</span></li><li>Shared memory pools<span class="ext">↗</span></li><li>Power modes</li><li class="sep"></li><li>CoD functions<span class="ext">↗</span></li><li>Licensed capabilities</li><li class="sep"></li><li>Tasks log</li><li>Serviceability<span class="ext">↗</span></li><li>Reference code log</li><li>RIO configuration<span class="ext">↗</span></li><li>PCI configuration<span class="ext">↗</span></li><li class="sep"></li><li>Virtual networking diagram</li><li>Virtual storage diagram</li><li>SR-IOV vNIC diagram</li></ul></nav><div class="hmc-main"><div class="lp"><div class="r"><h5>Hardware virtualized I/O</h5><a>Learn more ⧉</a></div></div><div class="selbar" hidden=""><span>1 item selected</span><button type="button" data-open-panel="">Edit mode</button></div><div class="filterable" style="background:#fff"><div class="sb"><input type="search" data-filter="" placeholder="Search input text" aria-label="Search table"></div><div class="tw"><table class="t sel"><thead><tr><th></th><th>Location code</th><th>SR-IOV adapter ID</th><th>Mode</th><th>Maximum Logical Ports</th><th>Available logical ports</th><th>Configured logical ports</th><th>Description</th><th>Owner</th><th>Status</th><th>Adapter configuration option</th></tr></thead><tbody><tr><td><span class="cb"></span></td><td><a>U78D8.ND3.FD0022-P0-C3-C0</a></td><td>1</td><td><span data-mode1="">Dedicated</span></td><td>NA</td><td>NA</td><td>NA</td><td>PCIe3 2 PORT 10GB NIC&amp;ROCE</td><td>Hypervisor</td><td>Running</td><td>Not Supported</td></tr><tr><td><span class="cb"></span></td><td><a>U78D8.ND3.FD0022-P0-C3-C1</a></td><td>2</td><td>Dedicated</td><td>NA</td><td>NA</td><td>NA</td><td>PCIe3 2 PORT 10GB NIC&amp;ROCE</td><td>Hypervisor</td><td>Running</td><td>Not Supported</td></tr><tr><td><span class="cb"></span></td><td><a>U78D8.ND3.FD0022-P0-C3-C2</a></td><td>3</td><td>Shared</td><td>70</td><td>0</td><td>NA</td><td>PCIe3 2 PORT 10GB NIC&amp;ROCE</td><td>Hypervisor</td><td>Running</td><td>Not Supported</td></tr></tbody></table></div></div></div></div></div></div>
+          <p class="hint">Try it — search, or click a row to select an adapter.</p></div>
+      </article>
+
+      <article class="item flip reveal in" id="d2">
+        <div class="copy">
+          <div class="n">02</div>
+          <h4>A side panel with sticky Cancel / Save, Design waiting, failing and succeeding</h4>
+          <p class="lbl sol">The solution</p>
+          <p>The redesign opens a right-hand side panel from a selected row. The table stays visible. The Cancel and Save buttons are pinned to the bottom — they never scroll away.</p>
+          <p>The redesign treats each state as a first-class design problem: skeleton loading, a missing-adapter warning with disabled fields, an in-progress state with a progress bar and estimated duration, and explicit error and success outcomes.</p>
+          <div class="ev"><b>Evidence</b>Feedback user 3: "This is easier to read and easier to understand."</div>
+          <div class="ev"><b>Evidence</b>Feedback user 1: "I'm not very happy with the responsiveness... it's complex to see which step the transfer is in." Visibility of progress was the request</div>
+        </div>
+        <div class="vis">
+          <div class="ctrls" id="pmTabs" role="group" aria-label="Panel states">
+            <span>Explore the states:</span>
+            <button type="button" data-s="loading" aria-pressed="false">Loading</button>
+            <button type="button" data-s="missing" aria-pressed="false">Missing adapter</button>
+            <button type="button" data-s="edit" aria-pressed="false">Edit</button>
+            <button type="button" data-s="inprogress" aria-pressed="false">In progress</button>
+            <button type="button" data-s="error" aria-pressed="false">Error</button>
+            <button type="button" data-s="success" aria-pressed="true">Success</button>
+            <label><input type="checkbox" id="failNext"> Fail next save</label>
+          </div>
+          <div id="m-d2" style="--h:430px"><div class="hmc"><div class="hmc-top"><span class="burger"></span><b>IBM Power HMC</b><span class="srch">Search for a system, partition, VIOS or cluster</span><span class="fbk">Feedback</span><span class="dots"><i></i><i></i><i></i><i></i></span></div><div class="hmc-head"><div class="bc">Systems <span>/</span></div><div class="ttl"><h4>[System/Partition/VIOS_name]</h4><span class="act">Actions</span></div><div class="st"><span class="dot g"></span>Running <span class="tri"></span>Normal <span class="tg"></span> Reference code : <a>C004091</a></div></div><div class="hmc-body"><nav class="hmc-side" aria-hidden="true"><ul><li>System settings</li><li>Partitions<span class="tagx n">213</span></li><li>Processor, memory, I/O</li><li>Persistent memory</li><li class="sep"></li><li>Virtual I/O servers<span class="tagx n">4</span></li><li>Virtual Networks</li><li>Virtual NICs<span class="tagx new">new</span></li><li>Virtual storage<span class="tagx upd">updated</span></li><li class="act-i">Hardware virtualized I/O<span class="tagx upd">updated</span></li><li>Reserved storage pools<span class="ext">↗</span></li><li>Shared processor pools<span class="ext">↗</span></li><li>Shared memory pools<span class="ext">↗</span></li><li>Power modes</li><li class="sep"></li><li>CoD functions<span class="ext">↗</span></li><li>Licensed capabilities</li><li class="sep"></li><li>Tasks log</li><li>Serviceability<span class="ext">↗</span></li><li>Reference code log</li><li>RIO configuration<span class="ext">↗</span></li><li>PCI configuration<span class="ext">↗</span></li><li class="sep"></li><li>Virtual networking diagram</li><li>Virtual storage diagram</li><li>SR-IOV vNIC diagram</li></ul></nav><div class="hmc-main flush"><div class="pm-wrap open" id="pmWrap"><div class="pm-page"><div class="lp"><div class="r"><h5>Hardware virtualized I/O</h5><a>Learn more ⧉</a></div></div><div class="selbar" hidden=""><span>1 item selected</span><button type="button" data-open-panel="">Edit mode</button></div><div class="filterable" style="background:#fff"><div class="sb"><input type="search" data-filter="" placeholder="Search input text" aria-label="Search table"></div><div class="tw"><table class="t sel"><thead><tr><th></th><th>Location code</th><th>SR-IOV adapter ID</th><th>Mode</th><th>Maximum Logical Ports</th><th>Available logical ports</th><th>Configured logical ports</th><th>Description</th><th>Owner</th><th>Status</th><th>Adapter configuration option</th></tr></thead><tbody><tr><td><span class="cb"></span></td><td><a>U78D8.ND3.FD0022-P0-C3-C0</a></td><td>1</td><td><span data-mode1="">Shared</span></td><td>NA</td><td>NA</td><td>NA</td><td>PCIe3 2 PORT 10GB NIC&amp;ROCE</td><td>Hypervisor</td><td>Running</td><td>Not Supported</td></tr><tr><td><span class="cb"></span></td><td><a>U78D8.ND3.FD0022-P0-C3-C1</a></td><td>2</td><td>Dedicated</td><td>NA</td><td>NA</td><td>NA</td><td>PCIe3 2 PORT 10GB NIC&amp;ROCE</td><td>Hypervisor</td><td>Running</td><td>Not Supported</td></tr><tr><td><span class="cb"></span></td><td><a>U78D8.ND3.FD0022-P0-C3-C2</a></td><td>3</td><td>Shared</td><td>70</td><td>0</td><td>NA</td><td>PCIe3 2 PORT 10GB NIC&amp;ROCE</td><td>Hypervisor</td><td>Running</td><td>Not Supported</td></tr></tbody></table></div></div></div><div class="pm-scrim" id="pmScrim"></div><aside class="pm-panel" role="dialog" aria-label="Edit SR-IOV adapter Mode"><header><h5>Edit SR-IOV adapter Mode</h5><button type="button" class="x" id="pmX" aria-label="Close panel">✕</button></header><div class="pm-body" id="pmBody"><div class="note ok" role="status"><div><b>Mode changed</b>The adapter is now in Shared mode.</div></div><dl class="pm-f"><dt>Location</dt><dd>U78D8.ND3.FD0022-P0-C3-C0</dd><dt>Description</dt><dd>100GbE RoCE adapter x16</dd><dt>Adapter ID</dt><dd>1</dd><dt>Status</dt><dd>Running</dd><dt>Maximum logical ports</dt><dd>16 Ethernet and 2 RoCE</dd><dt>Available logical ports</dt><dd>12 Ethernet 2 RoCE</dd><dt>Configured logical ports</dt><dd>4 Ethernet 0 RoCE</dd><dt>Owner</dt><dd>Hypervisor</dd></dl><label class="lbl2" for="pmMode">Mode</label><select class="sel2" id="pmMode" disabled=""><option>Dedicated</option><option selected="">Shared</option></select></div><footer id="pmFoot"><button type="button" class="btn-p" data-act="close">Close</button></footer></aside></div></div></div></div></div>
+          <p class="hint">Click any table row to reopen the panel. In Edit, change the mode to enable Save. Press Esc to close.</p>
+        </div>
+      </article>
+
+      <article class="item reveal in" id="d3">
+        <div class="copy">
+          <div class="n">03</div>
+          <h4>Progressive disclosure on the adapter page</h4>
+          <p class="lbl sol">The solution</p>
+          <p>On the adapter page, both sections used to expand by default. This pushed content down and created visual noise.</p>
+          <p>I chose to expand Physical ports and collapse Logical ports — because research suggested logical-port creation is done at partition level, and admins change them infrequently. Physical ports are the more common working context.</p>
+          <div class="ev"><b>Evidence</b>Research backed data: Research suggests logical-port creation is done at partition level and admins use this infrequently.</div>
+        </div>
+        <div class="vis"><div id="m-d3" style="--h:420px"><div class="hmc"><div class="hmc-top"><span class="burger"></span><b>IBM Power HMC</b><span class="srch">Search for a system, partition, VIOS or cluster</span><span class="fbk">Feedback</span><span class="dots"><i></i><i></i><i></i><i></i></span></div><div class="hmc-head"><div class="bc">Systems <span>/</span></div><div class="ttl"><h4>[System/Partition/VIOS_name]</h4><span class="act">Actions</span></div><div class="st"><span class="dot g"></span>Running <span class="tri"></span>Normal <span class="tg"></span> Reference code : <a>C004091</a></div></div><div class="hmc-body"><nav class="hmc-side" aria-hidden="true"><ul><li>System settings</li><li>Partitions<span class="tagx n">213</span></li><li>Processor, memory, I/O</li><li>Persistent memory</li><li class="sep"></li><li>Virtual I/O servers<span class="tagx n">4</span></li><li>Virtual Networks</li><li>Virtual NICs<span class="tagx new">new</span></li><li>Virtual storage<span class="tagx upd">updated</span></li><li class="act-i">Hardware virtualized I/O<span class="tagx upd">updated</span></li><li>Reserved storage pools<span class="ext">↗</span></li><li>Shared processor pools<span class="ext">↗</span></li><li>Shared memory pools<span class="ext">↗</span></li><li>Power modes</li><li class="sep"></li><li>CoD functions<span class="ext">↗</span></li><li>Licensed capabilities</li><li class="sep"></li><li>Tasks log</li><li>Serviceability<span class="ext">↗</span></li><li>Reference code log</li><li>RIO configuration<span class="ext">↗</span></li><li>PCI configuration<span class="ext">↗</span></li><li class="sep"></li><li>Virtual networking diagram</li><li>Virtual storage diagram</li><li>SR-IOV vNIC diagram</li></ul></nav><div class="hmc-main"><div class="cardtop"><div class="r"><a>Hardware Virtualized IO</a><span><a>Refresh ↻</a><a>Learn more ⧉</a></span></div><h5>SR-IOV adapter: U73D8.ND3.FD0022-P0-C3</h5><div class="kv"><dl><dt>Adapter ID</dt><dd>1</dd><dt>Status</dt><dd><span class="dot g"></span>Running</dd><dt>Maximum logical ports</dt><dd>80</dd><dt>Available logical ports</dt><dd>0</dd></dl><dl><dt>Configured logical ports</dt><dd>80</dd><dt>Owner</dt><dd>Hypervisor</dd><dt>Adapter configuration option</dt><dd>Not supported</dd><dt>Mode</dt><dd>Shared</dd></dl></div></div><section class="acc open"><button type="button" class="acc-h" aria-expanded="true"><i class="chev"></i>Physical ports</button><div class="acc-b"><div class="acc-in filterable"><div class="sb"><input type="search" data-filter="" placeholder="Search input text" aria-label="Search table"></div><div class="tw"><table class="t "><thead><tr><th>Location code</th><th>ID</th><th>Type</th><th>Link Status</th><th>MAC Address</th><th>Label</th><th>Sub-label</th><th>Configured Speed</th><th>Negotiated Speed</th><th>Available logical ports</th><th>Configured logical ports</th></tr></thead><tbody><tr><td><a>U78D8.ND3.FD0022-P0-C0-T0</a></td><td>0</td><td>RoCE</td><td>Down</td><td>B8:59:9F:EC:8D:F4</td><td><span class="pill">Label</span></td><td><span class="pill">Sub-label</span></td><td>Auto</td><td>25 Gbps</td><td>40</td><td>0</td></tr><tr><td><a>U78D8.ND3.FD0022-P0-C0-T1</a></td><td>1</td><td>RoCE</td><td>Down</td><td>B8:59:9F:EC:8D:F4</td><td><span class="pill">Label</span></td><td><span class="pill">Sub-label</span></td><td>Auto</td><td>25 Gbps</td><td>40</td><td>0</td></tr></tbody></table></div></div></div></section><section class="acc"><button type="button" class="acc-h" aria-expanded="false"><i class="chev"></i>Logical ports</button><div class="acc-b"><div class="acc-in filterable"><div class="sb"><input type="search" data-filter="" placeholder="Search input text" aria-label="Search table"></div><div class="tw"><table class="t "><thead><tr><th>(Device Name) Location code</th><th>Adapter ID</th><th>Physical Port ID</th><th>Capacity (%)</th><th>Type</th><th>Partition</th><th>VNIC Backed</th><th>Connected Partition</th><th>Permissions</th><th>Migratable</th></tr></thead><tbody><tr><td>(unavailable) U78DA.ND0.WZS09FV</td><td>2</td><td>0</td><td>2</td><td>Ethernet</td><td>Content</td><td>Yes</td><td>VIOS1</td><td>Diagnostic +1</td><td>—</td></tr><tr><td>(unavailable) U78DA.ND0.WZS09FV</td><td>2</td><td>0</td><td>2</td><td>Ethernet</td><td>Content</td><td>Yes</td><td>VIOS2</td><td>Diagnostic +1</td><td>—</td></tr></tbody></table></div></div></div></section></div></div></div></div>
+          <p class="hint">Try it — expand or collapse Physical ports and Logical ports.</p></div>
+      </article>
+    </div>
+  </div>
+
+  <div class="wrap reveal in">
+    <div class="stats" id="stats">
+      <div class="stat"><b data-count="3">3</b><span>levels in scope: System, Partition, VIOS</span></div>
+      <div class="stat"><b data-count="36">36</b><span>legacy screens analysed</span></div>
+      <div class="stat"><b data-count="7">7</b><span>research sessions across the feature context</span></div>
+      <div class="stat"><b data-count="31" data-suffix="+">31+</b><span>redesigned screens &amp; states documented</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ IMPACT ============ -->
+<section class="sec impact" id="impact" style="padding-top:96px">
+  <div class="wrap reveal in">
+    <h2 class="h2">Overall impact</h2>
+  </div>
+  <div class="band">
+    <div class="wrap reveal in">
+      <div class="cards3">
+        <article class="card">
+          <span class="arr" aria-hidden="true">↗</span>
+          <p class="big">Visible</p>
+          <h3>Visibility of system status</h3>
+          <p>Legacy screens showed no progress, error or success. The redesign has 5 states: skeleton, in progress, error, success and missing.</p>
+        </article>
+        <article class="card">
+          <span class="arr" aria-hidden="true">↗</span>
+          <p class="big">Findable</p>
+          <h3>Findability</h3>
+          <p>Adapters were hidden behind a dropdown. They are now listed upfront in a table, with a Negotiated speed column.</p>
+        </article>
+        <article class="card">
+          <span class="arr" aria-hidden="true">↗</span>
+          <p class="big">Direct</p>
+          <h3>Interaction cost</h3>
+          <p>Radio, then a one-item Action menu, then a modal. Now it is one link into a port page.</p>
+        </article>
+        <article class="card">
+          <span class="arr" aria-hidden="true">↗</span>
+          <p class="big">In context</p>
+          <h3>Context retention</h3>
+          <p>Centered modals covered the table being edited. A side panel now keeps the page visible.</p>
+        </article>
+        <article class="card">
+          <span class="arr" aria-hidden="true">↗</span>
+          <p class="big">Consistent</p>
+          <h3>Consistency and standards</h3>
+          <p>Carbon and Vaadin-style controls were mixed. Now it is Carbon throughout, with sentence case and the same table tools.</p>
+        </article>
+        <article class="card">
+          <span class="arr" aria-hidden="true">↗</span>
+          <p class="big">Oriented</p>
+          <h3>Wayfinding</h3>
+          <p>Port detail had no breadcrumb or return point. Each port now has its own page with a breadcrumb.</p>
+        </article>
+      </div>
+      <p class="fn">Based on a heuristic review of legacy screens against the redesign. Not a usability test.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REFLECTION ============ -->
+<section class="sec" id="reflection" style="padding-top:96px;padding-bottom:24px">
+  <div class="wrap reveal in">
+    <h2 class="h2">Reflection &amp; next</h2>
+    <p class="sub">What this project taught me, and what comes after the first release.</p>
+  </div>
+  <div class="band light">
+    <div class="wrap reveal in">
+      <div class="cards3 two">
+        <article class="card">
+          <p class="lab">What I learned</p>
+          <h3>Collaborate at every step</h3>
+          <p>Working closely with Product Managers and the Engineering team at every step helped me understand the business point of view, what was feasible, what was achievable, and how to scope it.</p>
+        </article>
+        <article class="card">
+          <p class="lab">Sponsor user research</p>
+          <h3>Users shaped the design</h3>
+          <p>Sessions with sponsor users showed which legacy behaviours mattered. They preferred seeing adapter information upfront, expected IDs to be clickable, and asked to see the real link speed.</p>
+        </article>
+        <article class="card">
+          <p class="lab">What I'd do differently</p>
+          <h3>Prototype states earlier</h3>
+          <p>Loading and error states surfaced late. Next time I would design them alongside the happy path instead of after it.</p>
+        </article>
+        <article class="card">
+          <p class="lab">What's next</p>
+          <h3>Extend the pattern</h3>
+          <p>Apply the same side-panel and feedback patterns to the remaining PowerHMC workflows, and validate the shipped experience with users.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <h2 class="ty">Thank you</h2>
+    <p class="ty-name">Modernizing Hardware Virtualized I/O in PowerHMC</p>
+    <p class="ty-date">Product Designer · Mar 2026 – Ongoing</p>
+    <a class="ty-top" href="#top">Back to top ↑</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+/* ================= HMC builders ================= */
+var NAV=[['System settings'],['Partitions','213'],['Processor, memory, I/O'],['Persistent memory'],'-',
+['Virtual I/O servers','4'],['Virtual Networks'],['Virtual NICs','new'],['Virtual storage','updated'],
+['Hardware virtualized I/O','updated',1],['Reserved storage pools',0,0,1],['Shared processor pools',0,0,1],['Shared memory pools',0,0,1],['Power modes'],'-',
+['CoD functions',0,0,1],['Licensed capabilities'],'-',['Tasks log'],['Serviceability',0,0,1],['Reference code log'],['RIO configuration',0,0,1],['PCI configuration',0,0,1],'-',
+['Virtual networking diagram'],['Virtual storage diagram'],['SR-IOV vNIC diagram']];
+
+function sidebar(){
+  return '<ul>'+NAV.map(function(n){
+    if(n==='-')return '<li class="sep"></li>';
+    var tag='';
+    if(n[1]){tag='<span class="tagx '+(n[1]==='new'?'new':n[1]==='updated'?'upd':'n')+'">'+n[1]+'</span>';}
+    return '<li'+(n[2]?' class="act-i"':'')+'>'+n[0]+tag+(n[3]?'<span class="ext">↗</span>':'')+'</li>';
+  }).join('')+'</ul>';
+}
+
+function hmc(main,o){
+  o=o||{};
+  var lg=!!o.legacy;
+  var head=lg
+   ? '<div class="bc">Systems <span>/</span> hmc-denali10-fsp</div><div class="ttl"><h4>hmc-denali10-fsp</h4><span class="act">System actions</span></div><div class="st"><span class="dot g"></span>Operating <span class="tri"></span>Physical attention LED on <span class="tg"></span></div>'
+   : '<div class="bc">Systems <span>/</span></div><div class="ttl"><h4>[System/Partition/VIOS_name]</h4><span class="act">Actions</span></div><div class="st"><span class="dot g"></span>Running <span class="tri"></span>Normal <span class="tg"></span> Reference code : <a>C004091</a></div>';
+  return '<div class="hmc'+(lg?' legacy':'')+'">'+
+   '<div class="hmc-top"><span class="burger"></span><b>'+(lg?'Power HMC':'IBM Power HMC')+'</b><span class="srch">Search for a system, partition, VIOS or cluster</span><span class="fbk">Feedback</span><span class="dots"><i></i><i></i><i></i><i></i></span></div>'+
+   '<div class="hmc-head">'+head+'</div>'+
+   '<div class="hmc-body"><nav class="hmc-side" aria-hidden="true">'+sidebar()+'</nav><div class="hmc-main'+(o.flush?' flush':'')+'">'+main+'</div></div></div>';
+}
+
+function table(head,rows,cls){
+  return '<div class="tw"><table class="t '+(cls||'')+'"><thead><tr>'+head.map(function(h){return '<th>'+h+'</th>'}).join('')+'</tr></thead><tbody>'+
+    rows.map(function(r){return '<tr>'+r.map(function(c){return '<td>'+c+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>';
+}
+function search(){return '<div class="sb"><input type="search" data-filter placeholder="Search input text" aria-label="Search table"></div>';}
+
+function acc(title,open,body){
+  return '<section class="acc'+(open?' open':'')+'"><button type="button" class="acc-h" aria-expanded="'+(!!open)+'"><i class="chev"></i>'+title+'</button><div class="acc-b"><div class="acc-in filterable">'+search()+body+'</div></div></section>';
+}
+
+function adapterPage(){
+  var phys=table(['Location code','ID','Type','Link Status','MAC Address','Label','Sub-label','Configured Speed','Negotiated Speed','Available logical ports','Configured logical ports'],
+   [['<a>U78D8.ND3.FD0022-P0-C0-T0</a>','0','RoCE','Down','B8:59:9F:EC:8D:F4','<span class="pill">Label</span>','<span class="pill">Sub-label</span>','Auto','25 Gbps','40','0'],
+    ['<a>U78D8.ND3.FD0022-P0-C0-T1</a>','1','RoCE','Down','B8:59:9F:EC:8D:F4','<span class="pill">Label</span>','<span class="pill">Sub-label</span>','Auto','25 Gbps','40','0']]);
+  var log=table(['(Device Name) Location code','Adapter ID','Physical Port ID','Capacity (%)','Type','Partition','VNIC Backed','Connected Partition','Permissions','Migratable'],
+   [['(unavailable) U78DA.ND0.WZS09FV','2','0','2','Ethernet','Content','Yes','VIOS1','Diagnostic +1','—'],
+    ['(unavailable) U78DA.ND0.WZS09FV','2','0','2','Ethernet','Content','Yes','VIOS2','Diagnostic +1','—']]);
+  return '<div class="cardtop"><div class="r"><a>Hardware Virtualized IO</a><span><a>Refresh ↻</a><a>Learn more ⧉</a></span></div><h5>SR-IOV adapter: U73D8.ND3.FD0022-P0-C3</h5>'+
+   '<div class="kv"><dl><dt>Adapter ID</dt><dd>1</dd><dt>Status</dt><dd><span class="dot g"></span>Running</dd><dt>Maximum logical ports</dt><dd>80</dd><dt>Available logical ports</dt><dd>0</dd></dl>'+
+   '<dl><dt>Configured logical ports</dt><dd>80</dd><dt>Owner</dt><dd>Hypervisor</dd><dt>Adapter configuration option</dt><dd>Not supported</dd><dt>Mode</dt><dd>Shared</dd></dl></div></div>'+
+   acc('Physical ports',true,phys)+acc('Logical ports',false,log);
+}
+
+var ADAPTERS=[
+ ['U78D8.ND3.FD0022-P0-C3-C0','1','Dedicated','NA','NA','NA'],
+ ['U78D8.ND3.FD0022-P0-C3-C1','2','Dedicated','NA','NA','NA'],
+ ['U78D8.ND3.FD0022-P0-C3-C2','3','Shared','70','0','NA']];
+function listPage(){
+  var rows=ADAPTERS.map(function(a,i){
+    return ['<span class="cb"></span>','<a>'+a[0]+'</a>',a[1],i===0?'<span data-mode1>'+a[2]+'</span>':a[2],a[3],a[4],a[5],'PCIe3 2 PORT 10GB NIC&amp;ROCE','Hypervisor','Running','Not Supported'];
+  });
+  return '<div class="lp"><div class="r"><h5>Hardware virtualized I/O</h5><a>Learn more ⧉</a></div></div>'+
+   '<div class="selbar" hidden><span>1 item selected</span><button type="button" data-open-panel>Edit mode</button></div>'+
+   '<div class="filterable" style="background:#fff">'+search()+
+   table(['','Location code','SR-IOV adapter ID','Mode','Maximum Logical Ports','Available logical ports','Configured logical ports','Description','Owner','Status','Adapter configuration option'],rows,'sel')+'</div>';
+}
+
+/* ================= mount mockups ================= */
+function mount(id,html){var el=document.getElementById(id);if(el)el.innerHTML=html;}
+mount('m-hero',hmc(adapterPage()));
+mount('m-d3',hmc(adapterPage()));
+mount('m-d1',hmc(listPage()));
+
+/* generic delegated behaviours */
+document.addEventListener('click',function(e){
+  var h=e.target.closest('.acc-h');
+  if(h){var s=h.parentNode;var o=!s.classList.contains('open');s.classList.toggle('open',o);h.setAttribute('aria-expanded',o);return;}
+  var tr=e.target.closest('.t.sel tbody tr');
+  if(tr&&!tr.classList.contains('nores')){
+    var root=tr.closest('.hmc-main');
+    var was=tr.classList.contains('selected');
+    $$('tr.selected',root).forEach(function(r){r.classList.remove('selected')});
+    if(!was)tr.classList.add('selected');
+    var bar=$('.selbar',root);
+    if(bar)bar.hidden=was;
+    if(root.querySelector('.pm-wrap')&&!was){openPanel(true);}
+  }
+  var ob=e.target.closest('[data-open-panel]');
+  if(ob){
+    var d2=document.getElementById('d2');
+    d2.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(function(){openPanel(true);},450);
+  }
+});
+document.addEventListener('input',function(e){
+  var inp=e.target.closest('[data-filter]');
+  if(!inp)return;
+  var root=inp.closest('.filterable');var q=inp.value.trim().toLowerCase();var n=0;
+  var body=$('tbody',root);
+  $$('tr:not(.nores)',body).forEach(function(r){var m=!q||r.textContent.toLowerCase().indexOf(q)>-1;r.style.display=m?'':'none';if(m)n++;});
+  var nr=$('.nores',body);
+  if(!n&&!nr){nr=document.createElement('tr');nr.className='nores';nr.innerHTML='<td colspan="20">No results match “'+q.replace(/[<>&]/g,'')+'”</td>';body.appendChild(nr);}
+  else if(nr){if(n)nr.remove();else nr.firstChild.textContent='No results match “'+q.replace(/[<>&]/g,'')+'”';}
+});
+
+/* ================= Decision 02 : side panel ================= */
+var panelHTML='<div class="pm-wrap open" id="pmWrap"><div class="pm-page">'+listPage()+'</div><div class="pm-scrim" id="pmScrim"></div>'+
+  '<aside class="pm-panel" role="dialog" aria-label="Edit SR-IOV adapter Mode"><header><h5>Edit SR-IOV adapter Mode</h5><button type="button" class="x" id="pmX" aria-label="Close panel">✕</button></header>'+
+  '<div class="pm-body" id="pmBody"></div><footer id="pmFoot"></footer></aside></div>';
+mount('m-d2',hmc(panelHTML,{flush:true}));
+
+var FIELDS=[['Location','U78D8.ND3.FD0022-P0-C3-C0'],['Description','100GbE RoCE adapter x16'],['Adapter ID','1'],['Status','Running'],['Maximum logical ports','16 Ethernet and 2 RoCE'],['Available logical ports','12 Ethernet 2 RoCE'],['Configured logical ports','4 Ethernet 0 RoCE'],['Owner','Hypervisor']];
+var P={state:'inprogress',mode:'Dedicated',pending:'Shared',p:42,timer:null,tm:null};
+var wrap=document.getElementById('pmWrap'),pBody=document.getElementById('pmBody'),pFoot=document.getElementById('pmFoot');
+
+function fieldsHTML(dis){
+  return '<dl class="pm-f'+(dis?' dis':'')+'">'+FIELDS.map(function(f){return '<dt>'+f[0]+'</dt><dd>'+(dis&&f[0]!=='Location'?'—':f[1])+'</dd>'}).join('')+'</dl>';
+}
+function modeSel(disabled,val){
+  return '<label class="lbl2" for="pmMode">Mode</label><select class="sel2" id="pmMode"'+(disabled?' disabled':'')+'><option'+(val==='Dedicated'?' selected':'')+'>Dedicated</option><option'+(val==='Shared'?' selected':'')+'>Shared</option></select>';
+}
+function render(){
+  var s=P.state,b='',f='';
+  var cancel='<button type="button" class="btn-s" data-act="close">Cancel</button>';
+  if(s==='loading'){
+    b='<dl class="pm-f">'+FIELDS.map(function(){return '<dt><div class="sk" style="width:70%"></div></dt><dd><div class="sk" style="width:'+(55+Math.random()*40|0)+'%"></div></dd>'}).join('')+'</dl><div class="sk" style="height:28px"></div>';
+    f=cancel+'<button type="button" class="btn-p" disabled>Save</button>';
+  }else if(s==='missing'){
+    b='<div class="note warn" role="alert"><div><b>Adapter not found</b>The SR-IOV adapter U78D8.ND3.FD0022-P0-C3-C0 is no longer available. Refresh the list or check the hardware.</div></div>'+fieldsHTML(true)+modeSel(true,'Dedicated');
+    f=cancel+'<button type="button" class="btn-p" disabled>Save</button>';
+  }else if(s==='edit'){
+    b=fieldsHTML()+modeSel(false,P.pending)+'<p style="color:#6f6f6f;margin:8px 0 0">Change the mode to enable Save.</p>';
+    f=cancel+'<button type="button" class="btn-p" data-act="save"'+(P.pending===P.mode?' disabled':'')+'>Save</button>';
+  }else if(s==='inprogress'){
+    b=fieldsHTML()+modeSel(true,P.mode)+'<div class="prog" role="status"><p>Mode change in progress…</p><div class="bar"><span id="pmBar" style="width:'+P.p+'%"></span></div><small>Duration: 2 minutes</small></div>';
+    f='<button type="button" class="btn-p" data-act="close">Close</button>';
+  }else if(s==='error'){
+    b='<div class="note err" role="alert"><div><b>Mode change failed</b>The adapter did not respond. Mode remains '+P.mode+'. Try again.</div></div>'+fieldsHTML()+modeSel(false,P.pending);
+    f=cancel+'<button type="button" class="btn-p" data-act="save">Retry</button>';
+  }else if(s==='success'){
+    b='<div class="note ok" role="status"><div><b>Mode changed</b>The adapter is now in '+P.mode+' mode.</div></div>'+fieldsHTML()+modeSel(true,P.mode);
+    f='<button type="button" class="btn-p" data-act="close">Close</button>';
+  }
+  pBody.innerHTML=b;pFoot.innerHTML=f;
+  var c=$('[data-mode1]',wrap);if(c)c.textContent=P.mode;
+  $$('#pmTabs button').forEach(function(t){t.setAttribute('aria-pressed',t.getAttribute('data-s')===s)});
+}
+function stopTimers(){clearInterval(P.timer);clearTimeout(P.tm);P.timer=P.tm=null;}
+function startProgress(){
+  clearInterval(P.timer);
+  P.timer=setInterval(function(){
+    P.p=Math.min(100,P.p+1.7);
+    var bar=document.getElementById('pmBar');if(bar)bar.style.width=P.p+'%';
+    if(P.p>=100){
+      var fail=document.getElementById('failNext').checked;
+      clearInterval(P.timer);
+      if(fail){document.getElementById('failNext').checked=false;setState('error');}
+      else{P.mode=P.pending;setState('success');}
+    }
+  },100);
+}
+function setState(s){
+  stopTimers();P.state=s;
+  if(s==='edit'){P.mode='Dedicated';P.pending='Dedicated';}
+  if(s==='inprogress'){P.pending=P.mode==='Dedicated'?'Shared':'Dedicated';P.p=P.p>=100?0:P.p;}
+  if(s==='error'){P.pending=P.pending===P.mode?'Shared':P.pending;}
+  if(s==='success'){P.mode='Shared';P.pending='Shared';}
+  render();
+  if(s==='inprogress')startProgress();
+}
+function openPanel(withLoading){
+  wrap.classList.add('open');
+  if(withLoading){
+    stopTimers();P.mode='Dedicated';P.pending='Dedicated';P.state='loading';render();
+    P.tm=setTimeout(function(){setState('edit');},1400);
+  }
+}
+function closePanel(){wrap.classList.remove('open');stopTimers();}
+
+document.getElementById('pmTabs').addEventListener('click',function(e){
+  var t=e.target.closest('button[data-s]');if(!t)return;
+  wrap.classList.add('open');
+  if(t.getAttribute('data-s')==='inprogress'){P.p=0;P.mode='Dedicated';}
+  if(t.getAttribute('data-s')==='error'){P.mode='Dedicated';P.pending='Shared';}
+  setState(t.getAttribute('data-s'));
+});
+pFoot.addEventListener('click',function(e){
+  var b=e.target.closest('[data-act]');if(!b)return;
+  if(b.getAttribute('data-act')==='close')closePanel();
+  if(b.getAttribute('data-act')==='save'){P.p=0;setState('inprogress');}
+});
+pBody.addEventListener('change',function(e){
+  if(e.target.id==='pmMode'){P.pending=e.target.value;
+    if(P.state==='edit'){var sv=$('[data-act="save"]',pFoot);if(sv)sv.disabled=(P.pending===P.mode);}}
+});
+document.getElementById('pmX').addEventListener('click',closePanel);
+document.getElementById('pmScrim').addEventListener('click',closePanel);
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&wrap.classList.contains('open'))closePanel();});
+render();startProgress();
+
+/* ================= Legacy mockups ================= */
+function lgHead(){return '<div class="lg-h"><span class="lg-ico"></span><div><h5>Hardware Virtualized I/O : SR-IOV</h5><p>Select the required SR-IOV adapter and click Modify to modify the properties of the SR-IOV adapter. The operating mode of the SR-IOV adapter and its owning partition name are also displayed.</p></div></div>';}
+var OPTS=['U78D8.ND3.FD0022-P0-C3-C0  PCIe3 2 PORT 10 GB NIC&amp;ROCE ADAPTER','U78D8.ND3.FD0022-P0-C3-C1  PCIe3 2 PORT 10 GB NIC&amp;ROCE ADAPTER'];
+function lgDetails(){return '<div class="lg-det"><div><b>Status :</b>Running</div><div><b>Adapter ID :</b>1</div><div><b>Mode :</b>Shared</div><div><b>Maximum Logical Ports :</b>80</div><div><b>Owner :</b>Hypervisor</div><div><b>Adapter Configuration Option :</b>Not Supported</div></div>';}
+
+/* L1 – empty page */
+mount('m-l1',hmc(lgHead()+'<div class="lg-sel"><label for="l1sel">SR-IOV Adapter:</label><select id="l1sel"><option value="">Select an SR-IOV adapter</option>'+OPTS.map(function(o,i){return '<option value="'+i+'">'+o+'</option>'}).join('')+'</select><button type="button" class="gbtn" id="l1mod" disabled>Modify</button></div><div id="l1det" class="lg-empty"></div>',{legacy:true}));
+document.getElementById('l1sel').addEventListener('change',function(e){
+  var v=e.target.value;var d=document.getElementById('l1det');
+  document.getElementById('l1mod').disabled=(v==='');
+  d.className=v===''?'lg-empty':'';d.innerHTML=v===''?'':lgDetails();
+});
+
+/* L2 – modal on modal, no feedback */
+function modalAdapter(){
+  return '<div class="lg-ov" id="l2ov"><div class="lg-modal" role="dialog" aria-label="Modify SR-IOV Adapter"><h6>Modify SR-IOV Adapter</h6><p>The table lists the properties of the SR-IOV adapter. You can change the mode of the SR-IOV adapter to either Dedicated or Shared.</p>'+
+   '<table><tr><th>Location Code</th><th>ID</th><th>Description</th><th>Owner</th></tr><tr><td>U78D8.ND3.FD0022-P0-C3-C0</td><td>1</td><td>PCIe3 2 PORT 10 GB NIC&amp;ROCE</td><td>Hypervisor</td></tr></table>'+
+   '<div class="row"><b>Mode :</b><label><input type="radio" name="l2m"> Dedicated</label><label><input type="radio" name="l2m" checked> Shared</label></div>'+
+   '<p>Configured Logical Ports : 0<br>Maximum Logical Ports : 80</p><div class="lg-btns"><button type="button" class="gbtn" data-l2="ok">OK</button><button type="button" class="gbtn" data-l2="cancel">Cancel</button></div></div></div>';
+}
+mount('m-l2',hmc(lgHead()+'<div class="lg-sel"><label>SR-IOV Adapter:</label><select disabled><option>'+OPTS[0]+'</option></select><button type="button" class="gbtn" disabled>Modify</button></div>'+lgDetails()+'<div id="l2tbl" style="font-size:8px;color:#6f6f6f;margin-top:8px">Physical ports · Logical ports …</div>'+modalAdapter(),{legacy:true}));
+var l2note=document.getElementById('l2note'),l2hint=document.getElementById('l2hint');
+document.getElementById('m-l2').addEventListener('click',function(e){
+  var b=e.target.closest('[data-l2]');if(!b)return;
+  document.getElementById('l2ov').hidden=true;
+  document.getElementById('l2txt').textContent=b.getAttribute('data-l2')==='ok'
+    ? 'You clicked OK. The dialog vanished — nothing on screen says whether the mode change is running, done or failed.'
+    : 'You clicked Cancel. Same grey button as OK — nothing differentiates the primary action.';
+  l2note.classList.add('show');l2hint.style.display='none';
+});
+document.getElementById('l2replay').addEventListener('click',function(){
+  document.getElementById('l2ov').hidden=false;l2note.classList.remove('show');l2hint.style.display='';
+});
+
+/* L3 – three steps through a menu with one item */
+function portModal(kind){
+  var v=kind==='view';
+  return '<div class="lg-modal" role="dialog" aria-label="'+(v?'View':'Modify')+' SR-IOV Physical Port"><h6>'+(v?'View':'Modify')+' SR-IOV Physical Port</h6>'+
+   '<p>'+(v?'You can view the properties of a physical port that is on a Single Root I/O Virtualization (SR-IOV) capable adapter. The table lists the details of the physical port that you want to view.':'You can modify the properties of a physical port that is on a Single Root I/O Virtualization (SR-IOV) capable adapter. The table lists the details of the physical port that you want to modify.')+'</p>'+
+   '<table><tr><th>ID</th><th>Location Code</th><th>Type</th><th>Link Status</th><th>Available Logical Ports</th><th>Configured Logical Ports</th></tr><tr><td>0</td><td>U78D8.ND3.FD0022-P0-C3-T0</td><td>RoCE</td><td>Down</td><td>40 Ethernet</td><td>0 Ethernet</td></tr></table>'+
+   '<div class="row"><b>Label :</b>'+(v?'Not Configured':'<input type="text" value="Not Configured" aria-label="Label">')+'</div>'+
+   '<div class="row"><b>Sub-label :</b>'+(v?'Not Configured':'<input type="text" value="Not Configured" aria-label="Sub-label">')+'</div>'+
+   '<div class="row"><b>Configured Speed :</b>Auto</div><div class="row"><b>MAC Address :</b>B8:59:9F:EC:8D:F4</div>'+
+   '<div class="lg-btns">'+(v?'<button type="button" class="gbtn" data-close>Close</button>':'<button type="button" class="gbtn" data-close>OK</button><button type="button" class="gbtn" data-close>Cancel</button>')+'</div></div>';
+}
+function physTable(){
+  return '<table class="t" style="font-size:8px"><thead><tr><th></th><th>ID</th><th>Location Code</th><th>Type</th><th>Link Status</th><th>MAC Address</th></tr></thead><tbody>'+
+   '<tr><td><input type="radio" name="l3r" aria-label="Select port 0"></td><td>0</td><td><a>U78D8.ND3.FD0022-P0-C3-T0</a></td><td>RoCE</td><td>Down</td><td>B8:59:9F:EC:8D:F4</td></tr>'+
+   '<tr><td><input type="radio" name="l3r" aria-label="Select port 1"></td><td>1</td><td><a>U78D8.ND3.FD0022-P0-C3-T1</a></td><td>RoCE</td><td>Down</td><td>B8:59:9F:EC:8D:F4</td></tr></tbody></table>';
+}
+mount('m-l3',hmc(lgHead()+'<div class="lg-sel"><label>SR-IOV Adapter:</label><select disabled><option>'+OPTS[0]+'</option></select><button type="button" class="gbtn" disabled>Modify</button></div>'+
+  '<div style="position:relative;margin-top:10px"><button type="button" class="gbtn" id="l3act" disabled style="margin-bottom:4px">Action ▾</button><div class="lg-menu" id="l3menu" hidden><button type="button" id="l3item">Modify Physical Port</button></div>'+physTable()+'</div>'+
+  '<div class="lg-ov" id="l3ov" hidden></div>',{legacy:true}));
+var l3=document.getElementById('m-l3');
+function l3steps(n){$$('#l3steps span').forEach(function(s,i){s.classList.toggle('on',i<n)});}
+l3.addEventListener('change',function(e){if(e.target.name==='l3r'){document.getElementById('l3act').disabled=false;l3steps(1);}});
+document.getElementById('l3act').addEventListener('click',function(){var m=document.getElementById('l3menu');m.hidden=!m.hidden;if(!m.hidden)l3steps(2);});
+document.getElementById('l3item').addEventListener('click',function(){
+  document.getElementById('l3menu').hidden=true;var ov=document.getElementById('l3ov');ov.innerHTML=portModal('modify');ov.hidden=false;l3steps(4);
+});
+l3.addEventListener('click',function(e){
+  if(e.target.closest('[data-close]')){document.getElementById('l3ov').hidden=true;l3steps(0);
+    $$('input[name="l3r"]',l3).forEach(function(r){r.checked=false});document.getElementById('l3act').disabled=true;}
+});
+
+/* L4 – View vs Modify */
+mount('m-l4',hmc(lgHead()+'<div class="lg-sel"><label>SR-IOV Adapter:</label><select disabled><option>'+OPTS[0]+'</option></select><button type="button" class="gbtn" disabled>Modify</button></div>'+physTable()+'<div class="lg-ov" id="l4ov">'+portModal('view')+'</div>',{legacy:true}));
+$$('[data-l4]').forEach(function(b){
+  b.addEventListener('click',function(){
+    var k=b.getAttribute('data-l4');
+    $$('[data-l4]').forEach(function(x){x.setAttribute('aria-pressed',x===b)});
+    var ov=document.getElementById('l4ov');ov.hidden=false;ov.innerHTML=portModal(k);
+  });
+});
+document.getElementById('m-l4').addEventListener('click',function(e){
+  if(e.target.closest('[data-close]'))document.getElementById('l4ov').hidden=true;
+});
+
+/* ================= page chrome ================= */
+var prog=document.getElementById('progress');
+function onScroll(){var h=document.documentElement;var m=h.scrollHeight-h.clientHeight;prog.style.width=(m>0?h.scrollTop/m*100:0)+'%';}
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+if('IntersectionObserver' in window){
+  var rv=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');rv.unobserve(en.target);}})},{threshold:.08});
+  $$('.reveal').forEach(function(el){rv.observe(el)});
+
+  var links=$$('.topnav nav a');
+  var spy=new IntersectionObserver(function(es){es.forEach(function(en){
+    if(en.isIntersecting){links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id)});}
+  })},{rootMargin:'-45% 0px -50% 0px'});
+  $$('section[id]').forEach(function(s){spy.observe(s)});
+
+  var counted=false;
+  var co=new IntersectionObserver(function(es){
+    if(counted||!es[0].isIntersecting)return;counted=true;
+    $$('.stat b').forEach(function(b){
+      var t=+b.getAttribute('data-count'),suf=b.getAttribute('data-suffix')||'',t0=performance.now();
+      (function tick(now){var p=Math.min(1,(now-t0)/1000);b.textContent=Math.round(t*p)+(p===1?suf:'');if(p<1)requestAnimationFrame(tick);})(t0);
+    });
+  },{threshold:.4});
+  co.observe(document.getElementById('stats'));
+}else{
+  $$('.reveal').forEach(function(el){el.classList.add('in')});
+}
+})();
+</script>
+
+
+</body></html>
