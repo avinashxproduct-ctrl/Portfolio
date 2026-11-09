@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NAM Corporate Banking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --neon:#00ff2a;
+  --lav:#f0f0fb;
+  --ink:#16161d;
+  --band:#c8c8c8;
+  --brand:#6a5bff;
+  --body:clamp(16px,1.4vw,18px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--ink);background:#fff;line-height:1.6;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit}
+.wrap{width:min(1160px,100% - 48px);margin-inline:auto}
+
+/* progress bar */
+#progress{position:fixed;inset:0 auto auto 0;height:3px;width:0;background:var(--brand);z-index:60}
+
+/* ---------- intro / hero ---------- */
+.intro{position:relative;overflow:hidden;color:#fff;background:#12111c;padding:clamp(28px,3vw,40px) 0 clamp(36px,4vw,56px)}
+.intro::before{content:"";position:absolute;inset:-20%;pointer-events:none;filter:blur(24px);animation:drift 18s ease-in-out infinite alternate;
+  background:radial-gradient(38% 38% at 14% 22%,rgba(106,91,255,.38),transparent 70%),radial-gradient(34% 34% at 86% 24%,rgba(75,63,176,.34),transparent 70%),
+  radial-gradient(38% 38% at 72% 92%,rgba(106,91,255,.24),transparent 70%),radial-gradient(34% 34% at 18% 92%,rgba(75,63,176,.28),transparent 70%)}
+@keyframes drift{to{transform:translate3d(3%,-3%,0) scale(1.08)}}
+.intro .wrap{position:relative;z-index:1}
+.eyebrow{font-size:clamp(12px,1.2vw,14px);letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.66);font-weight:500}
+.intro h1{margin-top:10px;font-size:clamp(30px,4.2vw,54px);line-height:1.08;font-weight:700;letter-spacing:-.025em;max-width:24ch}
+.intro .sub{margin-top:12px;max-width:56ch;font-size:var(--body);color:rgba(255,255,255,.8);font-weight:300}
+.intro .shot{margin-top:clamp(24px,3vw,40px);background:#000;border-radius:14px}
+.ov{display:grid;grid-template-columns:3fr 2fr;gap:clamp(24px,5vw,72px);margin-top:clamp(24px,3vw,40px)}
+.ov h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.62);font-weight:600;margin-bottom:8px}
+.ov p{font-size:var(--body);color:rgba(255,255,255,.9);max-width:70ch}
+.ov .side{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px;align-content:start}
+.contents{position:relative;overflow:hidden;color:#fff;background:#12111c;padding:clamp(48px,6vw,88px) 0}
+.contents::before{content:"";position:absolute;inset:-20%;pointer-events:none;filter:blur(24px);background:radial-gradient(38% 38% at 14% 22%,rgba(106,91,255,.3),transparent 70%),radial-gradient(34% 34% at 86% 80%,rgba(75,63,176,.3),transparent 70%)}
+.contents .wrap{position:relative;z-index:1}
+.contents h2{font-size:clamp(26px,3.2vw,40px);font-weight:700;letter-spacing:-.01em}
+.contents .sub{margin-top:8px;font-size:var(--body);color:rgba(255,255,255,.76);font-weight:300}
+.index{margin-top:clamp(24px,3vw,36px)}
+.pg{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-top:clamp(18px,2vw,26px);padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.28);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.62);font-weight:500}
+.pg:first-child{margin-top:0}
+.pg b{color:#fff;font-weight:600}
+.index ul{list-style:none}
+.index a{position:relative;isolation:isolate;display:flex;align-items:center;gap:clamp(14px,2.2vw,30px);text-decoration:none;font-size:clamp(20px,2.3vw,30px);font-weight:600;letter-spacing:-.01em;line-height:1.2;padding:clamp(9px,1vw,12px) 16px;border-bottom:1px solid rgba(255,255,255,.1);border-left:4px solid var(--brand);transition:padding-left .3s ease}
+.index a::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(106,91,255,.32);transform:scaleX(0);transform-origin:left;transition:transform .35s ease}
+.index a .n{flex:none;min-width:2ch;font-size:clamp(13px,1.2vw,15px);font-weight:500;letter-spacing:.06em;color:rgba(255,255,255,.62);font-variant-numeric:tabular-nums}
+.index a .go{margin-left:auto;flex:none;width:clamp(20px,2vw,26px);height:clamp(20px,2vw,26px);stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.4;transition:transform .3s,opacity .3s}
+.index a:hover,.index a:focus-visible{padding-left:28px}
+.index a:hover::before,.index a:focus-visible::before{transform:scaleX(1)}
+.index a:hover .go,.index a:focus-visible .go{opacity:1;transform:translateX(4px)}
+.index a:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+
+/* ---------- roadmap ---------- */
+.process{background:var(--lav);padding:clamp(32px,4vw,56px) 0 clamp(36px,4.5vw,64px)}
+.process h2{font-size:clamp(26px,3.2vw,40px);font-weight:700;letter-spacing:-.01em}
+.process .lead{margin-top:12px;font-size:var(--body);color:#3d3d4d}
+@media (min-width:1000px){.process .lead{white-space:nowrap}}
+.process .lead b{font-weight:600;color:var(--ink)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(24px,3vw,32px) 6px;margin-top:clamp(22px,3vw,34px)}
+.steps>li{transition:transform .3s ease}
+.steps>li:hover{transform:translateY(-4px)}
+.chev{display:flex;align-items:center;gap:10px;min-height:84px;padding:12px 28px 12px 30px;color:#fff;background:#2b2656;clip-path:polygon(0 0,calc(100% - 20px) 0,100% 50%,calc(100% - 20px) 100%,0 100%,20px 50%)}
+.steps>li:first-child .chev{padding-left:18px;clip-path:polygon(0 0,calc(100% - 20px) 0,100% 50%,calc(100% - 20px) 100%,0 100%)}
+.steps>li:nth-child(2) .chev{background:#322c68}.steps>li:nth-child(3) .chev{background:#3a3380}.steps>li:nth-child(4) .chev{background:#433a96}.steps>li:nth-child(5) .chev{background:#4b3fb0}
+.chev .k{flex:none;font-size:15px;font-weight:700;color:var(--neon);letter-spacing:.04em}
+.chev h3{font-size:clamp(15px,1.35vw,18px);font-weight:600;line-height:1.2}
+.steps .body{padding:16px 8px 0 4px}
+.steps .body ul{padding-left:18px;display:grid;gap:4px}
+.steps .body li::marker{color:#4b3fb0}
+.steps .body li,.steps .body p{font-size:var(--body);color:#3d3d4d}
+.steps .body p{margin-bottom:6px}
+
+/* ---------- section ---------- */
+.feature{--c1:#1f1b3a;--c2:#2a2550;--accent:#4b3fb0;color:#fff;background:linear-gradient(180deg,var(--c1),var(--c2));position:relative;overflow:hidden;scroll-margin-top:0}
+.feature::before{
+  content:"";position:absolute;right:-8%;top:-6%;width:46%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.14),transparent 65%);filter:blur(30px);pointer-events:none}
+.feature .wrap{position:relative;z-index:1}
+.feature.noshots .wrap{padding-bottom:clamp(40px,6vw,72px)}
+.hero{padding:clamp(56px,8vw,104px) 0 clamp(24px,4vw,48px)}
+.hero .tag{display:block;margin-bottom:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.66);font-weight:500}
+.hero h2{font-size:clamp(30px,4.2vw,52px);font-weight:700;letter-spacing:-.01em;line-height:1.1}
+.hero .lead{margin-top:16px;font-size:var(--body);color:rgba(255,255,255,.9)}
+@media (min-width:1000px){.hero .lead.one{white-space:nowrap}}
+.meta{--skew:34px;margin-top:clamp(24px,3vw,40px);display:grid;grid-template-columns:auto auto 1fr;gap:clamp(20px,5vw,72px);
+  padding:18px clamp(24px,4vw,56px) 18px 0;width:min(100%,780px);position:relative}
+.meta::before{content:"";position:absolute;inset:0 0 0 -100vw;background:linear-gradient(90deg,rgba(255,255,255,.07),var(--accent));
+  clip-path:polygon(0 0,100% 0,calc(100% - var(--skew)) 100%,0 100%);z-index:-1;opacity:.85}
+.meta dt{font-size:12px;color:rgba(255,255,255,.62);letter-spacing:.04em}
+.meta dd{font-size:clamp(13px,1.3vw,15px);font-weight:600}
+.block{padding:clamp(20px,3vw,36px) 0}
+.block h3{font-size:clamp(17px,1.6vw,20px);font-weight:600;margin-bottom:12px}
+.block p,.block li{font-size:var(--body);color:rgba(255,255,255,.9);max-width:78ch}
+.block ul{padding-left:20px;display:grid;gap:6px;margin-top:10px}
+.block li::marker{color:rgba(255,255,255,.7)}
+.outcomes{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(28px,4vw,52px) clamp(24px,6vw,96px);margin-top:20px}
+.out{padding:12px 0}
+.out svg{width:26px;height:26px;stroke:var(--neon);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+.out:hover svg.up{transform:translate(3px,-3px)}
+.out:hover svg.down{transform:translate(-3px,3px)}
+.out h4{font-size:clamp(17px,1.7vw,21px);font-weight:600;margin:10px 0 6px}
+.out h4 em{font-style:normal;color:var(--neon);text-transform:uppercase;font-size:.78em;letter-spacing:.02em;
+  background:linear-gradient(var(--neon),var(--neon)) 0 100%/100% 2px no-repeat;padding-bottom:1px;transition:background-size .5s ease .15s}
+.reveal:not(.in) .out h4 em{background-size:0 2px}
+.out p{font-size:var(--body);color:rgba(255,255,255,.82);max-width:46ch}
+.out .num{display:block;font-size:clamp(34px,4vw,52px);font-weight:700;line-height:1;color:var(--neon);letter-spacing:-.02em}
+
+/* cards (problem) and chips (features) */
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(14px,2vw,22px);margin-top:20px}
+.card{display:flex;align-items:flex-start;gap:clamp(14px,1.6vw,20px);padding:clamp(16px,2vw,24px);border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);border-radius:12px;transition:transform .3s ease,background .3s ease}
+.card .ic{flex:none;display:grid;place-items:center;width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18)}
+.card .ic svg{width:26px;height:26px;stroke:var(--neon);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card:hover{transform:translateY(-4px);background:rgba(255,255,255,.1)}
+/* method rail (experience mapping) */
+.rail{list-style:none;padding-left:0;margin-top:20px;counter-reset:r}
+.rail li{position:relative;display:grid;grid-template-columns:64px minmax(0,1fr) minmax(0,1.7fr);gap:0 clamp(16px,3vw,48px);align-items:start;padding:0 0 clamp(28px,3.4vw,44px);max-width:none}
+.rail li:last-child{padding-bottom:0}
+.rail li::before{content:"";position:absolute;left:23px;top:52px;bottom:4px;width:2px;background:linear-gradient(var(--neon),rgba(255,255,255,.12))}
+.rail li:last-child::before{display:none}
+.rail .n{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;border:2px solid var(--neon);color:var(--neon);font-weight:700;font-size:16px;background:rgba(255,255,255,.06);transition:background .3s ease,color .3s ease}
+.rail li:hover .n{background:var(--neon);color:#111}
+.rail h4{font-size:clamp(20px,2.1vw,26px);font-weight:600;line-height:1.25;padding-top:8px}
+.rail p{padding-top:10px;max-width:56ch}
+@media (max-width:820px){.rail li{grid-template-columns:48px 1fr;gap:0 16px}.rail p{grid-column:2;padding-top:6px}.rail h4{padding-top:10px}}
+.card h4{font-size:clamp(17px,1.7vw,21px);font-weight:600;margin-bottom:4px}
+.card p{font-size:var(--body);color:rgba(255,255,255,.82)}
+.block ul.chips{list-style:none;padding-left:0;display:flex;flex-wrap:wrap;gap:clamp(10px,1.4vw,16px);margin-top:20px}
+.block li.chip{max-width:none;display:flex;align-items:center;gap:12px;padding:14px 24px 14px 16px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);border-radius:12px;font-size:clamp(15px,1.4vw,18px);font-weight:500;transition:transform .3s ease,background .3s ease}
+.chip:hover{transform:translateY(-4px);background:rgba(255,255,255,.14)}
+.chip i{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--neon);position:relative}
+.chip i::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--neon)}
+
+.visuals-title{text-align:center;font-size:clamp(24px,2.6vw,32px);font-weight:700;padding:clamp(40px,6vw,72px) 0 clamp(32px,4vw,56px)}
+.shots{background:var(--band);padding:clamp(32px,5vw,72px) 0;color:var(--ink)}
+.shots .wrap{display:grid;gap:clamp(28px,4vw,56px)}
+.shot{display:block;border:0;background:#fff;padding:0;cursor:zoom-in;width:100%;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.08);transition:transform .35s ease,box-shadow .35s ease}
+.shot:hover{transform:translateY(-4px) scale(1.005);box-shadow:0 18px 40px rgba(0,0,0,.22)}
+.shot:focus-visible{outline:3px solid var(--brand);outline-offset:3px}
+.shots .shot{border-radius:16px}
+.shot img{width:100%;height:auto}
+.shots figcaption{margin-top:10px;font-size:13px;color:#444}
+
+/* ---------- footer ---------- */
+.thanks{position:relative;overflow:hidden;color:#fff;background:#12111c;padding:clamp(32px,4vw,52px) 0}
+.thanks::before{content:"";position:absolute;inset:-20%;pointer-events:none;filter:blur(24px);background:radial-gradient(38% 38% at 14% 30%,rgba(106,91,255,.34),transparent 70%),radial-gradient(34% 34% at 86% 70%,rgba(75,63,176,.3),transparent 70%),radial-gradient(34% 34% at 60% 100%,rgba(106,91,255,.2),transparent 70%)}
+.thanks .wrap{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:24px 40px;flex-wrap:wrap}
+.thanks h2{margin-top:10px;font-size:clamp(30px,4.2vw,54px);line-height:1.08;font-weight:700;letter-spacing:-.025em}
+.thanks .top{display:inline-block;padding:12px 28px;border-radius:999px;background:#fff;color:#1d1a38;font-weight:600;font-size:clamp(15px,1.4vw,17px);text-decoration:none;transition:transform .25s ease,box-shadow .25s ease}
+.thanks .top span{display:inline-block;transition:transform .25s ease}
+.thanks .top:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.28)}
+.thanks .top:hover span{transform:translateY(-3px)}
+.thanks .top:focus-visible{outline:3px solid #fff;outline-offset:4px}
+
+/* ---------- lightbox ---------- */
+#lb{position:fixed;inset:0;background:rgba(10,10,18,.92);display:none;align-items:center;justify-content:center;z-index:100;padding:3vw}
+#lb.open{display:flex;animation:fade .25s ease}
+#lb img{max-width:100%;max-height:100%;border-radius:6px;box-shadow:0 20px 80px rgba(0,0,0,.6);animation:pop .3s cubic-bezier(.2,1.2,.4,1)}
+#lb button{position:absolute;top:18px;right:22px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;font-size:24px;cursor:pointer;transition:background .2s}
+#lb button:hover{background:rgba(255,255,255,.15)}
+@keyframes fade{from{opacity:0}}
+@keyframes pop{from{transform:scale(.94);opacity:0}}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:1000px){ .steps{grid-template-columns:repeat(3,1fr);gap:20px 12px} .chev,.steps>li:first-child .chev{clip-path:none;padding:12px 18px;border-radius:10px} }
+@media (max-width:820px){
+  .pg{flex-direction:column;gap:4px}
+  .steps{grid-template-columns:1fr 1fr}
+  .outcomes,.cards,.ov{grid-template-columns:1fr}
+  .meta{grid-template-columns:1fr 1fr;gap:14px 24px;padding-right:48px}
+  .meta div:last-child{grid-column:1/-1}
+}
+@media (max-width:520px){ .steps{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .reveal{opacity:1;transform:none}
+  .reveal:not(.in) .out h4 em{background-size:100% 2px}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<header class="intro">
+  <div class="wrap">
+    <p class="eyebrow">Senior UX Designer &middot; Nov 2024 &ndash; Sept 2025</p>
+    <h1>NAM Corporate Banking</h1>
+    <p class="sub">Empowering corporate banking. A localised, customer-centric approach for unparalleled user experience.</p>
+    <button class="shot reveal" type="button" data-full="assets/nam/hero.jpg" data-alt="NAM Corporate Banking: dashboard and listing screens" aria-label="Enlarge: NAM Corporate Banking hero"><img src="assets/nam/hero.jpg" width="2400" height="1147" alt="NAM Corporate Banking: dashboard and listing screens"></button>
+    <div class="ov reveal">
+      <div>
+        <h2>Overview</h2>
+        <p>Designed a white-label corporate banking platform tailored for North America, addressing challenges like fragmented workflows, dense forms, and poor user guidance. Through research, wireframing, UI, and prototyping, I helped create a scalable solution that streamlined features, reduced friction, and improved task completion for both SMEs and large enterprises.</p>
+      </div>
+      <div class="side">
+        <div><h2>My role</h2><p>Senior UX Designer</p></div>
+        <div><h2>Team size</h2><p>2 Designers</p></div>
+        <div><h2>Duration</h2><p>Nov 2024 &ndash; Sept 2025</p></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="process" aria-labelledby="proc-t">
+  <div class="wrap">
+    <div class="reveal">
+      <h2 id="proc-t">Roadmap</h2>
+      <p class="lead">From <b>workshops and desk research</b> to <b>usability testing</b>, five steps took the platform from insight to a tested prototype.</p>
+    </div>
+    <ol class="steps">
+      <li class="reveal"><div class="chev"><span class="k">01</span><h3>Workshop &amp; Desk Research</h3></div><div class="body"><ul><li>Collection of insights from SMEs</li><li>Desk research to gain domain knowledge</li><li>Competitive benchmarking</li><li>Research on market trends</li></ul></div></li>
+      <li class="reveal"><div class="chev"><span class="k">02</span><h3>Experience Mapping</h3></div><div class="body"><p>Analysis and synthesis of data from the workshops to form:</p><ul><li>Detailed personas</li><li>Empathy map</li><li>Customer journey map</li><li>Information architecture</li></ul></div></li>
+      <li class="reveal"><div class="chev"><span class="k">03</span><h3>Ideation</h3></div><div class="body"><ul><li>Feature listing</li><li>Brainstorming</li><li>Low fidelity wireframes</li></ul></div></li>
+      <li class="reveal"><div class="chev"><span class="k">04</span><h3>Prototype</h3></div><div class="body"><ul><li>High fidelity designs</li><li>Interactions</li></ul></div></li>
+      <li class="reveal"><div class="chev"><span class="k">05</span><h3>Test</h3></div><div class="body"><ul><li>Usability testing</li></ul></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="contents" aria-labelledby="cont-t">
+  <div class="wrap">
+    <h2 id="cont-t">Contents</h2>
+    <p class="sub">The case study, then four feature deep dives. Pick one to jump straight to it.</p>
+    <nav class="index" id="index" aria-label="Sections"></nav>
+  </div>
+</section>
+
+<main id="sections"></main>
+
+<footer class="thanks">
+  <div class="wrap reveal">
+    <div>
+      <div class="eyebrow">NAM Corporate Banking &middot; Senior UX Designer &middot; Nov 2024 &ndash; Sept 2025</div>
+      <h2>Thank you</h2>
+    </div>
+    <a class="top" href="#" id="toTop"><span aria-hidden="true">&uarr;</span> Back to top</a>
+  </div>
+</footer>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Enlarged screenshot"><button type="button" aria-label="Close">&times;</button><img alt=""></div>
+
+<script>
+const ARR_UP='<svg class="up" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M8 6h10v10"/></svg>';
+const ARR_DOWN='<svg class="down" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M16 18H6V8"/></svg>';
+const ARR_GO='<svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const CORP={platform:'Desktop',project:'NAM Corporate Banking',role:'Research, Wire-framing, UI & Prototyping'};
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+/* ---- case study sections (content from the NAM case study) ---- */
+const STORY=[
+{id:'problem',title:'Scattered Steps, Slowed Decisions',tag:'Problem',oneLine:true,
+ lead:'Fragmented workflows slowed decisions and eroded trust and productivity in critical tasks where clarity and speed are essential.',
+ cards:[['shuffle','Scattered processes','Users navigated across multiple, disconnected screens'],['form','Dense, confusing forms','Lack of hierarchy and visual guidance'],['compass','Complex navigation','Key features and options buried in menus'],['eye','No holistic view','No centralized dashboard for real-time visibility']]},
+{id:'goals',title:'Driving Value Beyond Banking',tag:'Goals',oneLine:true,
+ lead:'Clear business objectives guided every design decision so banks and their corporate clients could achieve measurable value.',
+ goals:[['Enhance profitability and cash flow','Enable corporates to optimise liquidity and cash positioning through intuitive workflows, forecasting visibility, and balance transparency'],['Deliver visibility and actionable insights','Provide role-based, configurable visibility into balances, activity, and risks—enabling confident, timely decisions'],['Reduce time spent on banking operations','Streamlined workflows and guided processes minimized effort on repetitive banking tasks, freeing users to focus on core business priorities']]},
+{id:'modules',title:'A Modular, White-Label Platform',tag:'Features',
+ lead:'The solution was designed as a scalable, white-label corporate banking platform that could be tailored to the needs of both SMEs and large enterprises. Each feature was modular, ensuring flexibility for banks to adopt and extend as required.',
+ chips:['Forex Services','Positive Pay','E2E & Swift GPI','Approvals','Cash Management','Payments','Client Admin','Stop Pay','Alerts','Dashboard']},
+{id:'mapping',title:'Understanding Users in Context',tag:'Experience Mapping',noVisualsTitle:true,
+ lead:'To ensure the platform addressed real business needs and not just surface-level usability, we invested heavily in experience mapping. This stage allowed us to deeply understand our users, their pain points, and the journeys they take across corporate banking workflows. It combined qualitative insights with structural design practices to create a clear foundation for our solutions.',
+ points:[['Personas','Defined personas across archetypes (e.g., Startup Founders, Media Houses, SMEs, Multinationals) and focused on four primary private-sector profiles: Emerging, Midscale, Established, and Freelance businesses.'],['Empathy Mapping','Captured what users see, hear, think/feel, say, and do to highlight motivations and frustrations. This uncovered deeper emotional triggers like stress during high-stakes decisions or anxiety over cash flow visibility.'],['Customer Journey Mapping (CJM)','Visualized end-to-end user tasks, mapping touchpoints, emotions, and friction points. This helped us identify “moments of truth” where user experience breaks down.'],['Information Architecture (IA)','Structured complex banking functions into a logical hierarchy with clear labeling and intuitive navigation. This was crucial in simplifying access to the platform’s core features.']],
+ shots:[['nam/persona',1450,854,'Archetypes / User Personas'],['nam/empathy',1450,852,'Empathy Mapping'],['nam/ia',1450,850,'Information Architecture']]}
+];
+
+/* ---- feature deep dives (NAM features 01-04) ---- */
+const FEATURES=[
+{id:'payment',title:'Payment Onboarding',...CORP,
+ lead:'Corporate banking payment initiation involved complex workflows, excessive decision-making, and high friction due to:',
+ problems:['Multiple steps scattered across screens','Dense forms with poor information hierarchy','Lack of guidance or clear onboarding','Too many clicks and unclear grouping of data','Confusing navigation between payment types and options'],
+ opp:'Simplify and declutter the experience by bringing essential interactions upfront, reducing cognitive load, and improving clarity for faster decision-making.',
+ outcomes:[
+  ['down','Reduced','Steps','Key payment methods and types are presented as visual options in a single view with categorized types (ACH, Wires, etc.).'],
+  ['up','Enhanced','Visibility','All necessary form fields are clearly grouped and shown upfront, reducing the need to hunt for information.'],
+  ['up','Increased','Task Completion Rate','More users successfully completed a transaction without needing help or abandoning the flow.'],
+  ['up','Positive','Feedback from UAT & Clients','Better structured UI and reduced learning curve led to faster onboarding and satisfaction.']],
+ shots:[['nam/s1',1450,852,'Payment Listing page'],['po1',1560,890,'Payment setup: choose a method (ACH, Check Printing, Real-Time Payment, Transfers, Wires)'],['po2',1560,890,'ACH type picker with favourites'],['po3',1560,890,'Wire types'],['nam/s2',1450,936,'Payment Initiation, Step 1: Payment Setup'],['nam/s3',1450,1176,'Review and Confirmation, Step 2']]},
+
+{id:'forex',title:'Forex Services',...CORP,
+ lead:'Forex services, especially in corporate banking, were plagued with:',
+ problems:['Manual workflows (calls, emails, paper-based)','Limited real-time access to forex market rates','Fragmented, hard-to-track contracts and transaction journeys','High cognitive load and poor data visibility for decision makers','Regulatory risk and operational inefficiencies'],
+ opp:'Design a self-serve digital platform to empower users (Treasurers, Analysts, Finance Heads) to manage currency exposure, contracts, and transactions seamlessly — with real-time data, automated flows, and customized dashboards.',
+ outcomes:[
+  ['down','Minimized','Cognitive Load','Pre-defined favorites, tooltips, and visual hierarchy help users understand and act faster.'],
+  ['up','Streamlined','Flow','Progress bar with steps (New Contract → Review → Done) improves navigation and sets clear expectations.'],
+  ['up','Improved','UI Aesthetics & Engagement','Use of modern UI elements, intuitive icons, and lighter layouts enhances engagement and trust.'],
+  ['down','Reduced','Manual Effort','Due to automation in RFQ, contract management, and real-time data availability.']],
+ shots:[['fx1',1560,1440,'Forex overview dashboard'],['fx2',1560,1060,'Manage Contracts'],['fx3',1560,930,'Create Contract']]},
+
+{id:'positive',title:'Positive Pay',...CORP,
+ lead:'',
+ problems:['Check usage is declining overall, yet many businesses still rely on checks, and they remain one of the payment methods most often targeted by fraud.','ACH now carries most payment value, and fraud through ACH has been rising, so the risk is no longer limited to checks.','Finance teams rely on manual processes to track, reconcile, and resolve check/ACH discrepancies—leading to inefficiencies and errors.','Limited visibility into suspicious activity and lack of audit trails increase compliance and security risks.','Banks and corporates face financial loss, inefficiency, and trust issues due to the lack of proactive fraud prevention.'],
+ opp:'By digitizing Positive Pay for both check and ACH workflows, banks can empower corporates with real-time fraud detection, exception handling, and process automation. This unlocks operational efficiency, new revenue streams, and stronger risk control across markets.',
+ outcomes:[
+  ['up','Better','Security','Banks and businesses can now catch fraud before it happens — whether it’s a changed amount, wrong payee, or fake transaction.'],
+  ['down','Less','Manual Work','No more entering check details one by one or searching Excel files — just upload, review, and go.'],
+  ['up','Faster','Decisions','When something looks wrong, the system alerts you right away, so you can approve or reject it quickly — no more long email trails.'],
+  ['up','More','Control and Visibility','Everything is trackable — what you uploaded, what got flagged, who approved what. It’s all there in one dashboard for easy reference and audits.']],
+ shots:[['pp1',1560,880,'Check Exceptions'],['pp2',1560,940,'Bulk selection: Decision to Pay / Return'],['pp3',1560,940,'Issued Check details with activity timeline']]},
+
+{id:'alerts',title:'Alerts',...CORP,
+ summary:true,
+ lead:'',
+ problems:['Alerts are automated messages that notify users about important banking events like debits, approvals, or password expiry.','They come in two types — subscription-based (customized by the user) and non-subscription-based (sent to all users).','Subscription alerts are personalized, allowing users to receive notifications only for selected accounts or entities.','They enable timely actions by keeping users informed of critical events in real time.','Alerts enhance security and transparency, ensuring users never miss key updates or required actions.'],
+ shots:[['al1',1560,1100,'Profile Settings: Alerts list'],['al2',1560,1310,'Alert preferences: interests, channels and Do Not Disturb'],['al3',1560,880,'Manage interests']]}
+];
+
+const idx=document.getElementById('index'), main=document.getElementById('sections');
+const GROUPS=[
+ {name:'Case study',meta:'Overview to experience mapping',items:STORY},
+ {name:'Feature deep dives',meta:'Features 01 – 04',items:FEATURES}];
+idx.innerHTML=GROUPS.map(g=>`<p class="pg"><b>${esc(g.name)}</b><span>${esc(g.meta)}</span></p><ul>${g.items.map((s,i)=>`<li><a href="#${s.id}"><span class="n">0${i+1}</span>${esc(s.tag?s.tag:s.title)}${ARR_GO}</a></li>`).join('')}</ul>`).join('');
+
+const shotHTML=s=>`<figure class="reveal"><button class="shot" type="button" data-full="assets/${s[0]}.jpg" data-alt="${esc(s[3])}" aria-label="Enlarge: ${esc(s[3])}"><img src="assets/${s[0]}.jpg" width="${s[1]}" height="${s[2]}" alt="${esc(s[3])}" loading="lazy"></button><figcaption>${esc(s[3])}</figcaption></figure>`;
+
+function section(o,body){
+  const shots=o.shots&&o.shots.length;
+  main.insertAdjacentHTML('beforeend',`
+  <section class="feature${shots?'':' noshots'}" id="${o.id}" aria-labelledby="${o.id}-t">
+    <div class="wrap">
+      <div class="hero reveal">
+        ${o.tag?`<span class="tag">${esc(o.tag)}</span>`:''}
+        <h2 id="${o.id}-t">${esc(o.title)}</h2>
+        ${o.lead&&o.tag?`<p class="lead${o.oneLine?' one':''}">${esc(o.lead)}</p>`:''}
+        ${o.platform?`<dl class="meta"><div><dt>Platform</dt><dd>${esc(o.platform)}</dd></div><div><dt>Project</dt><dd>${esc(o.project)}</dd></div><div><dt>Role</dt><dd>${esc(o.role)}</dd></div></dl>`:''}
+      </div>
+      ${body}
+      ${shots&&!o.noVisualsTitle?`<h3 class="visuals-title reveal">Visuals</h3>`:''}
+    </div>
+    ${shots?`<div class="shots"><div class="wrap">${o.shots.map(shotHTML).join('')}</div></div>`:''}
+  </section>`);
+}
+
+const ICONS={
+  shuffle:'<path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/>',
+  form:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5z"/>',
+  eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'
+};
+STORY.forEach(s=>{
+  let body='';
+  if(s.cards)body=`<div class="block reveal"><div class="cards">${s.cards.map(c=>`<div class="card"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24">${ICONS[c[0]]}</svg></span><div><h4>${esc(c[1])}</h4><p>${esc(c[2])}</p></div></div>`).join('')}</div></div>`;
+  if(s.goals)body=`<div class="block reveal"><div class="outcomes">${s.goals.map((g,i)=>`<div class="out"><span class="num">0${i+1}</span><h4>${esc(g[0])}</h4><p>${esc(g[1])}</p></div>`).join('')}</div></div>`;
+  if(s.chips)body=`<div class="block reveal"><ul class="chips">${s.chips.map(c=>`<li class="chip"><i aria-hidden="true"></i>${esc(c)}</li>`).join('')}</ul></div>`;
+  if(s.points)body=`<div class="block reveal"><ol class="rail">${s.points.map((p,i)=>`<li><span class="n" aria-hidden="true">0${i+1}</span><h4>${esc(p[0])}</h4><p>${esc(p[1])}</p></li>`).join('')}</ol></div>`;
+  section(s,body);
+});
+
+FEATURES.forEach((f,i)=>{
+  f.tag='Feature 0'+(i+1);
+  const lead=f.lead;f.lead='';
+  const prob=`<div class="block reveal"><h3>${f.summary?'Summary':'Summary | Problem'}</h3>${lead?`<p>${esc(lead)}</p>`:''}<ul>${f.problems.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>`;
+  const opp=f.opp?`<div class="block reveal"><h3>Opportunity:</h3><p>${esc(f.opp)}</p></div>`:'';
+  const out=f.outcomes?`<div class="block reveal"><h3>Outcomes &amp; Overall Impact</h3><div class="outcomes">${f.outcomes.map(o=>`<div class="out">${o[0]==='up'?ARR_UP:ARR_DOWN}<h4><em>${esc(o[1])}</em> ${esc(o[2])}</h4><p>${esc(o[3])}</p></div>`).join('')}</div></div>`:'';
+  section(f,prob+opp+out);
+});
+
+/* scroll reveal */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+document.getElementById('toTop').addEventListener('click',e=>{e.preventDefault();scrollTo({top:0,behavior:'smooth'})});
+
+/* progress bar */
+const bar=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'},{passive:true});
+
+/* lightbox */
+const lb=document.getElementById('lb'), lbImg=lb.querySelector('img');
+let last=null;
+const close=()=>{lb.classList.remove('open');document.body.style.overflow='';last&&last.focus()};
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.shot');
+  if(b){last=b;lbImg.src=b.dataset.full;lbImg.alt=b.dataset.alt;lb.classList.add('open');document.body.style.overflow='hidden';lb.querySelector('button').focus();return}
+  if(lb.classList.contains('open')&&(e.target===lb||e.target.closest('#lb button')))close();
+});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&lb.classList.contains('open'))close()});
+</script>
+</body>
+</html>
