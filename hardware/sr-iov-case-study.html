@@ -406,7 +406,8 @@ footer a { color: inherit; }
 .contact .cline { font-size: var(--t-lead); max-width: none; margin: 0; }
 .contact a { color: var(--accent); }
 .contact a:hover { color: var(--ink); }
-.ty { padding-bottom: 8px; }
+.ty { padding-bottom: clamp(32px, 5vh, 48px); }
+.ty .row { align-items: baseline; }
 @media (prefers-reduced-motion: no-preference) { .next .go { transition: transform .35s var(--ease); } .next:hover .go { transform: translateX(6px); } }
 @media (min-width: 561px) and (max-width: 1100px) { .hero-facts { grid-template-columns: 1fr 1fr; } }
 
@@ -440,6 +441,12 @@ footer { margin-top: 0; }
 
 /* captions and footnotes run full width */
 .ui-frame figcaption, .fn, .more { max-width: none; }
+
+/* prominent "The issue" / "The solution" labels */
+.item .lbl { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em; margin: 0 0 14px; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
+.item .lbl::before { background: var(--accent) !important; width: 7px !important; height: 7px !important; }
+.item .lbl.sol { color: var(--signal); background: color-mix(in srgb, var(--signal) 12%, var(--surface)); border-color: color-mix(in srgb, var(--signal) 35%, transparent); }
+.item .lbl.sol::before { background: var(--signal) !important; }
 
 /* stacked hero */
 .hero-stack .dek { max-width: none; margin: 0; }
@@ -747,7 +754,7 @@ body.editing .totop { bottom: 72px; }
       </figure>
     </article>
 
-    <p class="more"><strong>4 of the 36 legacy screens reviewed are shown here.</strong> The rest followed the same patterns: dropdown-first pages, modal edits and no feedback after a click.</p>
+    <p class="more"><strong>4 of the 36 legacy screens are shown here.</strong></p>
   </section>
 
   </div>
@@ -772,14 +779,14 @@ body.editing .totop { bottom: 72px; }
         <div class="wh"><small>What it meant</small>Admins set things up once and rarely return. So when they do, the screen has to make the current state obvious and the change easy to find.<br><span class="pill">Research-backed</span></div>
       </figure>
       <figure class="q rv">
-        <blockquote>"This is definitely better."</blockquote>
-        <cite>Feedback user 2, comparing the adapter table with the old dropdown</cite>
-        <div class="wh"><small>What we did</small>Kept the table of all adapters up front. No big changes needed.<br><span class="pill ok">✓ Done</span></div>
-      </figure>
-      <figure class="q rv">
         <blockquote>"…would be nice to have a link status / negotiated speed shown, e.g., 10G or 25G, so we know if there is an issue or degradation."</blockquote>
         <cite>Feedback user 2, on the physical port view</cite>
         <div class="wh"><small>What we did</small>Added a column showing the speed each connection actually negotiated.<br><span class="pill ok">✓ Done</span></div>
+      </figure>
+      <figure class="q rv">
+        <blockquote>"This is definitely better."</blockquote>
+        <cite>Feedback user 2, comparing the adapter table with the old dropdown</cite>
+        <div class="wh"><small>What we did</small>Kept the table of all adapters up front. No big changes needed.<br><span class="pill ok">✓ Done</span></div>
       </figure>
       <figure class="q rv">
         <blockquote>"I'm not very happy with the responsiveness… it's complex to see which step the transfer is in."</blockquote>
@@ -790,7 +797,7 @@ body.editing .totop { bottom: 72px; }
   </section>
 
   </div>
-  <div class="box">
+  <div class="box tint">
   <!-- DESIGN & DELIVER -->
   <section class="sec wrap" id="design" aria-labelledby="h-des">
     <div class="sechead rv">
@@ -898,18 +905,10 @@ body.editing .totop { bottom: 72px; }
     </div>
 
     <div class="ty">
-      <h2>Thank you<i>.</i></h2>
       <div class="row">
-        <div>
-          <p style="color:var(--ink);font-size:1rem">Modernizing Hardware Virtualized I/O in PowerHMC</p>
-          <p style="margin-top:4px">Product Designer · Mar 2026 to now</p>
-        </div>
+        <h2>Thank you<i>.</i></h2>
         <a class="read" href="#top">Back to top ↑</a>
       </div>
-    </div>
-    <div class="contact rv">
-      <p class="lab">Get in touch</p>
-      <p class="cline">Hiring for complex product work? <a href="mailto:avinashxproduct@gmail.com">avinashxproduct@gmail.com</a> · <a href="https://www.linkedin.com/in/avinash-s-bhadrakali/" target="_blank" rel="noopener">LinkedIn</a></p>
     </div>
     <a class="next" href="https://avinashxproduct-ctrl.github.io/Portfolio/fleetdashboard/index.html" target="_blank" rel="noopener">
       <span><span class="k">Next case study</span><br><span class="t">Hapag-Lloyd: one view of a shipping fleet</span></span>
