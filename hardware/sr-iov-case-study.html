@@ -408,6 +408,13 @@ footer a { color: inherit; }
 @media (prefers-reduced-motion: no-preference) { .next .go { transition: transform .35s var(--ease); } .next:hover .go { transform: translateX(6px); } }
 @media (min-width: 561px) and (max-width: 1100px) { .hero-facts { grid-template-columns: 1fr 1fr; } }
 
+.rounds.three { grid-template-columns: repeat(3, 1fr); }
+.beyond { margin-top: 28px; padding: clamp(24px, 3vw, 36px); border-radius: 18px; background: color-mix(in srgb, var(--accent) 7%, var(--surface)); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); }
+.beyond .lab { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); margin: 0 0 10px; }
+.beyond h3 { font-size: clamp(1.375rem, 2.2vw, 1.875rem); font-weight: 400; letter-spacing: -0.02em; margin-bottom: 10px; }
+.beyond p:last-child { color: var(--muted); margin: 0; max-width: none; }
+@media (max-width: 900px) { .rounds.three { grid-template-columns: minmax(0, 1fr); } }
+
 /* ===== micro-interactions ===== */
 .zoomable { cursor: zoom-in; }
 .lightbox { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 4vh 4vw; background: color-mix(in srgb, var(--frame) 88%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); cursor: zoom-out; }
@@ -689,7 +696,8 @@ footer a { color: inherit; }
       <h2 class="display" id="h-inv">Seven sessions. <em>Real admins.</em></h2>
       <p class="tagline">The project included four discovery sessions and three design-feedback sessions. These weren't exclusively about SR-IOV; they covered the broader feature context. But several signals landed directly on what I was designing.</p>
     </div>
-    <div class="rounds big rv-kids">
+    <div class="rounds big three rv-kids">
+      <div class="opt rv"><p class="lab">Before the sessions</p><div class="huge">AI</div><h3>Desk research, AI-assisted</h3><p><b>Learn.</b> Used IBM BOB and Claude to get up to speed on SR-IOV and how admins use it.</p><p><b>Prepare.</b> Drafted the discussion guide for the generative research.</p><p><b>Probe.</b> Surfaced edge cases early, which later became designed states.</p></div>
       <div class="opt rv"><p class="lab">Round one</p><div class="huge" data-count="4">4</div><h3>Round one: 4 conversations</h3><p><b>Listen.</b> How admins work and how they experience the old screens.</p><p><b>Map.</b> Each person's day-to-day, turned into needs and frustrations.</p><p><b>Scope.</b> Agreed with product managers and engineers what to take on, and why anything was left out.</p></div>
       <div class="opt tint rv"><p class="lab">Round two</p><div class="huge" data-count="3">3</div><h3>Round two: 3 feedback sessions</h3><p><b>Return.</b> Polished designs, shown to the same people.</p><p><b>Try.</b> We gave them tasks, watched what they did and asked questions.</p><p><b>Improve.</b> What we learned went straight back into the design.</p></div>
     </div>
@@ -800,6 +808,11 @@ footer a { color: inherit; }
       <article class="card rv"><span class="arr" aria-hidden="true">↗</span><p class="big">Focused</p><h3>Each port has its own page</h3><p>Port details used to be buried. Now each port has its own page, so you can see everything about it in one place.</p></article>
     </div>
     <p class="fn">Based on a heuristic review of legacy screens against the redesign. Not a usability test.</p>
+    <div class="beyond rv">
+      <p class="lab">Beyond SR-IOV</p>
+      <h3>The side panel and feedback states became shared patterns</h3>
+      <p>Both are now part of the PowerHMC Pattern Library, so other PowerHMC screens use the same edit panel and the same loading, progress, error and success states.</p>
+    </div>
   </section>
 
   <div class="wrap"><p class="divider" aria-hidden="true">08</p></div>
