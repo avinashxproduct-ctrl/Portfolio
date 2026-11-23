@@ -566,7 +566,7 @@ footer { margin-top: 0; }
 /* solid pills + framed Result panels, both themes */
 .item .lbl.sol, .gov .lbl.sol { background: var(--signal-ink) !important; border-color: var(--signal-ink) !important; color: var(--paper) !important; }
 .item .lbl:not(.sol) { background: var(--accent-ink) !important; border-color: var(--accent-ink) !important; color: var(--paper) !important; }
-.item .lbl::before { background: var(--paper) !important; }
+.item .lbl::before, .item .lbl.sol::before, .gov .lbl::before, .gov .lbl.sol::before { background: var(--paper) !important; width: 7px !important; height: 7px !important; opacity: 1 !important; }
 .item .copy p.evidence, .box.tint .item .copy p.evidence { background: color-mix(in srgb, var(--signal) 10%, var(--surface)) !important; border: 1px solid color-mix(in srgb, var(--signal) 50%, var(--rule)) !important; border-left: 4px solid var(--signal-ink) !important; }
 
 /* stacked hero */
