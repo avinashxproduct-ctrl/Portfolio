@@ -563,13 +563,11 @@ footer { margin-top: 0; }
 .item .copy p.evidence { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--signal); }
 .box.tint .item .copy p.evidence { border-color: color-mix(in srgb, var(--signal) 30%, var(--rule)); border-left-color: var(--signal); }
 
-/* light mode: solid pills so they stand out on tinted boxes */
-@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .item .lbl.sol, :root:not([data-theme="dark"]) .gov .lbl.sol { background: var(--signal-ink); border-color: var(--signal-ink); color: #fff; }
-  :root:not([data-theme="dark"]) .item .lbl:not(.sol) { background: var(--accent-ink); border-color: var(--accent-ink); color: #fff; }
-  :root:not([data-theme="dark"]) .item .lbl::before { background: #fff !important; } }
-:root[data-theme="light"] .item .lbl.sol, :root[data-theme="light"] .gov .lbl.sol { background: var(--signal-ink); border-color: var(--signal-ink); color: #fff; }
-:root[data-theme="light"] .item .lbl:not(.sol) { background: var(--accent-ink); border-color: var(--accent-ink); color: #fff; }
-:root[data-theme="light"] .item .lbl::before { background: #fff !important; }
+/* solid pills + framed Result panels, both themes */
+.item .lbl.sol, .gov .lbl.sol { background: var(--signal-ink) !important; border-color: var(--signal-ink) !important; color: var(--paper) !important; }
+.item .lbl:not(.sol) { background: var(--accent-ink) !important; border-color: var(--accent-ink) !important; color: var(--paper) !important; }
+.item .lbl::before { background: var(--paper) !important; }
+.item .copy p.evidence, .box.tint .item .copy p.evidence { background: color-mix(in srgb, var(--signal) 10%, var(--surface)) !important; border: 1px solid color-mix(in srgb, var(--signal) 50%, var(--rule)) !important; border-left: 4px solid var(--signal-ink) !important; }
 
 /* stacked hero */
 .hero-stack .dek { max-width: none; margin: 0; }
