@@ -529,21 +529,17 @@ footer { margin-top: 0; }
 @keyframes bob { 50% { transform: translateY(-4%); } }
 }
 
-.mw-shelf { grid-template-columns: repeat(4, minmax(0, 1fr)); padding-top: clamp(56px, 8vh, 84px); }
-.mw-groups { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2.4vw, 36px); margin-top: 8px; }
-.mw-groups .lab { max-width: none; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--ink); font-weight: 500; margin: 0; padding-top: 12px; border-top: 1px solid var(--rule); }
-.mw-head { margin-bottom: 8px; }
+.more-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+.more-head .display { margin-bottom: 0; }
+.mw-groups { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 96px); }
+.mw-group { min-width: 0; }
+.mw-h { font-size: var(--t-h3); font-weight: 400; letter-spacing: -0.02em; margin: 0; padding-top: 18px; border-top: 1px solid var(--rule); }
+.mw-shelf { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-top: clamp(120px, 14vh, 150px); }
 @media (max-width: 900px) {
-  .mw-shelf { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 72px; }
-  .mw-groups { display: none; }
-  .mw-shelf .folder:nth-child(1)::before { content: "Work"; }
-  .mw-shelf .folder:nth-child(3)::before { content: "AI projects"; }
-  .mw-shelf .folder:nth-child(1)::before, .mw-shelf .folder:nth-child(3)::before { position: absolute; top: -44px; left: 0; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--ink); font-weight: 500; }
+  .mw-groups { grid-template-columns: minmax(0, 1fr); row-gap: 56px; }
+  .mw-shelf { display: grid; overflow: visible; margin: 0; padding: 150px 0 0; scroll-snap-type: none; }
 }
-
-/* "what changed" cards: a check badge, not a link arrow */
-.card .chk { position: absolute; top: 22px; right: 22px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; color: var(--signal); background: color-mix(in srgb, var(--signal) 14%, var(--surface)); border: 1px solid color-mix(in srgb, var(--signal) 35%, transparent); }
-.card, .q, .opt, .bigp > div, .result { cursor: default; }
+@media (max-width: 560px) { .mw-shelf { padding-top: 90px; gap: 14px; } }
 
 /* stacked hero */
 .hero-stack .dek { max-width: none; margin: 0; }
@@ -1005,10 +1001,22 @@ body.editing .totop { bottom: 72px; }
         <a class="read" href="#top">Back to top ↑</a>
       </div>
     </div>
-    <div class="more-work">
-      <div class="mw-head"><p class="lab">More work</p><a class="read" href="https://newportfolio2026.avinashxproduct.workers.dev/#/">All work →</a></div>
-      <div class="mw-groups"><p class="lab">Work</p><p class="lab">AI projects</p></div>
-      <div class="shelf mw-shelf">
+  </section>
+  </div>
+  <div class="box">
+  <!-- MORE WORK -->
+  <section class="sec wrap" id="more" aria-labelledby="h-more">
+    <div class="sechead rv more-head">
+      <div>
+        <p class="substage">Keep exploring</p>
+        <h2 class="display" id="h-more">More <em>work</em></h2>
+      </div>
+      <a class="read" href="https://newportfolio2026.avinashxproduct.workers.dev/#/">All work →</a>
+    </div>
+    <div class="mw-groups">
+      <div class="mw-group">
+        <h3 class="mw-h">Work</h3>
+        <div class="shelf mw-shelf">
 <a class="folder" target="_blank" rel="noopener" href="https://avinashxproduct-ctrl.github.io/Portfolio/fleetdashboard/index.html" style="--f:#1E5A8F;--i:0" data-title="Hapag-Lloyd: one view of a shipping fleet" data-year="Infosys WongDoody · 2024 · Data visualisation" data-desc="Hapag-Lloyd&#x27;s fleet data was spread across several systems. Over 4 months I designed cluster and voyage dashboards for chief officers, with filters and KPIs for fuel, CO₂, speed, distance, cargo and TEU in one view.">
 <span class="f-lean">
 <span class="f-bloom" aria-hidden="true"></span>
@@ -1035,7 +1043,12 @@ body.editing .totop { bottom: 72px; }
 </span>
 </span>
 </a>
-<a class="folder" target="_blank" rel="noopener" href="https://avinashxproduct-ctrl.github.io/Portfolio/carbonlens/index.html" style="--f:#1F6B5C;--i:2" data-title="CarbonLens: design review, re-imagined" data-year="IBM · 2026 · Figma plugin" data-desc="I designed and built this Figma plugin on my own, from brief to v1.0 in 3 days. It checks copy against 10 Carbon content rules, drafts UI text, and maps spacing to Carbon tokens on the canvas. Five designers use it, and the Carbon team is discussing scaling it to other teams.">
+        </div>
+      </div>
+      <div class="mw-group">
+        <h3 class="mw-h">AI projects</h3>
+        <div class="shelf mw-shelf">
+<a class="folder" target="_blank" rel="noopener" href="https://avinashxproduct-ctrl.github.io/Portfolio/carbonlens/index.html" style="--f:#1F6B5C;--i:0" data-title="CarbonLens: design review, re-imagined" data-year="IBM · 2026 · Figma plugin" data-desc="I designed and built this Figma plugin on my own, from brief to v1.0 in 3 days. It checks copy against 10 Carbon content rules, drafts UI text, and maps spacing to Carbon tokens on the canvas. Five designers use it, and the Carbon team is discussing scaling it to other teams.">
 <span class="f-lean">
 <span class="f-bloom" aria-hidden="true"></span>
 <span class="f-back" aria-hidden="true"></span>
@@ -1048,7 +1061,7 @@ body.editing .totop { bottom: 72px; }
 </span>
 </span>
 </a>
-<a class="folder" target="_blank" rel="noopener" href="https://avinashxproduct-ctrl.github.io/Portfolio/iatracker/index.html" style="--f:#7A4E1D;--i:3" data-title="IA Tracker: making migration visible" data-year="IBM · 2026 · AI tooling" data-desc="A tool I built with IBM BOB that maps themes, epics, features and tasks, so the team can see how far each part of PowerHMC has moved to Carbon, release by release. Every figure is calculated from the records. The case study uses demo data.">
+<a class="folder" target="_blank" rel="noopener" href="https://avinashxproduct-ctrl.github.io/Portfolio/iatracker/index.html" style="--f:#7A4E1D;--i:1" data-title="IA Tracker: making migration visible" data-year="IBM · 2026 · AI tooling" data-desc="A tool I built with IBM BOB that maps themes, epics, features and tasks, so the team can see how far each part of PowerHMC has moved to Carbon, release by release. Every figure is calculated from the records. The case study uses demo data.">
 <span class="f-lean">
 <span class="f-bloom" aria-hidden="true"></span>
 <span class="f-back" aria-hidden="true"></span>
@@ -1061,6 +1074,7 @@ body.editing .totop { bottom: 72px; }
 </span>
 </span>
 </a>
+        </div>
       </div>
     </div>
   </section>
