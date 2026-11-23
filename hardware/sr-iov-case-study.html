@@ -557,6 +557,20 @@ footer { margin-top: 0; }
 :root[data-theme="dark"] { --accent-ink: var(--accent); }
 .item .lbl:not(.sol), .g2g-tag.gap, .gaps .eff b { color: var(--accent-ink); }
 
+/* stronger separation for solution pills and result/evidence panels */
+.item .lbl.sol, .gov .lbl.sol { background: color-mix(in srgb, var(--signal) 16%, var(--surface)); border-color: color-mix(in srgb, var(--signal) 60%, transparent); }
+.item .lbl:not(.sol) { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+.item .copy p.evidence { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--signal); }
+.box.tint .item .copy p.evidence { border-color: color-mix(in srgb, var(--signal) 30%, var(--rule)); border-left-color: var(--signal); }
+
+/* light mode: solid pills so they stand out on tinted boxes */
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .item .lbl.sol, :root:not([data-theme="dark"]) .gov .lbl.sol { background: var(--signal-ink); border-color: var(--signal-ink); color: #fff; }
+  :root:not([data-theme="dark"]) .item .lbl:not(.sol) { background: var(--accent-ink); border-color: var(--accent-ink); color: #fff; }
+  :root:not([data-theme="dark"]) .item .lbl::before { background: #fff !important; } }
+:root[data-theme="light"] .item .lbl.sol, :root[data-theme="light"] .gov .lbl.sol { background: var(--signal-ink); border-color: var(--signal-ink); color: #fff; }
+:root[data-theme="light"] .item .lbl:not(.sol) { background: var(--accent-ink); border-color: var(--accent-ink); color: #fff; }
+:root[data-theme="light"] .item .lbl::before { background: #fff !important; }
+
 /* stacked hero */
 .hero-stack .dek { max-width: none; margin: 0; }
 .hero-stack .hero-facts { grid-template-columns: repeat(4, 1fr); margin-top: clamp(28px, 4vh, 40px); }
