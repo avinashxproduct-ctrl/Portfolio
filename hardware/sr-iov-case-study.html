@@ -395,6 +395,19 @@ footer a { color: inherit; }
 .band .ui-frame, .band .card, .band .opt { background: var(--surface); }
 .band .item { border-top-color: color-mix(in srgb, var(--accent) 18%, var(--rule)); }
 
+.results { margin: 0 0 12px; }
+.result .lab { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); margin: 0 0 14px; }
+.result .n { font-size: clamp(2.75rem, 5vw, 4rem); }
+.result .src { display: inline-block; margin-top: 12px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--rule); }
+.contact { padding: 28px 0; border-top: 1px solid var(--rule); }
+.contact .lab { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); margin: 0 0 8px; }
+.contact .cline { font-size: var(--t-lead); max-width: none; margin: 0; }
+.contact a { color: var(--accent); }
+.contact a:hover { color: var(--ink); }
+.ty { padding-bottom: 8px; }
+@media (prefers-reduced-motion: no-preference) { .next .go { transition: transform .35s var(--ease); } .next:hover .go { transform: translateX(6px); } }
+@media (min-width: 561px) and (max-width: 1100px) { .hero-facts { grid-template-columns: 1fr 1fr; } }
+
 /* ===== micro-interactions ===== */
 .zoomable { cursor: zoom-in; }
 .lightbox { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 4vh 4vw; background: color-mix(in srgb, var(--frame) 88%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); cursor: zoom-out; }
@@ -482,6 +495,8 @@ footer a { color: inherit; }
     <dl class="hero-facts">
       <div><dt>My role</dt><dd>Product Designer</dd></div>
       <div><dt>Contribution</dt><dd>Design ownership + collaboration</dd></div>
+      <div><dt>Timeline</dt><dd>Mar 2026 to now</dd></div>
+      <div><dt>Status</dt><dd>Ongoing, no shipped metrics yet</dd></div>
     </dl>
     </div>
     <div class="hero-shot"><div class="hshot zoomable" role="img" aria-label="Redesigned SR-IOV adapter page in PowerHMC, with adapter details and a physical ports table.">
@@ -661,7 +676,7 @@ footer a { color: inherit; }
       </figure>
     </article>
 
-    <p class="more"><strong>Many more..</strong></p>
+    <p class="more"><strong>4 of the 36 legacy screens reviewed are shown here.</strong> The rest followed the same patterns: dropdown-first pages, modal edits and no feedback after a click.</p>
   </section>
 
   </div>
@@ -771,6 +786,11 @@ footer a { color: inherit; }
   <!-- IMPACT -->
   <section class="sec wrap" id="impact" aria-labelledby="h-imp">
     <div class="sechead rv"><p class="substage">Outcome</p><h2 class="display" id="h-imp">What changed for the people <em>using it</em></h2></div>
+    <div class="results rv-kids">
+      <div class="result"><p class="lab">Fewer steps</p><div class="n"><span data-count="4">4</span><span class="arr"> → </span><span data-count="1">1</span></div><div class="l">Steps to edit a physical port</div><div class="src">Heuristic review</div></div>
+      <div class="result"><p class="lab">Visible system</p><div class="n"><span data-count="0">0</span><span class="arr"> → </span><span data-count="5">5</span></div><div class="l">Feedback states: loading, missing adapter, in progress, error, success</div><div class="src">Heuristic review</div></div>
+      <div class="result"><p class="lab">One place</p><div class="n"><span data-count="2">2</span><span class="arr"> → </span><span data-count="1">1</span></div><div class="l">Places to view and edit a port</div><div class="src">Heuristic review</div></div>
+    </div>
     <div class="cards3 rv">
       <article class="card rv"><span class="arr" aria-hidden="true">↗</span><p class="big">Visible</p><h3>You can see what is happening</h3><p>The old screens stayed silent after a click. Now you see loading, progress, errors and success as they happen.</p></article>
       <article class="card rv"><span class="arr" aria-hidden="true">↗</span><p class="big">Findable</p><h3>You can find things</h3><p>Adapters used to hide behind a dropdown. Now they are all listed in one table, including their real link speed.</p></article>
@@ -802,11 +822,19 @@ footer a { color: inherit; }
       <div class="row">
         <div>
           <p style="color:var(--ink);font-size:1rem">Modernizing Hardware Virtualized I/O in PowerHMC</p>
-          <p style="margin-top:4px">Product Designer · Mar 2026 to ongoing</p>
+          <p style="margin-top:4px">Product Designer · Mar 2026 to now</p>
         </div>
         <a class="read" href="#top">Back to top ↑</a>
       </div>
     </div>
+    <div class="contact rv">
+      <p class="lab">Get in touch</p>
+      <p class="cline">Hiring for complex product work? <a href="mailto:avinashxproduct@gmail.com">avinashxproduct@gmail.com</a> · <a href="https://www.linkedin.com/in/avinash-s-bhadrakali/" target="_blank" rel="noopener">LinkedIn</a></p>
+    </div>
+    <a class="next" href="https://avinashxproduct-ctrl.github.io/Portfolio/fleetdashboard/index.html" target="_blank" rel="noopener">
+      <span><span class="k">Next case study</span><br><span class="t">Hapag-Lloyd: one view of a shipping fleet</span></span>
+      <span class="go" aria-hidden="true">→</span>
+    </a>
   </section>
 </article>
 </main>
